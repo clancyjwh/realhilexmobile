@@ -104,11 +104,11 @@ export default function SportSchedule() {
 
             const awayLogoUrl = sport === 'nhl' 
               ? `https://assets.nhle.com/logos/nhl/svg/${game.away_team}_light.svg` 
-              : `https://cdn.nba.com/logos/nba/${game.away_team}/global/L/logo.svg`; // Fallback attempt
+              : `https://a.espncdn.com/i/teamlogos/nba/500/${game.away_team.toLowerCase()}.png`;
               
             const homeLogoUrl = sport === 'nhl' 
               ? `https://assets.nhle.com/logos/nhl/svg/${game.home_team}_light.svg` 
-              : `https://cdn.nba.com/logos/nba/${game.home_team}/global/L/logo.svg`; // Fallback attempt
+              : `https://a.espncdn.com/i/teamlogos/nba/500/${game.home_team.toLowerCase()}.png`;
 
             return (
               <div key={idx} className="bg-[#12121a] border border-white/5 rounded-2xl p-5 flex justify-between items-center shadow-lg">

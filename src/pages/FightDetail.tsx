@@ -35,6 +35,9 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
   const isRed = type === 'RED CORNER';
   const markerPos = ((fighter.score + 10) / 20) * 100;
   
+  // Debug Log for Headshots
+  console.log(`[FightDetail] Fighter Object for ${fighter.name}:`, JSON.parse(JSON.stringify(fighter)));
+  
   // Use heatscore color for numbers, but ring color based on corner
   const scoreColor = fighter.score > 0 ? 'text-[#00C853]' : 'text-red-500';
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
