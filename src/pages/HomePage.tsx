@@ -13,9 +13,11 @@ interface EntityScore {
   score_color: string;
   logo_url: string | null;
   headshot_url: string | null;
-  breakdown: any;
-  why: string;
-  symbol: string | null;
+  updated_at: string;
+  // Details for modal - optional for initial Top Movers list
+  breakdown?: any;
+  why?: string;
+  symbol?: string | null;
 }
 
 export default function HomePage() {
@@ -31,7 +33,7 @@ export default function HomePage() {
   const fetchEntities = async () => {
     setLoading(true);
     try {
-      // Exact Desktop Query Logic
+      // Exact Desktop Query Logic as requested
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
@@ -39,8 +41,7 @@ export default function HomePage() {
         .from('entity_scores')
         .select('id, name, type, sport, org, score, score_color, logo_url, headshot_url, updated_at')
         .not('score', 'is', null)
-        .gt('updated_at', sevenDaysAgo.toISOString())
-        .order('score', { ascending: false }); // Note: PostgREST order by abs isn't native, sorting in JS for precision matching
+        .gt('updated_at', sevenDaysAgo.toISOString());
 
       if (data) {
         // Precise Desktop Sorting: Order by abs(score) desc
@@ -55,6 +56,19 @@ export default function HomePage() {
   };
 
   const handleCardClick = async (entity: EntityScore) => {
+    // Fetch full entity details if missing (optimized for Top Movers list)
+    if (!entity.breakdown) {
+      const { data: details } = await supabase
+        .from('entity_scores')
+        .select('breakdown, why, symbol')
+        .eq('id', entity.id)
+        .single();
+      
+      if (details) {
+        entity = { ...entity, ...details };
+      }
+    }
+
     setSelectedEntity(entity);
     if (!entity.sport && entity.symbol) {
       const { data } = await supabase
@@ -94,7 +108,6 @@ export default function HomePage() {
                 className="rounded-[2.5rem] p-6 flex flex-col justify-center items-center text-center aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer"
                 style={{ backgroundColor: entity.score_color }}
               >
-                {/* Minimalist Face: Name & Score Only */}
                 <div className="space-y-3">
                   <h3 className="font-black text-2xl text-white leading-tight uppercase italic tracking-tighter line-clamp-2 drop-shadow-sm">
                     {entity.name}
