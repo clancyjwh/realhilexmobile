@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import { formatScore, getHeatScoreColor } from '../utils/format';
+
 
 interface Game {
   game_id: string | number;
@@ -17,7 +16,6 @@ export default function SportSchedule() {
   const { sport } = useParams();
   const navigate = useNavigate();
   const [games, setGames] = useState<Game[]>([]);
-  const [predictions, setPredictions] = useState<Record<string, CachedPrediction>>({});
   const [loading, setLoading] = useState(true);
   const [analyzingGameId, setAnalyzingGameId] = useState<string | number | null>(null);
 
