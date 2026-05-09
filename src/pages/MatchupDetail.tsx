@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { formatScore } from '../utils/format';
 
@@ -50,9 +50,9 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
   let logoUrl = '/logo.png';
   if (isNHL && team.code) {
     logoUrl = `https://assets.nhle.com/logos/nhl/svg/${team.code.toUpperCase()}_light.svg`;
-  } else if (team.code) {
-    // Default to NBA if not NHL
-    logoUrl = `https://cdn.nba.com/logos/nba/${team.code}/global/L/logo.svg`;
+  } else if (!isNHL && team.code) {
+    // NBA
+    logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${team.code.toLowerCase()}.png`;
   } else if (team.logo_url) {
     logoUrl = `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
   }
@@ -88,12 +88,10 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
       </div>
 
       {/* HeatScore Slider */}
-      <div className="w-full relative h-2 rounded-full mb-2 bg-gradient-to-r from-[#B71C1C] via-gray-500 to-[#00C853]">
-        <div 
-          className="absolute top-1/2 -translate-y-1/2 w-2.5 h-3.5 bg-white rounded-sm shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-          style={{ left: `calc(${markerPos}% - 5px)` }}
-        />
-      </div>
+      <div 
+        className="w-full h-2 rounded-full mb-2" 
+        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00C853)' }}
+      />
       <div className="w-full h-4 mb-4" /> {/* Spacer */}
 
       <div className={`text-4xl font-black italic tracking-tighter mb-8 ${isPositive ? 'text-[#00C853]' : 'text-red-500'} drop-shadow-lg`}>
@@ -111,6 +109,7 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
 };
 
 export default function MatchupDetail() {
+  const { sport } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const analysis = location.state?.analysis;
@@ -123,8 +122,8 @@ export default function MatchupDetail() {
     );
   }
 
-  // Determine if NHL based on presence of series_wins in request body/response or team fields
-  const isNHL = analysis.home_team?.series_wins !== undefined || analysis.home_team?.abbreviation?.length === 3 || analysis.home_team?.code?.length === 3;
+  // Determine if NHL based on url param
+  const isNHL = sport === 'nhl';
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col text-white">

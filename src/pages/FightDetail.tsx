@@ -39,8 +39,9 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
   const scoreColor = fighter.score > 0 ? 'text-[#00C853]' : 'text-red-500';
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
 
-  const headshotUrl = fighter.headshot 
-    ? `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(fighter.headshot)}`
+  const rawHeadshot = fighter.headshot || fighter.headshot_url || fighter.stats?.headshot || fighter.stats?.headshot_url;
+  const headshotUrl = rawHeadshot 
+    ? `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(rawHeadshot)}`
     : '';
   
   const getInitials = (name: string) => {
@@ -55,7 +56,7 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
       
       <div className={`w-20 h-20 bg-white/5 rounded-full flex items-center justify-center p-1 mb-3 shadow-xl border-2 ${ringColor}`}>
         <div className="w-full h-full rounded-full overflow-hidden bg-black/20 flex items-center justify-center">
-          {fighter.headshot ? (
+          {rawHeadshot ? (
             <img 
               src={headshotUrl} 
               alt={fighter.name} 
@@ -75,12 +76,10 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
       <h3 className="text-sm font-black italic uppercase text-center leading-tight mb-8">{fighter.name}</h3>
 
       {/* HeatScore Slider */}
-      <div className="w-full relative h-2 rounded-full mb-2 bg-gradient-to-r from-[#B71C1C] via-gray-500 to-[#00C853]">
-        <div 
-          className="absolute top-1/2 -translate-y-1/2 w-2.5 h-3.5 bg-white rounded-sm shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-          style={{ left: `calc(${markerPos}% - 5px)` }}
-        />
-      </div>
+      <div 
+        className="w-full h-2 rounded-full mb-2" 
+        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00C853)' }}
+      />
       <div className="w-full h-4 mb-4" /> {/* Spacer */}
 
       <div className={`text-4xl font-black italic tracking-tighter mb-8 ${scoreColor} drop-shadow-lg`}>
