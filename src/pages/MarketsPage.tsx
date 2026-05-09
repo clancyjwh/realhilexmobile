@@ -139,16 +139,12 @@ export default function MarketsPage() {
         .map(q => ({ ...q, question: q.question.replace('[TRENDING] ', '').replace('[TRENDING]', '') }))
         .slice(0, 5);
       setTrending(filtered);
-    }
 
-    const { data: pData } = await supabase
-      .from('prediction_market_movers')
-      .select('*')
-      .eq('active', true);
-    
-    if (pData) {
-      const sorted = [...pData].sort((a, b) => Math.abs(b.week_change || 0) - Math.abs(a.week_change || 0));
-      setPulse(sorted);
+      const pulseFiltered = tData
+        .filter(q => q.question.startsWith('[MOVER]'))
+        .map(q => ({ ...q, question: q.question.replace('[MOVER] ', '').replace('[MOVER]', '') }))
+        .sort((a, b) => Math.abs(b.week_change || 0) - Math.abs(a.week_change || 0));
+      setPulse(pulseFiltered);
     }
   };
 
@@ -223,9 +219,13 @@ export default function MarketsPage() {
           
           {pulseOpen && (
             <div className="animate-in slide-in-from-top-2 duration-300">
-              {pulse.map((q, idx) => (
-                <MarketPulseCard key={idx} question={q.question} initialData={q} type="pulse" />
-              ))}
+              {pulse.length === 0 ? (
+                <div className="text-center text-slate-500 font-bold italic py-4 text-[10px] uppercase tracking-widest">No market movers available</div>
+              ) : (
+                pulse.map((q, idx) => (
+                  <MarketPulseCard key={idx} question={q.question} initialData={q} type="pulse" />
+                ))
+              )}
             </div>
           )}
         </div>
