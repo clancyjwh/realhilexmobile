@@ -48,9 +48,10 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
 
   // Derive Logo URL
   let logoUrl = '/logo.png';
-  if (isNHL && team.abbreviation) {
-    logoUrl = `https://assets.nhle.com/logos/nhl/svg/${team.abbreviation.toUpperCase()}_light.svg`;
+  if (isNHL && team.code) {
+    logoUrl = `https://assets.nhle.com/logos/nhl/svg/${team.code.toUpperCase()}_light.svg`;
   } else if (team.code) {
+    // Default to NBA if not NHL
     logoUrl = `https://cdn.nba.com/logos/nba/${team.code}/global/L/logo.svg`;
   } else if (team.logo_url) {
     logoUrl = `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
@@ -61,8 +62,16 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
       <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em] mb-6 block">{type}</span>
       
       <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center p-2 mb-3 shadow-xl border border-white/10">
-        {team.abbreviation ? (
-           <img src={logoUrl} alt={team.abbreviation} className="w-full h-full object-contain drop-shadow-md" onError={(e) => (e.currentTarget.style.display = 'none')} />
+        {team.code || team.abbreviation ? (
+           <img 
+             src={logoUrl} 
+             alt={team.code || team.abbreviation} 
+             className="w-full h-full object-contain drop-shadow-md" 
+             onError={(e) => {
+               console.error(`Matchup Logo failed to load for ${team.name}:`, e.currentTarget.src);
+               e.currentTarget.style.display = 'none';
+             }} 
+           />
         ) : (
           <span className="text-xl font-black italic text-white/50">{team.name?.substring(0, 3)}</span>
         )}
@@ -70,7 +79,7 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
 
       <h3 className="text-sm font-black italic uppercase text-center leading-tight mb-1">{team.name}</h3>
       <div className="flex items-center gap-2 mb-6">
-        <span className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{team.abbreviation}</span>
+        <span className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{team.code || team.abbreviation}</span>
         {isNHL && team.series_wins !== undefined && (
           <span className="text-[9px] font-bold text-white/80 bg-black/20 px-1.5 py-0.5 rounded">
             {team.series_wins} WINS
@@ -78,7 +87,14 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
         )}
       </div>
 
-
+      {/* HeatScore Slider */}
+      <div className="w-full relative h-2 rounded-full mb-2 bg-gradient-to-r from-[#B71C1C] via-gray-500 to-[#00C853]">
+        <div 
+          className="absolute top-1/2 -translate-y-1/2 w-2.5 h-3.5 bg-white rounded-sm shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+          style={{ left: `calc(${markerPos}% - 5px)` }}
+        />
+      </div>
+      <div className="w-full h-4 mb-4" /> {/* Spacer */}
 
       <div className={`text-4xl font-black italic tracking-tighter mb-8 ${isPositive ? 'text-[#00C853]' : 'text-red-500'} drop-shadow-lg`}>
         {isPositive ? '+' : ''}{formatScore(team.score, 1)}
@@ -108,7 +124,7 @@ export default function MatchupDetail() {
   }
 
   // Determine if NHL based on presence of series_wins in request body/response or team fields
-  const isNHL = analysis.home_team?.series_wins !== undefined || analysis.home_team?.abbreviation?.length === 3;
+  const isNHL = analysis.home_team?.series_wins !== undefined || analysis.home_team?.abbreviation?.length === 3 || analysis.home_team?.code?.length === 3;
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col text-white">

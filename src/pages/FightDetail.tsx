@@ -33,13 +33,19 @@ const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
 
 const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'BLUE CORNER' }) => {
   const isRed = type === 'RED CORNER';
+  const markerPos = ((fighter.score + 10) / 20) * 100;
+  
   // Use heatscore color for numbers, but ring color based on corner
   const scoreColor = fighter.score > 0 ? 'text-[#00C853]' : 'text-red-500';
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
 
   const headshotUrl = fighter.headshot 
     ? `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(fighter.headshot)}`
-    : '/logo.png';
+    : '';
+  
+  const getInitials = (name: string) => {
+    return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  };
 
   return (
     <div className="flex-1 flex flex-col items-center p-4 border-r border-white/5 last:border-r-0 bg-[#0a0a0f]">
@@ -48,14 +54,34 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
       </span>
       
       <div className={`w-20 h-20 bg-white/5 rounded-full flex items-center justify-center p-1 mb-3 shadow-xl border-2 ${ringColor}`}>
-        <div className="w-full h-full rounded-full overflow-hidden bg-black/20">
-           <img src={headshotUrl} alt={fighter.name} className="w-full h-full object-cover" onError={(e) => (e.currentTarget.src = '/logo.png')} />
+        <div className="w-full h-full rounded-full overflow-hidden bg-black/20 flex items-center justify-center">
+          {fighter.headshot ? (
+            <img 
+              src={headshotUrl} 
+              alt={fighter.name} 
+              className="w-full h-full object-cover" 
+              onError={(e) => {
+                console.error(`UFC Headshot failed to load for ${fighter.name}:`, e.currentTarget.src);
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.parentElement!.innerHTML = `<span class="text-xl font-black italic text-white/50">${getInitials(fighter.name)}</span>`;
+              }} 
+            />
+          ) : (
+            <span className="text-xl font-black italic text-white/50">{getInitials(fighter.name)}</span>
+          )}
         </div>
       </div>
 
       <h3 className="text-sm font-black italic uppercase text-center leading-tight mb-8">{fighter.name}</h3>
 
-
+      {/* HeatScore Slider */}
+      <div className="w-full relative h-2 rounded-full mb-2 bg-gradient-to-r from-[#B71C1C] via-gray-500 to-[#00C853]">
+        <div 
+          className="absolute top-1/2 -translate-y-1/2 w-2.5 h-3.5 bg-white rounded-sm shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+          style={{ left: `calc(${markerPos}% - 5px)` }}
+        />
+      </div>
+      <div className="w-full h-4 mb-4" /> {/* Spacer */}
 
       <div className={`text-4xl font-black italic tracking-tighter mb-8 ${scoreColor} drop-shadow-lg`}>
         {fighter.score > 0 ? '+' : ''}{formatScore(fighter.score, 1)}
