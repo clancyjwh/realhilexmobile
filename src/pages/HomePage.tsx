@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { formatScore, getHeatScoreBgColor } from '../utils/format';
+import { formatScore } from '../utils/format';
 import AnalysisModal from './AnalysisModal';
 
 interface EntityScore {
@@ -31,21 +31,21 @@ export default function HomePage() {
   const fetchEntities = async () => {
     setLoading(true);
     try {
-      // Data Fix: Score not null and updated within 7 days
+      // Exact Desktop Query Logic
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
       const { data } = await supabase
         .from('entity_scores')
-        .select('*')
+        .select('id, name, type, sport, org, score, score_color, logo_url, headshot_url, updated_at')
         .not('score', 'is', null)
         .gt('updated_at', sevenDaysAgo.toISOString())
-        .order('score', { ascending: false });
+        .order('score', { ascending: false }); // Note: PostgREST order by abs isn't native, sorting in JS for precision matching
 
       if (data) {
-        // Sort by absolute score descending
+        // Precise Desktop Sorting: Order by abs(score) desc
         const sorted = [...data].sort((a, b) => Math.abs(b.score) - Math.abs(a.score));
-        setEntities(sorted.slice(0, 40));
+        setEntities(sorted);
       }
     } catch (err) {
       console.error(err);
@@ -57,7 +57,6 @@ export default function HomePage() {
   const handleCardClick = async (entity: EntityScore) => {
     setSelectedEntity(entity);
     if (!entity.sport && entity.symbol) {
-      // Fetch latest financial data
       const { data } = await supabase
         .from('asset_daily_analysis')
         .select('*')
@@ -88,34 +87,19 @@ export default function HomePage() {
       ) : (
         <div className="grid grid-cols-2 gap-4">
           {entities.map((entity) => {
-            const bgColor = getHeatScoreBgColor(entity.score);
-            const image = entity.headshot_url || entity.logo_url;
-            
             return (
               <div 
                 key={entity.id} 
                 onClick={() => handleCardClick(entity)}
-                className="rounded-[2.5rem] p-6 flex flex-col justify-between aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer"
-                style={{ backgroundColor: bgColor }}
+                className="rounded-[2.5rem] p-6 flex flex-col justify-center items-center text-center aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer"
+                style={{ backgroundColor: entity.score_color }}
               >
-                {/* Top Row: Badge & Image */}
-                <div className="flex justify-between items-start gap-2">
-                  <div className="text-[9px] font-black text-white bg-black/10 px-3 py-1.5 rounded-xl uppercase tracking-widest border border-white/10 backdrop-blur-md">
-                    {entity.org || entity.sport || 'HiLEX'}
-                  </div>
-                  {image && (
-                    <div className="w-12 h-12 rounded-full border-2 border-white/20 overflow-hidden bg-black/10 shrink-0 shadow-xl">
-                      <img src={image} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                </div>
-
-                {/* Bottom Row: Name & Score */}
-                <div className="space-y-1">
-                  <h3 className="font-black text-lg text-white leading-tight uppercase italic tracking-tighter line-clamp-2 drop-shadow-sm">
+                {/* Minimalist Face: Name & Score Only */}
+                <div className="space-y-3">
+                  <h3 className="font-black text-2xl text-white leading-tight uppercase italic tracking-tighter line-clamp-2 drop-shadow-sm">
                     {entity.name}
                   </h3>
-                  <div className="text-3xl font-black italic tracking-tighter text-white drop-shadow-md">
+                  <div className="text-4xl font-black italic tracking-tighter text-white drop-shadow-md">
                     {entity.score > 0 ? '+' : ''}{formatScore(entity.score, 1)}
                   </div>
                 </div>
