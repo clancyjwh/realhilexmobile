@@ -85,10 +85,24 @@ export default function MarketAnalysisPage() {
       </div>
 
       <div className="bg-[#12121a] border border-white/5 rounded-[2rem] p-8 shadow-2xl space-y-6">
-        <div className="flex flex-col items-center justify-center space-y-2 pb-2">
+        <div className="flex flex-col items-center justify-center space-y-2 pb-2 w-full">
           <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">HeatScore</span>
           <div className="text-7xl font-black italic tracking-tighter" style={{ color: getHeatScoreColor(heatscore) }}>
             {heatscore > 0 ? '+' : ''}{formatScore(heatscore, 1)}
+          </div>
+          
+          <div className="w-full max-w-xs mx-auto mt-6 px-2 relative pt-4 pb-2">
+            <div className="relative h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00C853)' }}>
+              {/* Marker */}
+              <div 
+                className="absolute top-1/2 w-4 h-4 bg-white rounded-full border-2 border-[#12121a] shadow-[0_0_10px_rgba(0,0,0,0.5)] -translate-y-1/2 -translate-x-1/2 transition-all duration-1000 ease-out"
+                style={{ left: `${Math.max(0, Math.min(100, ((heatscore + 10) / 20) * 100))}%` }}
+              />
+            </div>
+            {/* Labels */}
+            <div className="absolute top-8 left-2 text-[9px] font-black italic text-slate-500">-10</div>
+            <div className="absolute top-8 left-1/2 -translate-x-1/2 text-[9px] font-black italic text-slate-500">0</div>
+            <div className="absolute top-8 right-2 text-[9px] font-black italic text-slate-500">+10</div>
           </div>
         </div>
 
