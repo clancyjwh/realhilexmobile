@@ -6,6 +6,8 @@ import HomePage from './pages/HomePage';
 import FinancePage from './pages/FinancePage';
 import SportsPage from './pages/SportsPage';
 import MarketsPage from './pages/MarketsPage';
+import AccountPage from './pages/AccountPage';
+import AlertsPage from './pages/AlertsPage';
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -20,9 +22,8 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
   ];
 
   const drawerItems = [
-    { id: 'account', label: 'Account', icon: User },
-    { id: 'alerts', label: 'Alerts', icon: Bell },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'account', label: 'Account', icon: User, path: '/account' },
+    { id: 'alerts', label: 'Alerts', icon: Bell, path: '/alerts' }
   ];
 
   return (
@@ -58,7 +59,11 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="space-y-1">
               {drawerItems.map(item => (
-                <div key={item.id} className="flex items-center gap-4 p-5 rounded-2xl active:bg-white/5 transition-all group">
+                <div 
+                  key={item.id} 
+                  onClick={() => { navigate(item.path); setIsDrawerOpen(false); }}
+                  className="flex items-center gap-4 p-5 rounded-2xl active:bg-white/5 transition-all group cursor-pointer"
+                >
                   <item.icon size={20} className="text-slate-500 group-active:text-[#00C853]" />
                   <span className="font-bold text-sm tracking-tight group-active:text-[#00C853]">{item.label}</span>
                 </div>
@@ -105,6 +110,8 @@ export default function App() {
         <Route path="/finance" element={<Shell><FinancePage /></Shell>} />
         <Route path="/sports" element={<Shell><SportsPage /></Shell>} />
         <Route path="/markets" element={<Shell><MarketsPage /></Shell>} />
+        <Route path="/account" element={<Shell><AccountPage /></Shell>} />
+        <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

@@ -13,6 +13,15 @@ export const getHeatScoreColor = (score: number | any) => {
   const s = Number(score);
   if (isNaN(s)) return '#9E9E9E';
   
+  // Use white text for colored backgrounds, except neutral
+  if (Math.abs(s) >= 1) return '#ffffff';
+  return '#ffffff'; // Default to white for bold contrast on backgrounds
+};
+
+export const getHeatScoreBgColor = (score: number | any) => {
+  const s = Number(score);
+  if (isNaN(s)) return '#1c1c24'; // Fallback
+  
   if (s >= 7) return '#00C853';
   if (s >= 4) return '#64DD17';
   if (s >= 1) return '#AEEA00';
