@@ -65,41 +65,48 @@ export default function MarketsPage() {
   }, []);
 
   const fetchData = async () => {
-    const { data: tData, error } = await supabase
+    const rows = await supabase
       .from('event_forecasting_examples')
-      .select('id, question, batch_id')
+      .select('id, question, batch_id, created_at')
       .eq('active', true)
       .order('created_at', { ascending: false });
-    
-    console.log('[MarketsPage] Supabase Fetch Data:', tData);
-    if (error) {
-      console.error('[MarketsPage] Supabase Error:', error);
+
+    console.log('[MarketsPage] Supabase Fetch Data:', rows.data);
+    if (rows.error) {
+      console.error('[MarketsPage] Supabase Error:', rows.error);
     }
-    
-    if (tData && tData.length > 0) {
-      const parsedData = tData.map(row => {
-        let q = row.question;
-        if (typeof q === 'string') {
-          try { q = JSON.parse(q); } catch(e) {}
+
+    if (rows.data && rows.data.length > 0) {
+      const latestBatchId = rows.data[0]?.batch_id;
+      const latestBatch = rows.data.filter(r => r.batch_id === latestBatchId);
+
+      const trendingArr: any[] = [];
+      const moversArr: any[] = [];
+
+      latestBatch.forEach(row => {
+        const q = row.question;
+        if (q.startsWith('[TRENDING] ')) {
+          trendingArr.push({
+            id: row.id,
+            question: q.replace('[TRENDING] ', '')
+          });
+        } else if (q.startsWith('[MOVER] ')) {
+          try {
+            const parsed = JSON.parse(q.replace('[MOVER] ', ''));
+            moversArr.push({
+              id: row.id,
+              question: parsed.question,
+              slug: parsed.slug,
+              yes_prob: parsed.yes_prob,
+              week_change: parsed.week_change,
+              direction: parsed.direction
+            });
+          } catch(e) {}
         }
-        return { ...row, parsed: q };
       });
-
-      const latestBatchId = parsedData[0].batch_id;
-      const latestBatchRows = parsedData.filter(q => q.batch_id === latestBatchId);
-
-      const trendingFiltered = latestBatchRows.slice(0, 3).map(q => {
-        const text = typeof q.parsed === 'object' && q.parsed !== null && 'question' in q.parsed ? q.parsed.question : (typeof q.parsed === 'string' ? q.parsed : q.question);
-        return { ...q, question: typeof text === 'string' ? text.replace('[TRENDING] ', '').replace('[TRENDING]', '') : text };
-      });
-      setTrending(trendingFiltered);
-
-      const pulseFiltered = latestBatchRows.slice(3)
-        .filter(q => typeof q.parsed === 'object' && q.parsed !== null && 'question' in q.parsed && 'slug' in q.parsed)
-        .map(q => {
-          return { ...q, ...q.parsed, question: q.parsed.question };
-        });
-      setPulse(pulseFiltered);
+      
+      setTrending(trendingArr);
+      setPulse(moversArr);
     }
   };
 
