@@ -94,7 +94,7 @@ export default function HomePage() {
     if (!entity.breakdown) {
       const { data: details } = await supabase
         .from('entity_scores')
-        .select('breakdown, why, symbol')
+        .select('*')
         .eq('id', entity.id)
         .single();
       

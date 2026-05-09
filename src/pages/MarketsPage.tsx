@@ -128,18 +128,20 @@ export default function MarketsPage() {
   const fetchData = async () => {
     const { data: tData } = await supabase
       .from('event_forecasting_examples')
-      .select('*')
-      .eq('active', true);
+      .select('id, question, batch_id')
+      .eq('active', true)
+      .order('created_at', { ascending: false });
     
-    if (tData) {
+    if (tData && tData.length > 0) {
+      const latestBatchId = tData[0].batch_id;
+
       const trendingFiltered = tData
-        .filter(q => q.question.startsWith('[TRENDING]'))
-        .map(q => ({ ...q, question: q.question.replace('[TRENDING] ', '').replace('[TRENDING]', '') }))
-        .slice(0, 5);
+        .filter(q => q.batch_id === latestBatchId && q.question.startsWith('[TRENDING]'))
+        .map(q => ({ ...q, question: q.question.replace('[TRENDING] ', '').replace('[TRENDING]', '') }));
       setTrending(trendingFiltered);
 
       const pulseFiltered = tData
-        .filter(q => q.question.startsWith('[MOVER]'))
+        .filter(q => q.batch_id === latestBatchId && q.question.startsWith('[MOVER]'))
         .map(q => {
           let parsed = {};
           try {
