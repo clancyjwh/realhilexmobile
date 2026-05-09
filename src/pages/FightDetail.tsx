@@ -31,7 +31,7 @@ const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
   );
 };
 
-const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'BLUE CORNER' }) => {
+const FighterPanel = ({ fighter, type, headshotProp }: { fighter: any; type: 'RED CORNER' | 'BLUE CORNER'; headshotProp?: string }) => {
   const isRed = type === 'RED CORNER';
   const markerPos = ((fighter.score + 10) / 20) * 100;
   
@@ -42,7 +42,7 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
   const scoreColor = fighter.score > 0 ? 'text-[#00C853]' : 'text-red-500';
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
 
-  const rawHeadshot = fighter.headshot || fighter.headshot_url || fighter.stats?.headshot || fighter.stats?.headshot_url;
+  const rawHeadshot = headshotProp || fighter.headshot || fighter.headshot_url || fighter.stats?.headshot || fighter.stats?.headshot_url;
   const headshotUrl = rawHeadshot 
     ? `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(rawHeadshot)}`
     : '';
@@ -107,6 +107,7 @@ export default function FightDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const analysis = location.state?.analysis;
+  const headshots = location.state?.headshots || {};
 
   if (!analysis) {
     return (
@@ -127,8 +128,8 @@ export default function FightDetail() {
       </div>
 
       <div className="flex-grow flex overflow-y-auto">
-        <FighterPanel fighter={analysis.fighter_1} type="RED CORNER" />
-        <FighterPanel fighter={analysis.fighter_2} type="BLUE CORNER" />
+        <FighterPanel fighter={analysis.fighter_1} type="RED CORNER" headshotProp={headshots.f1} />
+        <FighterPanel fighter={analysis.fighter_2} type="BLUE CORNER" headshotProp={headshots.f2} />
       </div>
     </div>
   );

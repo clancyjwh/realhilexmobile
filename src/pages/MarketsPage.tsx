@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, ChevronDown, TrendingUp, TrendingDown, Loader2 } from 'lucide-react';
+import { Search, ChevronDown, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getHeatScoreColor, formatScore } from '../utils/format';
 
@@ -8,8 +8,7 @@ interface MarketData {
   our_signal_score: number;
   polymarket_yes_prob: number;
   gap: number;
-  misprice_flag: boolean;
-  week_change?: number;
+  polymarket_matched: boolean;
 }
 
 const ResultCard = ({ data, isExpanded = true }: { data: MarketData; isExpanded?: boolean }) => {
@@ -30,30 +29,27 @@ const ResultCard = ({ data, isExpanded = true }: { data: MarketData; isExpanded?
             </div>
           </div>
           <div className="space-y-1">
-            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Probability</span>
+            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Our Odds</span>
             <div className="text-3xl font-black italic tracking-tighter text-[#00C853]">
-              {formatScore(ourProb, 0)}%
+              {formatScore(ourProb, 1)}%
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-2 border-t border-white/5">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Polymarket</span>
-              <span className="text-sm font-black italic text-cyan-400">{formatScore(polyProb, 0)}% YES</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Gap</span>
-              <span className="text-sm font-black italic text-white">{formatScore(data.gap, 1)}</span>
+        {data.polymarket_matched && (
+          <div className="flex items-center justify-between pt-4 border-t border-white/5">
+            <div className="flex items-center gap-6">
+              <div className="flex flex-col">
+                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Polymarket</span>
+                <span className="text-sm font-black italic text-cyan-400">{formatScore(polyProb, 1)}% YES</span>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Gap</span>
+                <span className="text-sm font-black italic text-white">{formatScore(data.gap, 1)}</span>
+              </div>
             </div>
           </div>
-          {data.misprice_flag && (
-            <div className="bg-yellow-400 text-black px-2 py-1 rounded text-[9px] font-black uppercase tracking-widest flex items-center gap-1 shadow-[0_0_15px_rgba(250,204,21,0.3)]">
-              <span>⚡</span> MISPRICE
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );
@@ -74,7 +70,7 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
       const data = await response.json();
       setAnalysis({ question, ...data });
     } catch (err) {
-      // Fire-and-forget: swallow errors as requested
+      // Fire-and-forget
     } finally {
       setLoading(false);
     }
@@ -88,20 +84,22 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
           
           <div className="flex items-center gap-4">
             {type === 'pulse' && initialData?.week_change !== undefined && (
-              <div className={`flex items-center gap-1 text-[10px] font-black italic ${initialData.week_change > 0 ? 'text-[#00C853]' : 'text-red-500'}`}>
-                {initialData.week_change > 0 ? '▲' : '▼'} {Math.abs(initialData.week_change * 100).toFixed(1)}%
+              <div className={`flex items-center gap-1 text-[10px] font-black italic ${initialData.direction === 'up' ? 'text-[#00C853]' : 'text-red-500'}`}>
+                {initialData.direction === 'up' ? '▲' : '▼'} {Math.abs(initialData.week_change * 100).toFixed(1)}%
               </div>
             )}
-            <div className="text-cyan-400 text-[10px] font-black italic">
-              {( (initialData?.polymarket_yes_prob || initialData?.yes_prob || 0) * 100).toFixed(0)}% YES
-            </div>
+            {type === 'pulse' && initialData?.yes_prob !== undefined && (
+              <div className="text-cyan-400 text-[10px] font-black italic">
+                {(initialData.yes_prob * 100).toFixed(1)}% YES
+              </div>
+            )}
           </div>
         </div>
 
         <button 
           onClick={handleAnalyze}
           disabled={loading}
-          className="bg-[#00C853] text-[#0a0a0f] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[80px] flex justify-center items-center"
+          className="bg-[#00C853] text-[#0a0a0f] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[80px] flex justify-center items-center shrink-0"
         >
           {loading ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
         </button>
@@ -117,8 +115,8 @@ export default function MarketsPage() {
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchResult, setSearchResult] = useState<MarketData | null>(null);
   
-  const [trendingOpen, setTrendingOpen] = useState(true);
-  const [pulseOpen, setPulseOpen] = useState(true);
+  const [trendingOpen, setTrendingOpen] = useState(false); // Collapsed by default
+  const [pulseOpen, setPulseOpen] = useState(true); // Expanded by default
   
   const [trending, setTrending] = useState<any[]>([]);
   const [pulse, setPulse] = useState<any[]>([]);
@@ -134,16 +132,22 @@ export default function MarketsPage() {
       .eq('active', true);
     
     if (tData) {
-      const filtered = tData
+      const trendingFiltered = tData
         .filter(q => q.question.startsWith('[TRENDING]'))
         .map(q => ({ ...q, question: q.question.replace('[TRENDING] ', '').replace('[TRENDING]', '') }))
         .slice(0, 5);
-      setTrending(filtered);
+      setTrending(trendingFiltered);
 
       const pulseFiltered = tData
         .filter(q => q.question.startsWith('[MOVER]'))
-        .map(q => ({ ...q, question: q.question.replace('[MOVER] ', '').replace('[MOVER]', '') }))
-        .sort((a, b) => Math.abs(b.week_change || 0) - Math.abs(a.week_change || 0));
+        .map(q => {
+          let parsed = {};
+          try {
+            const rawJson = q.question.replace('[MOVER] ', '').replace('[MOVER]', '');
+            parsed = JSON.parse(rawJson);
+          } catch (e) {}
+          return { ...q, ...parsed };
+        });
       setPulse(pulseFiltered);
     }
   };
@@ -153,6 +157,7 @@ export default function MarketsPage() {
     if (!search.trim()) return;
     
     setSearchLoading(true);
+    setSearchResult(null);
     try {
       const response = await fetch('https://hook.us2.make.com/5qbkt4iyi3e52o8auyjssk4bxar6f8ay', {
         method: 'POST',
@@ -171,8 +176,8 @@ export default function MarketsPage() {
   return (
     <div className="flex-grow p-5 pb-10 flex flex-col">
       {/* Institutional Search */}
-      <form onSubmit={handleSearch} className="relative mb-8 pt-4">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">
+      <form onSubmit={handleSearch} className="relative mb-6 pt-4">
+        <div className="absolute left-4 top-[2.2rem] -translate-y-1/2 text-slate-500">
           {searchLoading ? <Loader2 size={18} className="animate-spin text-[#00C853]" /> : <Search size={18} />}
         </div>
         <input 

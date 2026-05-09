@@ -3,8 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 
 interface Fight {
-  fighter_1: { id: string; name: string };
-  fighter_2: { id: string; name: string };
+  fighter_1: { id: string; name: string; headshot?: string };
+  fighter_2: { id: string; name: string; headshot?: string };
   weight_class: string;
   is_title_fight: boolean;
 }
@@ -31,7 +31,12 @@ export default function UFCFightList() {
       });
       const analysisData = await res.json();
       
-      navigate('/sports/ufc/fight', { state: { analysis: analysisData } });
+      navigate('/sports/ufc/fight', { 
+        state: { 
+          analysis: analysisData,
+          headshots: { f1: fight.fighter_1.headshot, f2: fight.fighter_2.headshot }
+        } 
+      });
     } catch (err) {
       console.error(err);
     } finally {
