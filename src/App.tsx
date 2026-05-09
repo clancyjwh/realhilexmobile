@@ -3,11 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocat
 import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Bell, Settings } from 'lucide-react';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
+import FinancePage from './pages/FinancePage';
+import SportsPage from './pages/SportsPage';
 import MarketsPage from './pages/MarketsPage';
-
-// Empty Placeholder Pages
-const FinancePage = () => <div className="flex-grow"></div>;
-const SportsPage = () => <div className="flex-grow"></div>;
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
