@@ -77,22 +77,28 @@ export default function MarketsPage() {
     }
     
     if (tData && tData.length > 0) {
-      const latestBatchId = tData[0].batch_id;
+      const parsedData = tData.map(row => {
+        let q = row.question;
+        if (typeof q === 'string') {
+          try { q = JSON.parse(q); } catch(e) {}
+        }
+        return { ...row, parsed: q };
+      });
 
-      const trendingFiltered = tData
-        .filter(q => q.batch_id === latestBatchId && q.question.startsWith('[TRENDING]'))
-        .map(q => ({ ...q, question: q.question.replace('[TRENDING] ', '').replace('[TRENDING]', '') }));
+      const latestBatchId = parsedData[0].batch_id;
+
+      const trendingFiltered = parsedData
+        .filter(q => q.batch_id === latestBatchId && (typeof q.parsed === 'string' || (typeof q.question === 'string' && q.question.startsWith('[TRENDING]'))))
+        .map(q => {
+          const text = typeof q.parsed === 'string' ? q.parsed : q.question;
+          return { ...q, question: text.replace('[TRENDING] ', '').replace('[TRENDING]', '') };
+        });
       setTrending(trendingFiltered);
 
-      const pulseFiltered = tData
-        .filter(q => q.batch_id === latestBatchId && q.question.startsWith('[MOVER]'))
+      const pulseFiltered = parsedData
+        .filter(q => q.batch_id === latestBatchId && typeof q.parsed === 'object' && q.parsed !== null && 'question' in q.parsed && 'slug' in q.parsed)
         .map(q => {
-          let parsed = {};
-          try {
-            const rawJson = q.question.replace('[MOVER] ', '').replace('[MOVER]', '');
-            parsed = JSON.parse(rawJson);
-          } catch (e) {}
-          return { ...q, ...parsed };
+          return { ...q, ...q.parsed, question: q.parsed.question };
         });
       setPulse(pulseFiltered);
     }
