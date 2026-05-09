@@ -13,11 +13,6 @@ interface Game {
   date?: string;
 }
 
-interface CachedPrediction {
-  home_score: number;
-  away_score: number;
-}
-
 export default function SportSchedule() {
   const { sport } = useParams();
   const navigate = useNavigate();
@@ -54,27 +49,6 @@ export default function SportSchedule() {
       const data = await res.json();
       const gameList = data.games || [];
       setGames(gameList);
-
-      // Check cache in parallel
-      const today = new Date().toISOString().split('T')[0];
-      const dbSport = sport === 'soccer' ? 'ucl' : sport; // Soccer might use ucl in DB
-
-      const { data: preds } = await supabase
-        .from('predictions')
-        .select('home_team, away_team, home_score, away_score')
-        .eq('sport', dbSport)
-        .eq('game_date', today);
-
-      if (preds) {
-        const predMap: Record<string, CachedPrediction> = {};
-        preds.forEach(p => {
-          predMap[`${p.away_team}@${p.home_team}`] = {
-            home_score: p.home_score,
-            away_score: p.away_score
-          };
-        });
-        setPredictions(predMap);
-      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -128,32 +102,35 @@ export default function SportSchedule() {
       ) : (
         <div className="space-y-3">
           {games.map((game, idx) => {
-            const predKey = `${game.away_team}@${game.home_team}`;
-            const cached = predictions[predKey];
             const isAnalyzing = analyzingGameId === game.game_id;
+
+            const awayLogoUrl = sport === 'nhl' 
+              ? `https://assets.nhle.com/logos/nhl/svg/${game.away_team}_light.svg` 
+              : `https://cdn.nba.com/logos/nba/${game.away_team}/global/L/logo.svg`; // Fallback attempt
+              
+            const homeLogoUrl = sport === 'nhl' 
+              ? `https://assets.nhle.com/logos/nhl/svg/${game.home_team}_light.svg` 
+              : `https://cdn.nba.com/logos/nba/${game.home_team}/global/L/logo.svg`; // Fallback attempt
 
             return (
               <div key={idx} className="bg-[#12121a] border border-white/5 rounded-2xl p-5 flex justify-between items-center shadow-lg">
-                <span className="font-black text-lg italic tracking-tight">{game.away_team} @ {game.home_team}</span>
-                
-                {cached ? (
-                  <div className="flex items-center gap-4">
-                    <span className="text-xl font-black italic tracking-tighter" style={{ color: getHeatScoreColor(cached.away_score * 10) }}>
-                      {cached.away_score > 0 ? '+' : ''}{formatScore(cached.away_score * 10, 1)}
-                    </span>
-                    <span className="text-xl font-black italic tracking-tighter" style={{ color: getHeatScoreColor(cached.home_score * 10) }}>
-                      {cached.home_score > 0 ? '+' : ''}{formatScore(cached.home_score * 10, 1)}
-                    </span>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 flex items-center justify-center">
+                     <img src={awayLogoUrl} alt={game.away_team} className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                   </div>
-                ) : (
-                  <button 
-                    onClick={() => handleAnalyze(game)}
-                    disabled={isAnalyzing}
-                    className="bg-[#00C853] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,200,83,0.15)]"
-                  >
-                    {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
-                  </button>
-                )}
+                  <span className="font-black text-lg italic tracking-tight">{game.away_team} @ {game.home_team}</span>
+                  <div className="w-8 h-8 flex items-center justify-center">
+                     <img src={homeLogoUrl} alt={game.home_team} className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                  </div>
+                </div>
+                
+                <button 
+                  onClick={() => handleAnalyze(game)}
+                  disabled={isAnalyzing}
+                  className="bg-[#00C853] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,200,83,0.15)]"
+                >
+                  {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
+                </button>
               </div>
             );
           })}

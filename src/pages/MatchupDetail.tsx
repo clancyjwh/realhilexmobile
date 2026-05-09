@@ -52,7 +52,7 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
     : `https://cdn.nba.com/logos/nba/${team.team_id}/global/L/logo.svg`; // Fallback for NBA if ID exists
 
   return (
-    <div className={`flex-1 flex flex-col items-center p-4 overflow-y-auto border-r border-white/5 last:border-r-0 ${bgColor}`}>
+    <div className={`flex-1 flex flex-col items-center p-4 border-r border-white/5 last:border-r-0 ${bgColor}`}>
       <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.3em] mb-6 block">{type}</span>
       
       <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center p-2 mb-3 shadow-xl border border-white/10">
@@ -125,7 +125,7 @@ export default function MatchupDetail() {
         <div className="w-9" /> {/* Spacer */}
       </div>
 
-      <div className="flex-grow flex overflow-hidden">
+      <div className="flex-grow flex overflow-y-auto">
         <TeamPanel team={analysis.away_team} type="AWAY" isNHL={isNHL} />
         <TeamPanel team={analysis.home_team} type="HOME" isNHL={isNHL} />
       </div>

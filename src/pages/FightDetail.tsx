@@ -40,7 +40,7 @@ const FighterPanel = ({ fighter, type }: { fighter: any; type: 'RED CORNER' | 'B
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
 
   return (
-    <div className="flex-1 flex flex-col items-center p-4 overflow-y-auto border-r border-white/5 last:border-r-0 bg-[#0a0a0f]">
+    <div className="flex-1 flex flex-col items-center p-4 border-r border-white/5 last:border-r-0 bg-[#0a0a0f]">
       <span className={`text-[10px] font-black uppercase tracking-[0.3em] mb-6 block ${isRed ? 'text-red-500/70' : 'text-blue-500/70'}`}>
         {type}
       </span>
@@ -106,7 +106,7 @@ export default function FightDetail() {
         <div className="w-9" /> {/* Spacer */}
       </div>
 
-      <div className="flex-grow flex overflow-hidden">
+      <div className="flex-grow flex overflow-y-auto">
         <FighterPanel fighter={analysis.fighter_1} type="RED CORNER" />
         <FighterPanel fighter={analysis.fighter_2} type="BLUE CORNER" />
       </div>
