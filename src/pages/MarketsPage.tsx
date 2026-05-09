@@ -16,7 +16,7 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
   const navigate = useNavigate();
 
   const handleAnalyze = () => {
-    navigate('/markets/analyze', { state: { question } });
+    navigate('/markets/analyze', { state: { question, slug: initialData?.slug || null } });
   };
 
   return (
@@ -106,7 +106,7 @@ export default function MarketsPage() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!search.trim()) return;
-    navigate('/markets/analyze', { state: { question: search } });
+    navigate('/markets/analyze', { state: { question: search, slug: null } });
   };
 
   return (

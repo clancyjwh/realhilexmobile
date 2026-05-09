@@ -18,7 +18,7 @@ export default function MarketAnalysisPage() {
         const response = await fetch('https://hook.us2.make.com/5qbkt4iyi3e52o8auyjssk4bxar6f8ay', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event_description: question, source: 'mobile' })
+          body: JSON.stringify({ event_description: question, source: 'mobile', slug: location.state?.slug || null })
         });
         const data = await response.json();
         if (mounted) {
@@ -84,42 +84,35 @@ export default function MarketAnalysisPage() {
         <h1 className="text-2xl font-bold text-white leading-tight">{question}</h1>
       </div>
 
-      <div className="bg-[#12121a] border border-white/5 rounded-[2rem] p-8 shadow-2xl space-y-8">
-        <div className="grid grid-cols-2 gap-8">
-          <div className="space-y-2">
-            <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">HeatScore</span>
-            <div className="text-5xl font-black italic tracking-tighter" style={{ color: getHeatScoreColor(heatscore) }}>
-              {heatscore > 0 ? '+' : ''}{formatScore(heatscore, 1)}
-            </div>
-          </div>
-          <div className="space-y-2">
-            <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Our Odds</span>
-            <div className="text-5xl font-black italic tracking-tighter text-[#00C853]">
-              {our_probability}%
-            </div>
+      <div className="bg-[#12121a] border border-white/5 rounded-[2rem] p-8 shadow-2xl space-y-6">
+        <div className="flex flex-col items-center justify-center space-y-2 pb-2">
+          <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">HeatScore</span>
+          <div className="text-7xl font-black italic tracking-tighter" style={{ color: getHeatScoreColor(heatscore) }}>
+            {heatscore > 0 ? '+' : ''}{formatScore(heatscore, 1)}
           </div>
         </div>
 
-        {polyMatched ? (
-          <div className="pt-6 border-t border-white/5 grid grid-cols-2 gap-8">
-            <div className="space-y-2">
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Polymarket</span>
-              <div className="text-2xl font-black italic tracking-tighter text-cyan-400">
+        <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/5">
+          <div className="space-y-2 flex flex-col items-start">
+            <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Our Odds</span>
+            <div className="text-4xl font-black italic tracking-tighter text-[#00C853]">
+              {our_probability}%
+            </div>
+          </div>
+          
+          <div className="space-y-2 flex flex-col items-start">
+            <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Polymarket</span>
+            {polyMatched ? (
+              <div className="text-4xl font-black italic tracking-tighter text-cyan-400">
                 {polyProb}% <span className="text-sm font-bold text-cyan-400/50 ml-1">YES</span>
               </div>
-            </div>
-            <div className="space-y-2">
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Gap</span>
-              <div className="text-2xl font-black italic tracking-tighter text-white">
-                {gap > 0 ? '+' : ''}{gap}
+            ) : (
+              <div className="text-[10px] font-black italic text-slate-600 uppercase tracking-widest mt-2 leading-relaxed">
+                No Market Found
               </div>
-            </div>
+            )}
           </div>
-        ) : (
-          <div className="pt-6 border-t border-white/5 text-center">
-            <span className="text-xs font-black italic text-slate-600 uppercase tracking-widest">No Polymarket market found</span>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
