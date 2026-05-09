@@ -47,9 +47,14 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
   const markerPos = ((team.score + 10) / 20) * 100;
 
   // Derive Logo URL
-  const logoUrl = isNHL 
-    ? `https://assets.nhle.com/logos/nhl/svg/${team.abbreviation}_light.svg`
-    : `https://cdn.nba.com/logos/nba/${team.team_id}/global/L/logo.svg`; // Fallback for NBA if ID exists
+  let logoUrl = '/logo.png';
+  if (isNHL && team.abbreviation) {
+    logoUrl = `https://assets.nhle.com/logos/nhl/svg/${team.abbreviation.toUpperCase()}_light.svg`;
+  } else if (team.code) {
+    logoUrl = `https://cdn.nba.com/logos/nba/${team.code}/global/L/logo.svg`;
+  } else if (team.logo_url) {
+    logoUrl = `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
+  }
 
   return (
     <div className={`flex-1 flex flex-col items-center p-4 border-r border-white/5 last:border-r-0 ${bgColor}`}>
@@ -73,17 +78,7 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
         )}
       </div>
 
-      {/* Slider */}
-      <div className="w-full relative h-1.5 rounded-full mb-2 bg-gradient-to-r from-red-500 via-gray-500 to-[#00C853]">
-        <div 
-          className="absolute top-1/2 -translate-y-1/2 w-2 h-3 bg-white rounded-sm shadow-[0_0_8px_rgba(255,255,255,0.8)]"
-          style={{ left: `calc(${markerPos}% - 4px)` }}
-        />
-      </div>
-      <div className="flex justify-between w-full text-[7px] font-black text-white/50 mb-4">
-        <span>-10</span>
-        <span>+10</span>
-      </div>
+
 
       <div className={`text-4xl font-black italic tracking-tighter mb-8 ${isPositive ? 'text-[#00C853]' : 'text-red-500'} drop-shadow-lg`}>
         {isPositive ? '+' : ''}{formatScore(team.score, 1)}
