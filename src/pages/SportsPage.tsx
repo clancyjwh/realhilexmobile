@@ -1,7 +1,9 @@
 import React from 'react';
 import { Trophy } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SportsPage() {
+  const navigate = useNavigate();
   const sports = [
     { name: 'NHL', path: '/sports/nhl' },
     { name: 'NBA', path: '/sports/nba' },
@@ -10,22 +12,25 @@ export default function SportsPage() {
   ];
 
   return (
-    <div className="flex-grow p-5 pb-10">
-      <div className="mb-8 pt-4">
-        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Institutional Hub</h2>
-        <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">Sports</h1>
+    <div className="flex-grow p-5 pb-10 bg-[#0a0a0f]">
+      <div className="mb-10 pt-4 px-2">
+        <h2 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-1">Institutional Hub</h2>
+        <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Sports</h1>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4 px-1">
         {sports.map((sport) => (
           <div 
             key={sport.name}
-            className="bg-[#12121a] border border-white/5 rounded-2xl p-6 aspect-square flex flex-col justify-between shadow-xl active:bg-white/5 transition-all group"
+            onClick={() => navigate(sport.path)}
+            className="bg-[#12121a] border border-white/5 rounded-2xl p-6 aspect-[5/4] flex flex-col justify-between shadow-[0_8px_30px_rgb(0,0,0,0.4)] active:scale-[0.97] transition-all cursor-pointer group relative overflow-hidden"
           >
-            <div className="flex justify-end">
-              <Trophy size={20} className="text-slate-700 group-active:text-[#00C853] transition-colors" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
+            
+            <div className="relative z-10 flex justify-end w-full">
+              <Trophy size={20} className="text-slate-600 group-active:text-[#00C853] transition-colors" />
             </div>
-            <h3 className="text-2xl font-black italic uppercase text-white leading-none">
+            <h3 className="relative z-10 text-3xl font-black italic uppercase text-white leading-none tracking-tighter">
               {sport.name}
             </h3>
           </div>

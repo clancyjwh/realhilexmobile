@@ -8,6 +8,11 @@ import SportsPage from './pages/SportsPage';
 import MarketsPage from './pages/MarketsPage';
 import AccountPage from './pages/AccountPage';
 import AlertsPage from './pages/AlertsPage';
+import SportSchedule from './pages/SportSchedule';
+import UFCEventList from './pages/UFCEventList';
+import UFCFightList from './pages/UFCFightList';
+import MatchupDetail from './pages/MatchupDetail';
+import FightDetail from './pages/FightDetail';
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -109,6 +114,11 @@ export default function App() {
         <Route path="/home" element={<Shell><HomePage /></Shell>} />
         <Route path="/finance" element={<Shell><FinancePage /></Shell>} />
         <Route path="/sports" element={<Shell><SportsPage /></Shell>} />
+        <Route path="/sports/ufc" element={<Shell><UFCEventList /></Shell>} />
+        <Route path="/sports/ufc/event/:eventId" element={<Shell><UFCFightList /></Shell>} />
+        <Route path="/sports/ufc/fight" element={<Shell><FightDetail /></Shell>} />
+        <Route path="/sports/:sport" element={<Shell><SportSchedule /></Shell>} />
+        <Route path="/sports/:sport/matchup" element={<Shell><MatchupDetail /></Shell>} />
         <Route path="/markets" element={<Shell><MarketsPage /></Shell>} />
         <Route path="/account" element={<Shell><AccountPage /></Shell>} />
         <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
