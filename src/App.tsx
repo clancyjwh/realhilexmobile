@@ -13,6 +13,7 @@ import UFCEventList from './pages/UFCEventList';
 import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
+import MarketAnalysisPage from './pages/MarketAnalysisPage';
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -120,6 +121,7 @@ export default function App() {
         <Route path="/sports/:sport" element={<Shell><SportSchedule /></Shell>} />
         <Route path="/sports/:sport/matchup" element={<Shell><MatchupDetail /></Shell>} />
         <Route path="/markets" element={<Shell><MarketsPage /></Shell>} />
+        <Route path="/markets/analyze" element={<MarketAnalysisPage />} />
         <Route path="/account" element={<Shell><AccountPage /></Shell>} />
         <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
 

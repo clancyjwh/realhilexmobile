@@ -11,69 +11,11 @@ interface MarketData {
   polymarket_matched: boolean;
 }
 
-const ResultCard = ({ data, isExpanded = true }: { data: MarketData; isExpanded?: boolean }) => {
-  const heatScore = data.our_signal_score * 10;
-  const ourProb = ((data.our_signal_score + 1) / 2) * 100;
-  const polyProb = data.polymarket_yes_prob * 100;
-
-  return (
-    <div className={`bg-[#12121a] border border-white/5 rounded-2xl p-5 mb-4 shadow-2xl transition-all duration-500 overflow-hidden ${isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0 py-0 border-0'}`}>
-      <div className="space-y-6">
-        {isExpanded && <h3 className="font-bold text-base text-white leading-snug">{data.question}</h3>}
-        
-        <div className="grid grid-cols-2 gap-6">
-          <div className="space-y-1">
-            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">HeatScore</span>
-            <div className="text-3xl font-black italic tracking-tighter" style={{ color: getHeatScoreColor(heatScore) }}>
-              {heatScore > 0 ? '+' : ''}{formatScore(heatScore, 1)}
-            </div>
-          </div>
-          <div className="space-y-1">
-            <span className="text-[9px] font-black text-slate-600 uppercase tracking-widest">Our Odds</span>
-            <div className="text-3xl font-black italic tracking-tighter text-[#00C853]">
-              {formatScore(ourProb, 1)}%
-            </div>
-          </div>
-        </div>
-
-        {data.polymarket_matched && (
-          <div className="flex items-center justify-between pt-4 border-t border-white/5">
-            <div className="flex items-center gap-6">
-              <div className="flex flex-col">
-                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Polymarket</span>
-                <span className="text-sm font-black italic text-cyan-400">{formatScore(polyProb, 1)}% YES</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Gap</span>
-                <span className="text-sm font-black italic text-white">{formatScore(data.gap, 1)}</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
 const MarketPulseCard = ({ question, initialData, type = 'trending' }: { question: string; initialData?: any; type?: 'trending' | 'pulse' }) => {
-  const [loading, setLoading] = useState(false);
-  const [analysis, setAnalysis] = useState<MarketData | null>(null);
+  const navigate = useNavigate();
 
-  const handleAnalyze = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch('https://hook.us2.make.com/5qbkt4iyi3e52o8auyjssk4bxar6f8ay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event_description: question, source: 'mobile' })
-      });
-      const data = await response.json();
-      setAnalysis({ question, ...data });
-    } catch (err) {
-      // Fire-and-forget
-    } finally {
-      setLoading(false);
-    }
+  const handleAnalyze = () => {
+    navigate('/markets/analyze', { state: { question } });
   };
 
   return (
@@ -98,22 +40,18 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
 
         <button 
           onClick={handleAnalyze}
-          disabled={loading}
-          className="bg-[#00C853] text-[#0a0a0f] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[80px] flex justify-center items-center shrink-0"
+          className="bg-[#00C853] text-[#0a0a0f] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 min-w-[80px] flex justify-center items-center shrink-0"
         >
-          {loading ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
+          ANALYZE
         </button>
       </div>
-      
-      {analysis && <ResultCard data={analysis} />}
     </div>
   );
 };
 
 export default function MarketsPage() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [searchResult, setSearchResult] = useState<MarketData | null>(null);
   
   const [trendingOpen, setTrendingOpen] = useState(false); // Collapsed by default
   const [pulseOpen, setPulseOpen] = useState(true); // Expanded by default
@@ -126,11 +64,16 @@ export default function MarketsPage() {
   }, []);
 
   const fetchData = async () => {
-    const { data: tData } = await supabase
+    const { data: tData, error } = await supabase
       .from('event_forecasting_examples')
       .select('id, question, batch_id')
       .eq('active', true)
       .order('created_at', { ascending: false });
+    
+    console.log('[MarketsPage] Supabase Fetch Data:', tData);
+    if (error) {
+      console.error('[MarketsPage] Supabase Error:', error);
+    }
     
     if (tData && tData.length > 0) {
       const latestBatchId = tData[0].batch_id;
@@ -154,25 +97,10 @@ export default function MarketsPage() {
     }
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!search.trim()) return;
-    
-    setSearchLoading(true);
-    setSearchResult(null);
-    try {
-      const response = await fetch('https://hook.us2.make.com/5qbkt4iyi3e52o8auyjssk4bxar6f8ay', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ event_description: search, source: 'mobile' })
-      });
-      const data = await response.json();
-      setSearchResult({ question: search, ...data });
-    } catch (err) {
-      // Fire-and-forget
-    } finally {
-      setSearchLoading(false);
-    }
+    navigate('/markets/analyze', { state: { question: search } });
   };
 
   return (
@@ -180,7 +108,7 @@ export default function MarketsPage() {
       {/* Institutional Search */}
       <form onSubmit={handleSearch} className="relative mb-6 pt-4">
         <div className="absolute left-4 top-[2.2rem] -translate-y-1/2 text-slate-500">
-          {searchLoading ? <Loader2 size={18} className="animate-spin text-[#00C853]" /> : <Search size={18} />}
+          <Search size={18} />
         </div>
         <input 
           type="text"
@@ -190,9 +118,6 @@ export default function MarketsPage() {
           className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:outline-none focus:border-[#00C853] text-sm font-medium transition-all text-white placeholder:text-slate-700"
         />
       </form>
-
-      {/* Search Result Card */}
-      {searchResult && <ResultCard data={searchResult} />}
 
       <div className="space-y-6">
         {/* Trending Section */}
