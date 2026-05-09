@@ -54,7 +54,7 @@ export default function MarketsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   
-  const [trendingOpen, setTrendingOpen] = useState(false); // Collapsed by default
+  const [trendingOpen, setTrendingOpen] = useState(true); // Expanded by default
   const [pulseOpen, setPulseOpen] = useState(true); // Expanded by default
   
   const [trending, setTrending] = useState<any[]>([]);
@@ -86,17 +86,16 @@ export default function MarketsPage() {
       });
 
       const latestBatchId = parsedData[0].batch_id;
+      const latestBatchRows = parsedData.filter(q => q.batch_id === latestBatchId);
 
-      const trendingFiltered = parsedData
-        .filter(q => q.batch_id === latestBatchId && (typeof q.parsed === 'string' || (typeof q.question === 'string' && q.question.startsWith('[TRENDING]'))))
-        .map(q => {
-          const text = typeof q.parsed === 'string' ? q.parsed : q.question;
-          return { ...q, question: text.replace('[TRENDING] ', '').replace('[TRENDING]', '') };
-        });
+      const trendingFiltered = latestBatchRows.slice(0, 3).map(q => {
+        const text = typeof q.parsed === 'object' && q.parsed !== null && 'question' in q.parsed ? q.parsed.question : (typeof q.parsed === 'string' ? q.parsed : q.question);
+        return { ...q, question: typeof text === 'string' ? text.replace('[TRENDING] ', '').replace('[TRENDING]', '') : text };
+      });
       setTrending(trendingFiltered);
 
-      const pulseFiltered = parsedData
-        .filter(q => q.batch_id === latestBatchId && typeof q.parsed === 'object' && q.parsed !== null && 'question' in q.parsed && 'slug' in q.parsed)
+      const pulseFiltered = latestBatchRows.slice(3)
+        .filter(q => typeof q.parsed === 'object' && q.parsed !== null && 'question' in q.parsed && 'slug' in q.parsed)
         .map(q => {
           return { ...q, ...q.parsed, question: q.parsed.question };
         });
