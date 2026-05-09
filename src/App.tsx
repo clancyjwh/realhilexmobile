@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home, TrendingUp, Trophy, BarChart3, Menu, X, User, Bell, Settings } from 'lucide-react';
-import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage';
+import AuthPage from './pages/AuthPage';
 
 // Empty Placeholder Pages
 const Page = ({ title }: { title: string }) => <div className="flex-grow"></div>;
@@ -40,7 +39,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
         </button>
       </header>
 
-      {/* Main Content Area (Empty for now) */}
+      {/* Main Content Area */}
       <main className="flex-grow flex flex-col">
         {children}
       </main>
@@ -91,14 +90,15 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/login" element={<AuthPage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         
         <Route path="/home" element={<Shell><Page title="Home" /></Shell>} />
         <Route path="/finance" element={<Shell><Page title="Finance" /></Shell>} />
         <Route path="/sports" element={<Shell><Page title="Sports" /></Shell>} />
         <Route path="/markets" element={<Shell><Page title="Markets" /></Shell>} />
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
