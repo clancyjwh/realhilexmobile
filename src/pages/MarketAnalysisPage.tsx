@@ -56,21 +56,29 @@ export default function MarketAnalysisPage() {
   }
 
   // Calculation Logic
-  const raw = (
-    parseFloat(result?.["News & Sentiment score"] || 0) * 0.25 +
-    parseFloat(result?.["Recent Momentum"] || 0) * 0.20 +
-    parseFloat(result?.["Expert Consensus Score"] || 0) * 0.20 +
-    parseFloat(result?.["Historical Pattern Match"] || 0) * 0.15 +
-    parseFloat(result?.["Structural Edge"] || 0) * 0.10 +
-    parseFloat(result?.["Time Pressure/Deadline Effect"] || 0) * 0.10
-  );
-  const signal = Math.max(-1, Math.min(1, raw * 2 - 1));
-  const heatscore = parseFloat((signal * 10).toFixed(1));
-  const our_probability = parseFloat((((signal + 1) / 2) * 100).toFixed(1));
-  
-  const polyMatched = result?.polymarket_slug != null;
-  const polyProb = result?.polymarket_yes_prob ? parseFloat((result.polymarket_yes_prob * 100).toFixed(1)) : 0;
-  const gap = result?.gap ? parseFloat(result.gap.toFixed(1)) : 0;
+  const safeFloat = (val: any) => {
+    if (val === null || val === undefined || val === '') return null;
+    const n = parseFloat(val);
+    return isFinite(n) ? n : null;
+  };
+
+  const gap = safeFloat(result?.gap);
+  const polymarket_yes_prob = safeFloat(result?.polymarket_yes_prob);
+  const our_signal_score = safeFloat(result?.our_signal_score);
+
+  const heatscore = our_signal_score !== null 
+    ? parseFloat((our_signal_score * 10).toFixed(1))
+    : parseFloat((((
+        parseFloat(result?.["News & Sentiment score"] || 0) * 0.25 +
+        parseFloat(result?.["Recent Momentum"] || 0) * 0.20 +
+        parseFloat(result?.["Expert Consensus Score"] || 0) * 0.20 +
+        parseFloat(result?.["Historical Pattern Match"] || 0) * 0.15 +
+        parseFloat(result?.["Structural Edge"] || 0) * 0.10 +
+        parseFloat(result?.["Time Pressure/Deadline Effect"] || 0) * 0.10
+      ) * 2 - 1) * 10).toFixed(1));
+
+  const our_probability = parseFloat(((heatscore / 10 + 1) / 2 * 100).toFixed(1));
+  const polyProb = polymarket_yes_prob !== null ? parseFloat((polymarket_yes_prob * 100).toFixed(1)) : null;
 
   return (
     <div className="flex-grow p-4 bg-[#0a0a0f] text-white min-h-screen">
@@ -117,7 +125,7 @@ export default function MarketAnalysisPage() {
           
           <div className="space-y-2 flex flex-col items-start">
             <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Polymarket</span>
-            {polyMatched ? (
+            {polyProb !== null ? (
               <div className="text-4xl font-black italic tracking-tighter text-cyan-400">
                 {polyProb}% <span className="text-sm font-bold text-cyan-400/50 ml-1">YES</span>
               </div>
