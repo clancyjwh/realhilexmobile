@@ -41,7 +41,9 @@ export default function FinancePage() {
         .eq('id', user.id)
         .single();
         
-      const tier = profile?.subscription_tier?.toLowerCase() || '';
+      const rawTier = profile?.subscription_tier;
+      const tier = (rawTier || 'Pro Tier').toLowerCase();
+      
       let limit = 0;
       if (tier.includes('pro') || tier.includes('premium') || tier.includes('finance')) limit = 6;
       else if (tier.includes('free')) limit = 1;
@@ -175,19 +177,15 @@ export default function FinancePage() {
               onTouchEnd={clearPress}
               onTouchMove={clearPress}
               onContextMenu={(e) => { e.preventDefault(); confirmDelete(item.symbol); }}
-              className="rounded-[2.5rem] p-6 flex flex-col justify-between aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer select-none bg-[#12121a] border"
-              style={{ borderColor: `${getHeatScoreColor(item.signal)}40` }}
+              className="rounded-[2.5rem] p-6 flex flex-col justify-between aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer select-none"
+              style={{ backgroundColor: getHeatScoreColor(item.signal) }}
             >
-              <div className="absolute inset-0 opacity-10" style={{ background: `linear-gradient(to bottom right, transparent, ${getHeatScoreColor(item.signal)})` }} />
               <div className="relative z-10">
-                <div className="text-[10px] font-black text-white bg-white/10 px-2 py-1 rounded-lg inline-block uppercase tracking-widest backdrop-blur-sm border border-white/5">
+                <div className="text-[10px] font-black text-white bg-black/20 px-3 py-1.5 rounded-xl inline-block uppercase tracking-widest backdrop-blur-sm border border-white/10 shadow-sm">
                   {item.symbol}
                 </div>
-                <h3 className="font-bold text-[13px] text-white leading-snug tracking-wide drop-shadow-sm mt-3 line-clamp-2">
-                  {item.name}
-                </h3>
               </div>
-              <div className="text-4xl font-black italic tracking-tighter drop-shadow-md relative z-10" style={{ color: getHeatScoreColor(item.signal) }}>
+              <div className="text-5xl font-black italic tracking-tighter drop-shadow-lg relative z-10 text-white">
                 {item.signal > 0 ? '+' : ''}{formatScore(item.signal, 1)}
               </div>
             </div>
