@@ -51,6 +51,18 @@ const getShorthand = (name: string) => {
   return name;
 };
 
+const getSignalColors = (signal: number) => {
+  if (signal >= 9) return { bg: 'bg-[linear-gradient(145deg,#FFFDF5_0%,#FFF3CC_35%,#EBD48E_70%,#C9A43B_100%)] bg-[length:200%_200%] shadow-[0_0_20px_rgba(201,164,59,0.8)]', border: 'border-yellow-400', text: 'text-black' };
+  if (signal >= 7) return { bg: 'bg-green-900', border: 'border-green-700', text: 'text-green-300' };
+  if (signal >= 4) return { bg: 'bg-green-700', border: 'border-green-600', text: 'text-green-200' };
+  if (signal >= 1) return { bg: 'bg-green-500', border: 'border-green-400', text: 'text-green-100' };
+  if (signal > -1) return { bg: 'bg-slate-600', border: 'border-slate-500', text: 'text-slate-200' };
+  if (signal >= -4) return { bg: 'bg-orange-500', border: 'border-orange-400', text: 'text-orange-100' };
+  if (signal >= -7) return { bg: 'bg-red-600', border: 'border-red-500', text: 'text-red-100' };
+  if (signal <= -9) return { bg: 'bg-gradient-to-br from-red-900 to-red-950', border: 'border-red-600', text: 'text-red-200' };
+  return { bg: 'bg-red-900', border: 'border-red-700', text: 'text-red-300' };
+};
+
 export default function HomePage() {
   const [entities, setEntities] = useState<UnifiedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -194,39 +206,40 @@ export default function HomePage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3">
-          {entities.map((entity) => {
+        <div className="grid grid-cols-2 gap-2.5">
+          {entities.map((entity, index) => {
+            const colors = getSignalColors(entity.unifiedScore);
             return (
-              <div 
+              <button 
                 key={`${entity.id}-${entity.itemType}`} 
                 onClick={() => handleCardClick(entity)}
-                className="rounded-2xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer"
-                style={{ backgroundColor: entity.score_color }}
+                className={`${colors.bg} ${colors.border} border-2 rounded-lg p-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 text-left relative overflow-hidden`}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{entity.org || entity.itemType}</span>
+                <div className="flex items-center justify-between gap-1.5 mb-2 w-full">
+                  <div className="flex items-center gap-1.5 truncate">
+                    <div className="text-white/60 text-xs font-bold">#{index + 1}</div>
+                    <span className="text-white/70 text-[10px] font-medium truncate">{entity.org || entity.itemType}</span>
                   </div>
                   {(entity.headshot_url || entity.logo_url) && (
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10 border border-white/20 shadow-sm flex-shrink-0">
+                    <div className="w-5 h-5 rounded-full overflow-hidden bg-white/10 flex-shrink-0 flex items-center justify-center">
                       <img 
                         src={entity.headshot_url || entity.logo_url!} 
                         alt="" 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   )}
                 </div>
                 
-                <div className="flex flex-col mt-auto">
-                  <h3 className="font-black text-xl text-white leading-tight uppercase italic tracking-tighter drop-shadow-sm truncate w-full mb-1">
+                <div className="flex items-center justify-between w-full">
+                  <div className="text-white text-xl font-bold truncate pr-2">
                     {getShorthand(entity.name)}
-                  </h3>
-                  <div className="text-3xl font-black italic tracking-tighter text-white drop-shadow-md">
+                  </div>
+                  <div className={`text-3xl font-bold ${colors.text} flex-shrink-0`}>
                     {entity.unifiedScore > 0 ? '+' : ''}{formatScore(entity.unifiedScore, 1)}
                   </div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
