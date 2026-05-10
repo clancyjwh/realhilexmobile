@@ -49,7 +49,8 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
   const isUFC = entity.sport?.toLowerCase() === 'ufc';
   
   // HeatScore Slider Marker Position (-10 to +10)
-  const markerPos = ((entity.score + 10) / 20) * 100;
+  const scoreToUse = typeof entity.unifiedScore !== 'undefined' ? entity.unifiedScore : (entity.score || 0);
+  const markerPos = ((scoreToUse + 10) / 20) * 100;
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col animate-in fade-in zoom-in-95 duration-200">
@@ -107,7 +108,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
           <div className="flex flex-col items-center">
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">Global HeatScore</span>
             <div className="text-6xl font-black italic tracking-tighter" style={{ color: entity.score_color || '#00C853' }}>
-              {entity.score > 0 ? '+' : ''}{formatScore(entity.score, 1)}
+              {scoreToUse > 0 ? '+' : ''}{formatScore(scoreToUse, 1)}
             </div>
           </div>
         </div>
@@ -137,12 +138,18 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {Object.entries(financialData.horizon_json || {}).map(([key, val]: [string, any]) => (
-                    <div key={key} className={`rounded-lg p-2 text-center border ${val.correct ? 'bg-[#00C853]/10 border-[#00C853]/20 text-[#00C853]' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
-                      <div className="text-[8px] font-black uppercase mb-1">{key}</div>
-                      <div className="text-[7px] font-bold uppercase tracking-tighter">{val.correct ? 'Accurate' : 'Miss'}</div>
-                    </div>
-                  ))}
+                  {Object.entries(financialData.horizon_json || {})
+                    .filter(([key]) => !['Analysis', 'Win Rate', 'Parameters'].includes(key))
+                    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+                    .map(([key, val]: [string, any]) => {
+                      const isCorrect = typeof val === 'object' ? (val.Correct === true || val.Correct === 'true' || val.correct === true) : false;
+                      return (
+                        <div key={key} className={`rounded-lg p-2 text-center border ${isCorrect ? 'bg-[#00C853]/10 border-[#00C853]/20 text-[#00C853]' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
+                          <div className="text-[8px] font-black uppercase mb-1">{key}</div>
+                          <div className="text-[7px] font-bold uppercase tracking-tighter">{isCorrect ? 'Accurate' : 'Miss'}</div>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
             </div>
