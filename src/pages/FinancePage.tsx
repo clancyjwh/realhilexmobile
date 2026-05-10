@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Plus, X, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { formatScore, getHeatScoreColor } from '../utils/format';
-import AnalysisModal from './AnalysisModal';
+import WatchlistDetailModal from './WatchlistDetailModal';
 
 interface WatchlistItem {
   name: string;
@@ -23,7 +23,6 @@ export default function FinancePage() {
   const [adding, setAdding] = useState(false);
 
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
-  const [financialData, setFinancialData] = useState<any>(null);
 
   useEffect(() => {
     fetchWatchlist();
@@ -52,7 +51,7 @@ export default function FinancePage() {
 
       const { data } = await supabase
         .from('user_watchlist')
-        .select('symbol, name, signal, price, indicators')
+        .select('symbol, name, signal, price, indicators, optimized_parameters')
         .eq('user_id', user.id)
         .order('signal', { ascending: false }); // order by abs(signal) desc is harder in raw supabase JS without rpc, so we fetch and sort in JS
 
@@ -73,12 +72,15 @@ export default function FinancePage() {
     
     setAdding(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user, session } } = await supabase.auth.getSession();
       if (!user) return;
 
-      await fetch('https://hook.us2.make.com/8kuomvnr2exdq8se2dw1hqa5cdgozaoe', {
+      const res = await fetch('https://avijzlkdukanneylvtrd.supabase.co/functions/v1/user-watchlist-webhook', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token}`
+        },
         body: JSON.stringify({
           ticker: newSymbol.trim().toUpperCase(),
           name: newName.trim(),
@@ -87,10 +89,17 @@ export default function FinancePage() {
         })
       });
 
+      const responseData = await res.json();
+
       setNewSymbol('');
       setNewName('');
       setShowAddModal(false);
       await fetchWatchlist();
+      
+      // Auto-open detail modal if webhook returns the item data
+      if (responseData?.data) {
+        setSelectedEntity(responseData.data);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -117,26 +126,8 @@ export default function FinancePage() {
     }
   };
 
-  const handleCardClick = async (symbol: string) => {
-    const { data: details } = await supabase
-      .from('entity_scores')
-      .select('*')
-      .eq('symbol', symbol)
-      .single();
-    
-    if (details) {
-      setSelectedEntity(details);
-      
-      const { data: finData } = await supabase
-        .from('asset_daily_analysis')
-        .select('*')
-        .eq('symbol', symbol)
-        .order('run_date', { ascending: false })
-        .limit(1)
-        .single();
-        
-      setFinancialData(finData);
-    }
+  const handleCardClick = (item: any) => {
+    setSelectedEntity(item);
   };
 
   // Mobile long press logic
@@ -172,7 +163,7 @@ export default function FinancePage() {
           {items.map((item) => (
             <div 
               key={item.symbol}
-              onClick={() => handleCardClick(item.symbol)}
+              onClick={() => handleCardClick(item)}
               onTouchStart={() => startPress(item.symbol)}
               onTouchEnd={clearPress}
               onTouchMove={clearPress}
@@ -275,9 +266,8 @@ export default function FinancePage() {
 
       {/* Detail Modal */}
       {selectedEntity && (
-        <AnalysisModal 
-          entity={selectedEntity} 
-          financialData={financialData}
+        <WatchlistDetailModal 
+          item={selectedEntity} 
           onClose={() => setSelectedEntity(null)} 
         />
       )}
