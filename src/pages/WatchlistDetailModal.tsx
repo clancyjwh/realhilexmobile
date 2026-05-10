@@ -1,6 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { getHeatScoreColor, formatScore } from '../utils/format';
+import { getHeatScoreBgColor, formatScore } from '../utils/format';
 
 interface WatchlistDetailModalProps {
   item: any; // The full user_watchlist row or the webhook response 'data'
@@ -51,9 +51,9 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
         
         {/* HeatScore Section */}
         <div className="flex flex-col items-center justify-center space-y-2 py-6 bg-[#12121a] border border-white/5 rounded-[2rem] shadow-xl relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10" style={{ background: `linear-gradient(to bottom right, transparent, ${getHeatScoreColor(signal)})` }} />
+          <div className="absolute inset-0 opacity-10" style={{ background: `linear-gradient(to bottom right, transparent, ${getHeatScoreBgColor(signal)})` }} />
           <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] relative z-10">HeatScore</span>
-          <div className="text-6xl font-black italic tracking-tighter drop-shadow-md relative z-10" style={{ color: getHeatScoreColor(signal) }}>
+          <div className="text-6xl font-black italic tracking-tighter drop-shadow-md relative z-10" style={{ color: getHeatScoreBgColor(signal) }}>
             {signal > 0 ? '+' : ''}{formatScore(signal, 1)}
           </div>
         </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, X, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
-import { formatScore, getHeatScoreColor } from '../utils/format';
+import { formatScore, getHeatScoreBgColor } from '../utils/format';
 import WatchlistDetailModal from './WatchlistDetailModal';
 
 interface WatchlistItem {
@@ -72,7 +72,8 @@ export default function FinancePage() {
     
     setAdding(true);
     try {
-      const { data: { user, session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
       if (!user) return;
 
       const res = await fetch('https://avijzlkdukanneylvtrd.supabase.co/functions/v1/user-watchlist-webhook', {
@@ -169,12 +170,18 @@ export default function FinancePage() {
               onTouchMove={clearPress}
               onContextMenu={(e) => { e.preventDefault(); confirmDelete(item.symbol); }}
               className="rounded-[2.5rem] p-6 flex flex-col justify-between aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer select-none"
-              style={{ backgroundColor: getHeatScoreColor(item.signal) }}
+              style={{ backgroundColor: getHeatScoreBgColor(item.signal) }}
             >
-              <div className="relative z-10">
+              <div className="relative z-10 flex justify-between items-start">
                 <div className="text-[10px] font-black text-white bg-black/20 px-3 py-1.5 rounded-xl inline-block uppercase tracking-widest backdrop-blur-sm border border-white/10 shadow-sm">
                   {item.symbol}
                 </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); confirmDelete(item.symbol); }}
+                  className="p-1.5 bg-black/10 hover:bg-black/20 rounded-full text-white/70 hover:text-white transition-colors backdrop-blur-sm"
+                >
+                  <X size={14} />
+                </button>
               </div>
               <div className="text-5xl font-black italic tracking-tighter drop-shadow-lg relative z-10 text-white">
                 {item.signal > 0 ? '+' : ''}{formatScore(item.signal, 1)}
