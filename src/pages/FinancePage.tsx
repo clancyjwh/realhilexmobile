@@ -15,9 +15,11 @@ interface WatchlistItem {
 export default function FinancePage() {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [slotLimit, setSlotLimit] = useState(0);
   
   const [showAddModal, setShowAddModal] = useState(false);
   const [newSymbol, setNewSymbol] = useState('');
+  const [newName, setNewName] = useState('');
   const [adding, setAdding] = useState(false);
 
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
@@ -32,6 +34,19 @@ export default function FinancePage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('subscription_tier')
+        .eq('id', user.id)
+        .single();
+        
+      const tier = profile?.subscription_tier?.toLowerCase() || '';
+      let limit = 0;
+      if (tier.includes('pro') || tier.includes('premium') || tier.includes('finance')) limit = 6;
+      else if (tier.includes('free')) limit = 1;
+      
+      setSlotLimit(limit);
 
       const { data } = await supabase
         .from('user_watchlist')
@@ -52,7 +67,7 @@ export default function FinancePage() {
 
   const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newSymbol.trim()) return;
+    if (!newSymbol.trim() || !newName.trim()) return;
     
     setAdding(true);
     try {
@@ -64,12 +79,14 @@ export default function FinancePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ticker: newSymbol.trim().toUpperCase(),
+          name: newName.trim(),
           user_id: user.id,
           source: 'mobile'
         })
       });
 
       setNewSymbol('');
+      setNewName('');
       setShowAddModal(false);
       await fetchWatchlist();
     } catch (err) {
@@ -166,7 +183,7 @@ export default function FinancePage() {
                 <div className="text-[10px] font-black text-white bg-white/10 px-2 py-1 rounded-lg inline-block uppercase tracking-widest backdrop-blur-sm border border-white/5">
                   {item.symbol}
                 </div>
-                <h3 className="font-black text-lg text-white leading-tight uppercase italic tracking-tighter drop-shadow-sm mt-3 line-clamp-2">
+                <h3 className="font-bold text-[13px] text-white leading-snug tracking-wide drop-shadow-sm mt-3 line-clamp-2">
                   {item.name}
                 </h3>
               </div>
@@ -179,55 +196,80 @@ export default function FinancePage() {
       )}
 
       <div className="mt-auto pt-8 shrink-0 pb-4">
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="w-full border-2 border-[#00C853] text-[#00C853] py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 active:scale-[0.98] transition-all bg-[#00C853]/5"
-        >
-          <Plus size={16} />
-          Add Asset
-        </button>
+        {items.length >= slotLimit ? (
+          <div className="w-full border-2 border-slate-700 text-slate-500 py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 bg-slate-800/20">
+            Slot Limit Reached ({items.length}/{slotLimit})
+          </div>
+        ) : (
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="w-full border-2 border-[#00C853] text-[#00C853] py-4 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 active:scale-[0.98] transition-all bg-[#00C853]/5"
+          >
+            <Plus size={16} />
+            Add Asset ({slotLimit - items.length} slots left)
+          </button>
+        )}
       </div>
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-[#12121a] border border-white/10 rounded-[2rem] w-full max-w-sm p-6 relative shadow-2xl">
+        <div className="fixed inset-0 bg-[#0a0a0f]/90 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-[#12121a] border border-white/10 rounded-[2rem] w-full max-w-sm p-6 relative shadow-2xl overflow-hidden">
             <button 
-              onClick={() => setShowAddModal(false)}
-              className="absolute top-4 right-4 p-2 bg-white/5 rounded-full text-slate-400 active:bg-white/10"
+              onClick={() => !adding && setShowAddModal(false)}
+              className="absolute top-4 right-4 p-2 bg-white/5 rounded-full text-slate-400 active:bg-white/10 z-20"
+              disabled={adding}
             >
               <X size={20} />
             </button>
             
-            <h3 className="text-xl font-black italic uppercase tracking-tighter text-white mb-6">Add to Watchlist</h3>
-            
             {adding ? (
-              <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <Loader2 className="animate-spin text-[#00C853]" size={32} />
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Adding Asset...</div>
+              <div className="flex flex-col items-center justify-center py-12 space-y-6 relative z-10">
+                <div className="w-20 h-20 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shadow-2xl relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#00C853]/20 to-transparent opacity-50" />
+                  <Loader2 className="animate-spin text-[#00C853] relative z-10" size={36} />
+                </div>
+                <div className="text-center space-y-2">
+                  <div className="text-sm font-black italic text-white uppercase tracking-widest">Deploying Agent...</div>
+                  <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Generating Initial Analysis</div>
+                </div>
               </div>
             ) : (
-              <form onSubmit={handleAddSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Ticker Symbol</label>
-                  <input
-                    type="text"
-                    required
-                    value={newSymbol}
-                    onChange={(e) => setNewSymbol(e.target.value.toUpperCase())}
-                    placeholder="e.g. AAPL, BTC"
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold placeholder:text-slate-600 focus:outline-none focus:border-[#00C853] transition-colors uppercase"
-                    autoFocus
-                  />
-                </div>
-                <button 
-                  type="submit"
-                  disabled={!newSymbol.trim()}
-                  className="w-full bg-[#00C853] text-[#0a0a0f] py-4 rounded-xl font-black uppercase tracking-widest text-xs active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100"
-                >
-                  Submit
-                </button>
-              </form>
+              <div className="relative z-10">
+                <h3 className="text-xl font-black italic uppercase tracking-tighter text-white mb-6">Add to Watchlist</h3>
+                <form onSubmit={handleAddSubmit} className="space-y-5">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Ticker Symbol</label>
+                    <input
+                      type="text"
+                      required
+                      value={newSymbol}
+                      onChange={(e) => setNewSymbol(e.target.value.toUpperCase())}
+                      placeholder="e.g. AAPL, BTC"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold placeholder:text-slate-600 focus:outline-none focus:border-[#00C853] transition-colors uppercase"
+                      autoFocus
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-2 ml-1">Asset Full Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      placeholder="e.g. Apple Inc, Bitcoin"
+                      className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white font-bold placeholder:text-slate-600 focus:outline-none focus:border-[#00C853] transition-colors"
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={!newSymbol.trim() || !newName.trim()}
+                    className="w-full bg-[#00C853] text-[#0a0a0f] py-4 rounded-xl font-black uppercase tracking-widest text-xs active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 mt-2"
+                  >
+                    Deploy Engine
+                  </button>
+                </form>
+              </div>
             )}
           </div>
         </div>
