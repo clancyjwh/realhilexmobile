@@ -113,8 +113,20 @@ export default function MarketsPage() {
         }
       });
       
-      console.log('Movers:', moversArr.length);
-      setPulse(moversArr);
+      // Deduplicate to prevent repeating cards
+      const uniqueMovers: any[] = [];
+      const seen = new Set();
+      
+      for (const mover of moversArr) {
+        const identifier = mover.slug || mover.question;
+        if (!seen.has(identifier)) {
+          seen.add(identifier);
+          uniqueMovers.push(mover);
+        }
+      }
+
+      console.log('Movers:', uniqueMovers.length);
+      setPulse(uniqueMovers);
     }
   };
 
