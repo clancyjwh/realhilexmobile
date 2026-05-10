@@ -128,12 +128,14 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
 
           {isFinancial && financialData ? (
             <div className="space-y-8">
-              {/* 2x2 Grid */}
+              {/* 2x3 Grid */}
               <div className="grid grid-cols-2 gap-3">
                 <IndicatorTile label="SMA" score={financialData.indicator_json?.SMA?.signal || 0} />
                 <IndicatorTile label="RSI" score={financialData.indicator_json?.RSI?.signal || 0} />
                 <IndicatorTile label="CCI" score={financialData.indicator_json?.CCI?.signal || 0} />
                 <IndicatorTile label="MACD" score={financialData.indicator_json?.MACD?.signal || 0} />
+                <IndicatorTile label="BOLL" score={financialData.indicator_json?.BOLL?.signal || 0} />
+                <IndicatorTile label="ROC" score={financialData.indicator_json?.Rate_of_Change?.rate_of_change?.signal || 0} />
               </div>
 
               {/* Accuracy Horizon */}
@@ -145,7 +147,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {Object.entries(financialData.optimized_parameters || {})
+                  {Object.entries(financialData.horizon_json || {})
                     .filter(([key]) => !['Analysis', 'Win Rate', 'Parameters'].includes(key))
                     .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
                     .map(([key, rawVal]: [string, any]) => {

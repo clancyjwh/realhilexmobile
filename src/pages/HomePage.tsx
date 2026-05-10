@@ -234,7 +234,7 @@ export default function HomePage() {
                 </div>
                 
                 <div className="flex items-center justify-between w-full mt-2">
-                  <div className="text-white text-lg leading-tight font-bold pr-2 overflow-hidden break-words line-clamp-2">
+                  <div className="text-white text-xl font-bold truncate pr-2">
                     {entity.itemType === 'asset' ? entity.symbol : getShorthand(entity.name)}
                   </div>
                   <div className={`text-3xl font-bold ${colors.text} flex-shrink-0 ml-1`}>
