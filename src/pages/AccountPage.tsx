@@ -3,6 +3,13 @@ import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { Mail, User as UserIcon, Bell, CreditCard, LogOut } from 'lucide-react';
 
+declare global {
+  interface Window {
+    OneSignalDeferred: any[];
+    OneSignal: any;
+  }
+}
+
 export default function AccountPage() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
@@ -60,22 +67,10 @@ export default function AccountPage() {
   };
 
   const testNotification = async () => {
-    if ('Notification' in window) {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
-        if (navigator.serviceWorker) {
-          const registration = await navigator.serviceWorker.ready;
-          registration.showNotification('HiLEX Test', {
-            body: 'Notifications are working on iOS!',
-            icon: '/logo.png'
-          });
-        } else {
-          new Notification('HiLEX Test', {
-            body: 'Notifications are working!',
-            icon: '/logo.png'
-          });
-        }
-      }
+    if (window.OneSignalDeferred) {
+      window.OneSignalDeferred.push(async function(OneSignal: any) {
+        await OneSignal.Slidedown.promptPush();
+      });
     }
   };
 

@@ -3,6 +3,13 @@ import { supabase } from '../lib/supabase';
 import { ArrowLeft, TrendingUp, Trophy, BarChart3, Clock, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+declare global {
+  interface Window {
+    OneSignalDeferred: any[];
+    OneSignal: any;
+  }
+}
+
 export default function NotificationsSettingsPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -56,7 +63,10 @@ export default function NotificationsSettingsPage() {
         .eq('id', user.id);
         
       if (value === true) {
-        await requestAndSubscribe(user.id);
+        await requestAndSubscribe(user.id, newPrefs);
+      } else {
+        // Tag user even if disabling
+        await updateTags(user.id, newPrefs);
       }
     } catch (err) {
       console.error(err);
@@ -73,33 +83,34 @@ export default function NotificationsSettingsPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       await supabase.from('profiles').update({ notification_preferences: newPrefs }).eq('id', user.id);
+      await updateTags(user.id, newPrefs);
     } catch (err) {} finally { setSaving(false); }
   };
 
-  const requestAndSubscribe = async (userId: string) => {
-    if (!('Notification' in window)) return;
-    
-    let permission = Notification.permission;
-    if (permission === 'default') {
-      permission = await Notification.requestPermission();
+  const updateTags = async (userId: string, currentPrefs: any) => {
+    if (window.OneSignalDeferred) {
+      window.OneSignalDeferred.push(async function(OneSignal: any) {
+        await OneSignal.login(userId);
+        await OneSignal.User.addTags({
+          financial_enabled: currentPrefs.financial_enabled,
+          sports_enabled: currentPrefs.sports_enabled,
+          markets_enabled: currentPrefs.markets_enabled
+        });
+      });
     }
-    
-    if (permission === 'granted' && navigator.serviceWorker) {
-      try {
-        const registration = await navigator.serviceWorker.ready;
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: 'YOUR_VAPID_PUBLIC_KEY' // MUST BE REPLACED WITH ACTUAL KEY IN PRODUCTION
-        });
+  };
 
-        // Insert subscription object
-        await supabase.from('push_subscriptions').insert({
-          user_id: userId,
-          subscription_json: JSON.parse(JSON.stringify(subscription))
+  const requestAndSubscribe = async (userId: string, currentPrefs: any) => {
+    if (window.OneSignalDeferred) {
+      window.OneSignalDeferred.push(async function(OneSignal: any) {
+        await OneSignal.Slidedown.promptPush();
+        await OneSignal.login(userId);
+        await OneSignal.User.addTags({
+          financial_enabled: currentPrefs.financial_enabled,
+          sports_enabled: currentPrefs.sports_enabled,
+          markets_enabled: currentPrefs.markets_enabled
         });
-      } catch (err) {
-        console.error('Push subscription failed:', err);
-      }
+      });
     }
   };
 
