@@ -81,42 +81,35 @@ export default function MarketsPage() {
       const trendingArr: any[] = [];
       const moversArr: any[] = [];
 
-      data.forEach((row, index) => {
+      data.forEach(row => {
         const q = row.question || '';
-        const isExplicitTrending = q.startsWith('[TRENDING] ');
-        const isExplicitMover = q.startsWith('[MOVER] ');
         
-        const cleanQ = q.replace('[TRENDING] ', '').replace('[MOVER] ', '');
-        let parsed: any = null;
+        // Try to parse as JSON first
         try {
-          parsed = JSON.parse(cleanQ);
-        } catch (e) {}
-
-        const questionText = parsed && parsed.question ? parsed.question : cleanQ;
-
-        if (isExplicitTrending) {
-          trendingArr.push({ id: row.id, question: questionText });
-        } else if (isExplicitMover && parsed) {
-          moversArr.push({
-            id: row.id,
-            question: questionText,
-            slug: parsed.slug,
-            yes_prob: parsed.yes_prob,
-            week_change: parsed.week_change,
-            direction: parsed.direction
-          });
-        } else if (!isExplicitTrending && !isExplicitMover) {
-          // Fallback if the database is missing prefixes: Top 3 go to Trending, rest to Pulse
-          if (index < 3) {
-            trendingArr.push({ id: row.id, question: questionText });
-          } else if (parsed) {
+          const parsed = JSON.parse(q);
+          // If it has a slug it's a mover
+          if (parsed.slug) {
             moversArr.push({
               id: row.id,
-              question: questionText,
+              question: parsed.question,
               slug: parsed.slug,
-              yes_prob: parsed.yes_prob,
-              week_change: parsed.week_change,
-              direction: parsed.direction
+              yes_prob: parseFloat(parsed.yes_prob) || 0,
+              week_change: parseFloat(parsed.week_change) || 0,
+              direction: parsed.direction || 'up'
+            });
+          } else if (parsed.question) {
+            // Has question but no slug - treat as trending
+            trendingArr.push({
+              id: row.id,
+              question: parsed.question
+            });
+          }
+        } catch(e) {
+          // Plain string - treat as trending question
+          if (q.length > 5) {
+            trendingArr.push({
+              id: row.id,
+              question: q
             });
           }
         }
