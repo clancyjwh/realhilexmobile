@@ -14,6 +14,7 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
+import NotificationsSettingsPage from './pages/NotificationsSettingsPage';
 
 const Shell = ({ children }: { children: React.ReactNode }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -29,7 +30,8 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
 
   const drawerItems = [
     { id: 'account', label: 'Account', icon: User, path: '/account' },
-    { id: 'alerts', label: 'Alerts', icon: Bell, path: '/alerts' }
+    { id: 'alerts', label: 'Alerts', icon: Bell, path: '/alerts' },
+    { id: 'notifications', label: 'Notification Settings', icon: Settings, path: '/settings/notifications' }
   ];
 
   return (
@@ -122,6 +124,7 @@ export default function App() {
         <Route path="/markets/analyze" element={<MarketAnalysisPage />} />
         <Route path="/account" element={<Shell><AccountPage /></Shell>} />
         <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
+        <Route path="/settings/notifications" element={<NotificationsSettingsPage />} />
 
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
