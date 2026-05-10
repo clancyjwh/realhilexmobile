@@ -15,6 +15,7 @@ export default function MarketAnalysisPage() {
     let mounted = true;
     const analyze = async () => {
       try {
+        console.log('Firing webhook with:', { event_description: question, slug: location.state?.slug || null });
         const response = await fetch('https://hook.us2.make.com/5qbkt4iyi3e52o8auyjssk4bxar6f8ay', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
