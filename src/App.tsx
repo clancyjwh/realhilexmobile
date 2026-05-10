@@ -37,10 +37,8 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
       {/* Header */}
       <header className="h-16 bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-white/5 rounded flex items-center justify-center border border-white/10">
-            <img src="/logo.png" alt="" className="w-5 h-5 object-contain opacity-80" />
-          </div>
-          <span className="font-bold text-xl tracking-tight italic uppercase">HiLEX</span>
+          <img src="/logo.png" alt="HiLEX" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
+          <span className="font-black text-2xl tracking-tighter italic uppercase text-white drop-shadow-md">HiLEX</span>
         </div>
         <button onClick={() => setIsDrawerOpen(true)} className="p-2 active:opacity-50 transition-opacity">
           <Menu size={24} />

@@ -141,11 +141,27 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
               {/* Accuracy Horizon */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Historical Accuracy</h3>
+                  <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Top Historical Parameter</h3>
                   <span className="text-[8px] font-black text-[#00C853] uppercase tracking-widest opacity-60">
-                    {financialData.dominant_indicator}
+                    Monthly Snapshots
                   </span>
                 </div>
+                
+                <div className="flex flex-col bg-[#12121a] p-4 rounded-xl border border-white/5 space-y-3 shadow-lg">
+                  <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Indicator</span>
+                    <span className="text-sm font-black text-white">{financialData.horizon_json?.Analysis || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Parameters</span>
+                    <span className="text-sm font-black text-white">{financialData.horizon_json?.Parameters || 'N/A'}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Accuracy Rate</span>
+                    <span className="text-sm font-black text-white">{financialData.horizon_json?.['Win Rate'] || 'N/A'}</span>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-4 gap-2">
                   {Object.entries(financialData.horizon_json || {})
                     .filter(([key]) => !['Analysis', 'Win Rate', 'Parameters'].includes(key))

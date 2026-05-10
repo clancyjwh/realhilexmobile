@@ -63,10 +63,18 @@ export default function AccountPage() {
     if ('Notification' in window) {
       const permission = await Notification.requestPermission();
       if (permission === 'granted') {
-        new Notification('HiLEX Test', {
-          body: 'Notifications are working!',
-          icon: '/logo.png'
-        });
+        if (navigator.serviceWorker) {
+          const registration = await navigator.serviceWorker.ready;
+          registration.showNotification('HiLEX Test', {
+            body: 'Notifications are working on iOS!',
+            icon: '/logo.png'
+          });
+        } else {
+          new Notification('HiLEX Test', {
+            body: 'Notifications are working!',
+            icon: '/logo.png'
+          });
+        }
       }
     }
   };
