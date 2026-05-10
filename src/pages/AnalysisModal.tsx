@@ -71,17 +71,21 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
             {(() => {
               const url = entity.headshot_url || entity.logo_url;
               const isValid = url && (url.startsWith('http') || url.startsWith('/'));
-              if (isValid) {
-                return (
-                  <img 
-                    src={url} 
-                    alt="" 
-                    className="w-full h-full object-cover rounded-full shadow-2xl"
-                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                  />
-                );
-              }
-              return <span className="text-4xl font-black text-white/30 uppercase">{entity.name.charAt(0)}</span>;
+              return (
+                <div className="relative w-full h-full flex items-center justify-center">
+                  <span className="text-4xl font-black text-white/30 uppercase absolute inset-0 flex items-center justify-center z-0">
+                    {entity.name.charAt(0)}
+                  </span>
+                  {isValid && (
+                    <img 
+                      src={url} 
+                      alt="" 
+                      className="w-full h-full object-cover rounded-full shadow-2xl relative z-10 bg-black/20"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    />
+                  )}
+                </div>
+              );
             })()}
           </div>
           <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white mb-2 leading-none">
@@ -138,11 +142,15 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                   </span>
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {Object.entries(financialData.horizon_json || {})
+                  {Object.entries(financialData.optimized_parameters || {})
                     .filter(([key]) => !['Analysis', 'Win Rate', 'Parameters'].includes(key))
                     .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-                    .map(([key, val]: [string, any]) => {
-                      const isCorrect = typeof val === 'object' ? (val.Correct === true || val.Correct === 'true' || val.correct === true) : false;
+                    .map(([key, rawVal]: [string, any]) => {
+                      let val = rawVal;
+                      if (typeof rawVal === 'string') {
+                        try { val = JSON.parse(rawVal); } catch (e) {}
+                      }
+                      const isCorrect = val && (val.Correct === true || val.Correct === 'true' || val.correct === true || val.Correct === 'True');
                       return (
                         <div key={key} className={`rounded-lg p-2 text-center border ${isCorrect ? 'bg-[#00C853]/10 border-[#00C853]/20 text-[#00C853]' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
                           <div className="text-[8px] font-black uppercase mb-1">{key}</div>

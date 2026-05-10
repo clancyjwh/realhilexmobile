@@ -225,11 +225,14 @@ export default function HomePage() {
                     const url = entity.headshot_url || entity.logo_url;
                     if (url && (url.startsWith('http') || url.startsWith('/'))) {
                       return (
-                        <div className="w-5 h-5 rounded-full overflow-hidden bg-white/10 flex-shrink-0 flex items-center justify-center">
+                        <div className="w-5 h-5 rounded-full overflow-hidden bg-white/10 flex-shrink-0 flex items-center justify-center relative">
+                          <span className="text-[10px] font-black text-white/30 uppercase absolute inset-0 flex items-center justify-center z-0">
+                            {entity.name.charAt(0)}
+                          </span>
                           <img 
                             src={url} 
                             alt="" 
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-contain relative z-10 bg-black/20"
                             onError={(e) => { e.currentTarget.style.display = 'none'; }}
                           />
                         </div>
