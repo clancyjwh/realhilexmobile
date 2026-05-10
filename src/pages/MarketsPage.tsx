@@ -81,26 +81,43 @@ export default function MarketsPage() {
       const trendingArr: any[] = [];
       const moversArr: any[] = [];
 
-      data.forEach(row => {
+      data.forEach((row, index) => {
         const q = row.question || '';
-        if (q.startsWith('[TRENDING] ')) {
-          trendingArr.push({
+        const isExplicitTrending = q.startsWith('[TRENDING] ');
+        const isExplicitMover = q.startsWith('[MOVER] ');
+        
+        const cleanQ = q.replace('[TRENDING] ', '').replace('[MOVER] ', '');
+        let parsed: any = null;
+        try {
+          parsed = JSON.parse(cleanQ);
+        } catch (e) {}
+
+        const questionText = parsed && parsed.question ? parsed.question : cleanQ;
+
+        if (isExplicitTrending) {
+          trendingArr.push({ id: row.id, question: questionText });
+        } else if (isExplicitMover && parsed) {
+          moversArr.push({
             id: row.id,
-            question: q.substring('[TRENDING] '.length)
+            question: questionText,
+            slug: parsed.slug,
+            yes_prob: parsed.yes_prob,
+            week_change: parsed.week_change,
+            direction: parsed.direction
           });
-        } else if (q.startsWith('[MOVER] ')) {
-          try {
-            const parsed = JSON.parse(q.substring('[MOVER] '.length));
+        } else if (!isExplicitTrending && !isExplicitMover) {
+          // Fallback if the database is missing prefixes: Top 3 go to Trending, rest to Pulse
+          if (index < 3) {
+            trendingArr.push({ id: row.id, question: questionText });
+          } else if (parsed) {
             moversArr.push({
               id: row.id,
-              question: parsed.question,
+              question: questionText,
               slug: parsed.slug,
               yes_prob: parsed.yes_prob,
               week_change: parsed.week_change,
               direction: parsed.direction
             });
-          } catch(e) {
-            console.log('MOVER parse failed:', q);
           }
         }
       });
