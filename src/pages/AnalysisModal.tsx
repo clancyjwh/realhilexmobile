@@ -64,14 +64,24 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
         {/* Top Entity Info */}
         <div className="flex flex-col items-center text-center mb-8">
           <div 
-            className="w-28 h-28 rounded-full border-4 mb-4 flex items-center justify-center p-1 bg-black/20"
+            className="w-28 h-28 rounded-full border-4 mb-4 flex items-center justify-center p-1 bg-black/20 overflow-hidden"
             style={{ borderColor: entity.score_color || '#00C853' }}
           >
-            <img 
-              src={entity.headshot_url || entity.logo_url || '/logo.png'} 
-              alt="" 
-              className="w-full h-full object-cover rounded-full shadow-2xl"
-            />
+            {(() => {
+              const url = entity.headshot_url || entity.logo_url;
+              const isValid = url && (url.startsWith('http') || url.startsWith('/'));
+              if (isValid) {
+                return (
+                  <img 
+                    src={url} 
+                    alt="" 
+                    className="w-full h-full object-cover rounded-full shadow-2xl"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                );
+              }
+              return <span className="text-4xl font-black text-white/30 uppercase">{entity.name.charAt(0)}</span>;
+            })()}
           </div>
           <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white mb-2 leading-none">
             {entity.name}

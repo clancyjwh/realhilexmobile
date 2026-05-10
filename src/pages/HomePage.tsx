@@ -221,15 +221,22 @@ export default function HomePage() {
                     <div className="text-white/60 text-xs font-bold">#{index + 1}</div>
                     <span className="text-white/70 text-[10px] font-medium truncate">{entity.org || entity.itemType}</span>
                   </div>
-                  {(entity.headshot_url || entity.logo_url) && (
-                    <div className="w-5 h-5 rounded-full overflow-hidden bg-white/10 flex-shrink-0 flex items-center justify-center">
-                      <img 
-                        src={entity.headshot_url || entity.logo_url!} 
-                        alt="" 
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  )}
+                  {(() => {
+                    const url = entity.headshot_url || entity.logo_url;
+                    if (url && (url.startsWith('http') || url.startsWith('/'))) {
+                      return (
+                        <div className="w-5 h-5 rounded-full overflow-hidden bg-white/10 flex-shrink-0 flex items-center justify-center">
+                          <img 
+                            src={url} 
+                            alt="" 
+                            className="w-full h-full object-contain"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                          />
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
                 
                 <div className="flex items-center justify-between w-full">
