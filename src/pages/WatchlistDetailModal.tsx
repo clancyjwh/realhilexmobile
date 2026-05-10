@@ -89,33 +89,33 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
           <div className="space-y-4">
             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 pl-2">Top Historical Parameter: Monthly Snapshots</h3>
             
-            <div className="flex justify-between items-center bg-[#12121a] p-4 rounded-2xl border border-white/5">
-              <div className="flex flex-col items-center text-center">
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Indicator</span>
-                <span className="text-xs font-bold text-white">{rawParams.Analysis || 'N/A'}</span>
+            <div className="flex flex-col bg-[#12121a] p-5 rounded-2xl border border-white/5 space-y-4">
+              <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Indicator</span>
+                <span className="text-sm font-black text-white">{rawParams.Analysis || 'N/A'}</span>
               </div>
-              <div className="flex flex-col items-center text-center">
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Parameters</span>
-                <span className="text-xs font-bold text-white">{rawParams.Parameters || 'N/A'}</span>
+              <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Parameters</span>
+                <span className="text-sm font-black text-white">{rawParams.Parameters || 'N/A'}</span>
               </div>
-              <div className="flex flex-col items-center text-center">
-                <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Historical Accuracy Rate</span>
-                <span className="text-xs font-bold text-white">{rawParams['Win Rate'] || 'N/A'}</span>
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Accuracy Rate</span>
+                <span className="text-sm font-black text-white">{rawParams['Win Rate'] || 'N/A'}</span>
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-3">
               {params.map((p, idx) => {
                 const isCorrect = p.Correct === 'true' || p.Correct === true;
                 return (
                   <div 
                     key={idx}
-                    className={`rounded-xl p-3 flex flex-col justify-center items-center text-center border ${isCorrect ? 'border-[#00C853]/20 bg-[#00C853]/10' : 'border-red-500/20 bg-red-500/10'}`}
+                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#00C853]/20 bg-[#00C853]/10' : 'border-red-500/20 bg-red-500/10'}`}
                   >
-                    <span className={`text-lg font-black ${isCorrect ? 'text-[#00C853]' : 'text-red-500'}`}>
+                    <span className={`text-3xl font-black ${isCorrect ? 'text-[#00C853]' : 'text-red-500'}`}>
                       {p.Daysback || p.days}
                     </span>
-                    <span className={`text-[9px] font-bold uppercase tracking-widest ${isCorrect ? 'text-[#00C853]/70' : 'text-red-500/70'}`}>
+                    <span className={`text-[10px] mt-1 font-black uppercase tracking-widest ${isCorrect ? 'text-[#00C853]/70' : 'text-red-500/70'}`}>
                       days
                     </span>
                   </div>
