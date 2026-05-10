@@ -102,7 +102,7 @@ export default function HomePage() {
         id: row[symbolField] || row.symbol,
         name: row[nameField] || row.symbol,
         symbol: row.symbol,
-        unifiedScore: row.signal || 0,
+        unifiedScore: Number(row.signal) || 0,
         itemType: 'asset',
         org: orgLabel,
         score_color: row.score_color || '#1c1c24',
@@ -144,6 +144,7 @@ export default function HomePage() {
       const entityItems = [...topAthletes, ...topTeams];
 
       const combined = [...uniqueAssets, ...entityItems]
+        .map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 }))
         .sort((a, b) => b.unifiedScore - a.unifiedScore);
 
       setEntities(combined);
