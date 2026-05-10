@@ -132,7 +132,7 @@ export default function HomePage() {
       const entityItems = [...topAthletes, ...topTeams];
 
       const combined = [...uniqueAssets, ...entityItems]
-        .sort((a, b) => Math.abs(b.unifiedScore) - Math.abs(a.unifiedScore));
+        .sort((a, b) => b.unifiedScore - a.unifiedScore);
 
       setEntities(combined);
     } catch (err) {
@@ -194,34 +194,35 @@ export default function HomePage() {
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {entities.map((entity) => {
             return (
               <div 
                 key={`${entity.id}-${entity.itemType}`} 
                 onClick={() => handleCardClick(entity)}
-                className="rounded-[2.5rem] p-6 flex flex-col justify-center items-center text-center aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer"
+                className="rounded-2xl p-4 flex flex-col justify-between shadow-xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer"
                 style={{ backgroundColor: entity.score_color }}
               >
-                {entity.org && (
-                  <div className="absolute top-4 left-4 text-[9px] font-black text-white bg-black/20 px-2 py-1 rounded-lg uppercase tracking-widest backdrop-blur-sm border border-white/10 shadow-sm max-w-[calc(100%-3rem)] truncate">
-                    {entity.org}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-white/60 uppercase tracking-widest">{entity.org || entity.itemType}</span>
                   </div>
-                )}
-                {(entity.headshot_url || entity.logo_url) && (
-                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full overflow-hidden bg-white/10 border border-white/20 shadow-sm flex-shrink-0">
-                    <img 
-                      src={entity.headshot_url || entity.logo_url!} 
-                      alt="" 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="space-y-3 mt-4 w-full">
-                  <h3 className="font-black text-2xl text-white leading-tight uppercase italic tracking-tighter drop-shadow-sm truncate w-full px-2">
+                  {(entity.headshot_url || entity.logo_url) && (
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-white/10 border border-white/20 shadow-sm flex-shrink-0">
+                      <img 
+                        src={entity.headshot_url || entity.logo_url!} 
+                        alt="" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex flex-col mt-auto">
+                  <h3 className="font-black text-xl text-white leading-tight uppercase italic tracking-tighter drop-shadow-sm truncate w-full mb-1">
                     {getShorthand(entity.name)}
                   </h3>
-                  <div className="text-4xl font-black italic tracking-tighter text-white drop-shadow-md">
+                  <div className="text-3xl font-black italic tracking-tighter text-white drop-shadow-md">
                     {entity.unifiedScore > 0 ? '+' : ''}{formatScore(entity.unifiedScore, 1)}
                   </div>
                 </div>
