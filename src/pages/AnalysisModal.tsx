@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Info } from 'lucide-react';
 import { formatScore, getHeatScoreBgColor } from '../utils/format';
+import { getEntityImageUrl } from './HomePage';
 
 interface AnalysisModalProps {
   entity: any;
@@ -71,7 +72,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
               style={{ borderColor: finalColor }}
             >
               {(() => {
-                const url = entity.headshot_url || entity.logo_url;
+                const url = getEntityImageUrl(entity);
                 const isValid = url && (url.startsWith('http') || url.startsWith('/'));
                 return (
                   <div className="relative w-full h-full flex items-center justify-center">

@@ -63,6 +63,16 @@ const getSignalColors = (signal: number) => {
   return { bg: 'bg-red-900', border: 'border-red-700', text: 'text-red-300' };
 };
 
+export const getEntityImageUrl = (entity: any) => {
+  if (entity.headshot_url) return entity.headshot_url;
+  if (entity.logo_url) return entity.logo_url;
+  if (entity.type === 'team' && entity.name?.length <= 3) {
+    if (entity.sport?.toLowerCase() === 'nhl') return `https://assets.nhle.com/logos/nhl/svg/${entity.name.toUpperCase()}_light.svg`;
+    if (entity.sport?.toLowerCase() === 'nba') return `https://a.espncdn.com/i/teamlogos/nba/500/${entity.name.toLowerCase()}.png`;
+  }
+  return null;
+};
+
 export default function HomePage() {
   const [entities, setEntities] = useState<UnifiedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -213,7 +223,7 @@ export default function HomePage() {
                     <span className="text-white/70 text-[10px] font-medium truncate">{entity.org || entity.itemType}</span>
                   </div>
                   {(() => {
-                    const url = entity.headshot_url || entity.logo_url;
+                    const url = getEntityImageUrl(entity);
                     if (url && (url.startsWith('http') || url.startsWith('/'))) {
                       return (
                         <div className="w-5 h-5 rounded-full overflow-hidden bg-white/10 flex-shrink-0 flex items-center justify-center relative">
@@ -235,7 +245,7 @@ export default function HomePage() {
                 
                 <div className="flex items-center justify-between w-full mt-2">
                   <div className="text-white text-xl font-bold truncate pr-2">
-                    {entity.itemType === 'asset' ? entity.symbol : getShorthand(entity.name)}
+                    {entity.itemType === 'asset' ? entity.symbol : (entity.type === 'athlete' ? entity.name : getShorthand(entity.name))}
                   </div>
                   <div className={`text-3xl font-bold ${colors.text} flex-shrink-0 ml-1`}>
                     {entity.unifiedScore > 0 ? '+' : ''}{formatScore(entity.unifiedScore, 1)}
