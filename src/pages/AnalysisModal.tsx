@@ -51,6 +51,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
   // HeatScore Slider Marker Position (-10 to +10)
   const scoreToUse = typeof entity.unifiedScore !== 'undefined' ? entity.unifiedScore : (entity.score || 0);
   const markerPos = ((scoreToUse + 10) / 20) * 100;
+  const finalColor = isFinancial ? getHeatScoreBgColor(scoreToUse) : (entity.score_color || '#00C853');
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col animate-in fade-in zoom-in-95 duration-200">
@@ -64,34 +65,36 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
       <div className="flex-grow overflow-y-auto px-6 pb-12">
         {/* Top Entity Info */}
         <div className="flex flex-col items-center text-center mb-8">
-          <div 
-            className="w-28 h-28 rounded-full border-4 mb-4 flex items-center justify-center p-1 bg-black/20 overflow-hidden"
-            style={{ borderColor: entity.score_color || '#00C853' }}
-          >
-            {(() => {
-              const url = entity.headshot_url || entity.logo_url;
-              const isValid = url && (url.startsWith('http') || url.startsWith('/'));
-              return (
-                <div className="relative w-full h-full flex items-center justify-center">
-                  <span className="text-4xl font-black text-white/30 uppercase absolute inset-0 flex items-center justify-center z-0">
-                    {entity.name.charAt(0)}
-                  </span>
-                  {isValid && (
-                    <img 
-                      src={url} 
-                      alt="" 
-                      className="w-full h-full object-cover rounded-full shadow-2xl relative z-10 bg-black/20"
-                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                    />
-                  )}
-                </div>
-              );
-            })()}
-          </div>
-          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white mb-2 leading-none">
-            {entity.name}
+          {!isFinancial && (
+            <div 
+              className="w-28 h-28 rounded-full border-4 mb-4 flex items-center justify-center p-1 bg-black/20 overflow-hidden"
+              style={{ borderColor: finalColor }}
+            >
+              {(() => {
+                const url = entity.headshot_url || entity.logo_url;
+                const isValid = url && (url.startsWith('http') || url.startsWith('/'));
+                return (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <span className="text-4xl font-black text-white/30 uppercase absolute inset-0 flex items-center justify-center z-0">
+                      {entity.name.charAt(0)}
+                    </span>
+                    {isValid && (
+                      <img 
+                        src={url} 
+                        alt="" 
+                        className="w-full h-full object-cover rounded-full shadow-2xl relative z-10 bg-black/20"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+          <h1 className={`font-black italic uppercase tracking-tighter text-white mb-2 leading-none ${isFinancial ? 'text-6xl mt-4' : 'text-4xl'}`}>
+            {isFinancial ? (entity.symbol || entity.name) : entity.name}
           </h1>
-          <div className="text-[10px] font-black text-[#00C853] bg-[#00C853]/10 px-3 py-1 rounded-full border border-[#00C853]/20 uppercase tracking-widest">
+          <div className="text-[10px] font-black text-white bg-white/10 px-3 py-1 rounded-full uppercase tracking-widest" style={{ color: finalColor, borderColor: finalColor, borderWidth: '1px' }}>
             {entity.org || entity.sport || 'Financial'}
           </div>
         </div>
@@ -111,7 +114,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
           
           <div className="flex flex-col items-center">
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">Global HeatScore</span>
-            <div className="text-6xl font-black italic tracking-tighter" style={{ color: entity.score_color || '#00C853' }}>
+            <div className="text-6xl font-black italic tracking-tighter" style={{ color: finalColor }}>
               {scoreToUse > 0 ? '+' : ''}{formatScore(scoreToUse, 1)}
             </div>
           </div>

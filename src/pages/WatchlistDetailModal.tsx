@@ -15,11 +15,12 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
   const params: any[] = [];
   
   Object.keys(rawParams).forEach(key => {
+    if (['Analysis', 'Parameters', 'Win Rate'].includes(key)) return;
     try {
       const parsed = typeof rawParams[key] === 'string' ? JSON.parse(rawParams[key]) : rawParams[key];
       params.push({ days: parseInt(key), ...parsed });
     } catch (e) {
-      console.error('Failed to parse param:', key);
+      // Ignore parse errors silently
     }
   });
   

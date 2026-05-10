@@ -166,15 +166,6 @@ export default function HomePage() {
       if (details) {
         entity = { ...entity, ...details };
       }
-    } else if (entity.itemType === 'asset') {
-      const { data: assetDetails } = await supabase
-        .from('entity_scores')
-        .select('*')
-        .eq('symbol', entity.symbol)
-        .single();
-      if (assetDetails) {
-        entity = { ...entity, ...assetDetails };
-      }
     }
 
     setSelectedEntity(entity);
