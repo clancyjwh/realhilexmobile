@@ -54,10 +54,8 @@ export default function MarketsPage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   
-  const [trendingOpen, setTrendingOpen] = useState(true); // Expanded by default
   const [pulseOpen, setPulseOpen] = useState(true); // Expanded by default
   
-  const [trending, setTrending] = useState<any[]>([]);
   const [pulse, setPulse] = useState<any[]>([]);
 
   useEffect(() => {
@@ -115,8 +113,7 @@ export default function MarketsPage() {
         }
       });
       
-      console.log('Trending:', trendingArr.length, 'Movers:', moversArr.length);
-      setTrending(trendingArr);
+      console.log('Movers:', moversArr.length);
       setPulse(moversArr);
     }
   };
@@ -144,28 +141,7 @@ export default function MarketsPage() {
       </form>
 
       <div className="space-y-6">
-        {/* Trending Section */}
-        <div>
-          <button 
-            onClick={() => setTrendingOpen(!trendingOpen)}
-            className="w-full flex items-center justify-between p-2 mb-2"
-          >
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">✦ Trending Questions</span>
-            <ChevronDown size={16} className={`text-slate-700 transition-transform ${trendingOpen ? 'rotate-180' : ''}`} />
-          </button>
-          
-          {trendingOpen && (
-            <div className="animate-in slide-in-from-top-2 duration-300">
-              {trending.length === 0 ? (
-                <div className="text-center text-slate-500 font-bold italic py-4 text-[10px] uppercase tracking-widest">No trending questions</div>
-              ) : (
-                trending.map((q, idx) => (
-                  <MarketPulseCard key={idx} question={q.question} initialData={q} type="trending" />
-                ))
-              )}
-            </div>
-          )}
-        </div>
+
 
         {/* Pulse Section */}
         <div>
@@ -173,7 +149,7 @@ export default function MarketsPage() {
             onClick={() => setPulseOpen(!pulseOpen)}
             className="w-full flex items-center justify-between p-2 mb-2"
           >
-            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">⚡ Market Pulse</span>
+            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-slate-500">⚡ Trending on Polymarket</span>
             <ChevronDown size={16} className={`text-slate-700 transition-transform ${pulseOpen ? 'rotate-180' : ''}`} />
           </button>
           
