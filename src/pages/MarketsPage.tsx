@@ -65,34 +65,32 @@ export default function MarketsPage() {
   }, []);
 
   const fetchData = async () => {
-    const rows = await supabase
+    const { data, error } = await supabase
       .from('event_forecasting_examples')
       .select('id, question, batch_id, created_at')
       .eq('active', true)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(50);
 
-    console.log('[MarketsPage] Supabase Fetch Data:', rows.data);
-    if (rows.error) {
-      console.error('[MarketsPage] Supabase Error:', rows.error);
+    console.log('[MarketsPage] Supabase Fetch Data:', data);
+    if (error) {
+      console.error('[MarketsPage] Supabase Error:', error);
     }
 
-    if (rows.data && rows.data.length > 0) {
-      const latestBatchId = rows.data[0]?.batch_id;
-      const latestBatch = rows.data.filter(r => r.batch_id === latestBatchId);
-
+    if (data && data.length > 0) {
       const trendingArr: any[] = [];
       const moversArr: any[] = [];
 
-      latestBatch.forEach(row => {
-        const q = row.question;
+      data.forEach(row => {
+        const q = row.question || '';
         if (q.startsWith('[TRENDING] ')) {
           trendingArr.push({
             id: row.id,
-            question: q.replace('[TRENDING] ', '')
+            question: q.substring('[TRENDING] '.length)
           });
         } else if (q.startsWith('[MOVER] ')) {
           try {
-            const parsed = JSON.parse(q.replace('[MOVER] ', ''));
+            const parsed = JSON.parse(q.substring('[MOVER] '.length));
             moversArr.push({
               id: row.id,
               question: parsed.question,
@@ -101,10 +99,13 @@ export default function MarketsPage() {
               week_change: parsed.week_change,
               direction: parsed.direction
             });
-          } catch(e) {}
+          } catch(e) {
+            console.log('MOVER parse failed:', q);
+          }
         }
       });
       
+      console.log('Trending:', trendingArr.length, 'Movers:', moversArr.length);
       setTrending(trendingArr);
       setPulse(moversArr);
     }
@@ -145,9 +146,13 @@ export default function MarketsPage() {
           
           {trendingOpen && (
             <div className="animate-in slide-in-from-top-2 duration-300">
-              {trending.map((q, idx) => (
-                <MarketPulseCard key={idx} question={q.question} initialData={q} type="trending" />
-              ))}
+              {trending.length === 0 ? (
+                <div className="text-center text-slate-500 font-bold italic py-4 text-[10px] uppercase tracking-widest">No trending questions</div>
+              ) : (
+                trending.map((q, idx) => (
+                  <MarketPulseCard key={idx} question={q.question} initialData={q} type="trending" />
+                ))
+              )}
             </div>
           )}
         </div>
