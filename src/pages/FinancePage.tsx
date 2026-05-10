@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { formatScore, getHeatScoreBgColor } from '../utils/format';
-import AnalysisModal from './AnalysisModal';
+import WatchlistDetailModal from './WatchlistDetailModal';
 
 interface WatchlistItem {
   name: string;
@@ -16,7 +16,6 @@ export default function FinancePage() {
   const [loading, setLoading] = useState(true);
 
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
-  const [financialData, setFinancialData] = useState<any>(null);
 
   useEffect(() => {
     fetchWatchlist();
@@ -30,7 +29,7 @@ export default function FinancePage() {
 
       const { data } = await supabase
         .from('user_watchlist')
-        .select('symbol, name, signal, price, indicators')
+        .select('symbol, name, signal, price, indicators, optimized_parameters')
         .eq('user_id', user.id)
         .order('signal', { ascending: false });
 
@@ -45,26 +44,8 @@ export default function FinancePage() {
     }
   };
 
-  const handleCardClick = async (symbol: string) => {
-    const { data: details } = await supabase
-      .from('entity_scores')
-      .select('*')
-      .eq('symbol', symbol)
-      .single();
-    
-    if (details) {
-      setSelectedEntity(details);
-      
-      const { data: finData } = await supabase
-        .from('asset_daily_analysis')
-        .select('*')
-        .eq('symbol', symbol)
-        .order('run_date', { ascending: false })
-        .limit(1)
-        .single();
-        
-      setFinancialData(finData);
-    }
+  const handleCardClick = (item: any) => {
+    setSelectedEntity(item);
   };
 
   return (
@@ -91,18 +72,15 @@ export default function FinancePage() {
           {items.map((item) => (
             <div 
               key={item.symbol}
-              onClick={() => handleCardClick(item.symbol)}
+              onClick={() => handleCardClick(item)}
               className="rounded-[2.5rem] p-6 flex flex-col justify-center items-center text-center aspect-square shadow-2xl relative overflow-hidden transition-all active:scale-[0.96] cursor-pointer select-none"
               style={{ backgroundColor: getHeatScoreBgColor(item.signal) }}
             >
-              <div className="absolute top-4 left-4 text-[10px] font-black text-white bg-black/20 px-2 py-1 rounded-lg uppercase tracking-widest backdrop-blur-sm border border-white/10 shadow-sm">
-                {item.symbol}
-              </div>
-              <div className="space-y-3 mt-4">
-                <h3 className="font-black text-2xl text-white leading-tight uppercase italic tracking-tighter drop-shadow-sm">
-                  {item.name}
-                </h3>
-                <div className="text-4xl font-black italic tracking-tighter drop-shadow-md text-white">
+              <div className="space-y-4 flex flex-col items-center">
+                <div className="text-xl font-black text-white bg-black/20 px-4 py-2 rounded-xl uppercase tracking-widest backdrop-blur-sm border border-white/10 shadow-sm">
+                  {item.symbol}
+                </div>
+                <div className="text-5xl font-black italic tracking-tighter drop-shadow-md text-white">
                   {item.signal > 0 ? '+' : ''}{formatScore(item.signal, 1)}
                 </div>
               </div>
@@ -113,9 +91,8 @@ export default function FinancePage() {
 
       {/* Detail Modal */}
       {selectedEntity && (
-        <AnalysisModal 
-          entity={selectedEntity} 
-          financialData={financialData}
+        <WatchlistDetailModal 
+          item={selectedEntity} 
           onClose={() => setSelectedEntity(null)} 
         />
       )}
