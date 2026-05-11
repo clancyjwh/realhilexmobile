@@ -29,7 +29,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           const { data } = await supabase.from('profiles').select('subscription_tier').eq('id', user.id).single();
-          if (data?.subscription_tier) setTier(data.subscription_tier);
+          if (data?.subscription_tier) {
+            const rawTier = data.subscription_tier.toLowerCase();
+            if (rawTier === 'pro' || rawTier === 'premium') setTier('Premium');
+            else if (rawTier === 'sports') setTier('Sports');
+            else if (rawTier === 'finance') setTier('Finance');
+            else if (rawTier === 'markets') setTier('Markets');
+            else setTier('Free');
+          }
         }
       } catch (e) {
         console.error(e);

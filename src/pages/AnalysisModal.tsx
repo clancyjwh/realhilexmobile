@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Info } from 'lucide-react';
 import { formatScore, getHeatScoreBgColor } from '../utils/format';
-import { getEntityImageUrl } from './HomePage';
+import { getEntityImageUrl, getSignalColors } from './HomePage';
 
 interface AnalysisModalProps {
   entity: any;
@@ -9,20 +9,17 @@ interface AnalysisModalProps {
   onClose: () => void;
 }
 
-const IndicatorTile = ({ label, score }: { label: string; score: number }) => (
-  <div 
-    className="rounded-xl p-4 flex flex-col justify-between aspect-square border border-white/5"
-    style={{ backgroundColor: getHeatScoreBgColor(score) }}
-  >
-    <div className="flex justify-between items-start">
-      <span className="text-[9px] font-black uppercase tracking-widest text-white opacity-80">{label}</span>
-      <Info size={12} className="text-white opacity-40" />
+const IndicatorTile = ({ label, score }: { label: string; score: number }) => {
+  const colors = getSignalColors(score);
+  return (
+    <div className={`${colors.bg} ${colors.border} border-2 rounded-xl p-3 flex items-center justify-between shadow-md`}>
+      <span className="text-[10px] font-black uppercase tracking-widest text-white/70">{label}</span>
+      <div className={`text-xl font-bold italic tracking-tighter ${colors.text}`}>
+        {score > 0 ? '+' : ''}{formatScore(score, 1)}
+      </div>
     </div>
-    <div className="text-xl font-black italic tracking-tighter text-white">
-      {score > 0 ? '+' : ''}{formatScore(score, 1)}
-    </div>
-  </div>
-);
+  );
+};
 
 const BreakdownRow = ({ label, value }: { label: string; value: any }) => {
   const numValue = parseFloat(value) || 0;
@@ -128,9 +125,52 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
           </h2>
 
           {isFinancial && financialData ? (
-            <div className="space-y-8">
+            <div className="space-y-6">
+              
+              {/* Relative Value */}
+              {(() => {
+                let relativeValueNum = null;
+                let isUp = false;
+                if (financialData?.relative_value) {
+                  let parsedData = financialData.relative_value;
+                  if (typeof parsedData === 'string') {
+                    try { parsedData = JSON.parse(parsedData); } catch (e) {}
+                  }
+                  if (parsedData?.relative_value) parsedData = parsedData.relative_value;
+                  
+                  if (parsedData?.Result !== undefined) relativeValueNum = parseFloat(parsedData.Result);
+                  else if (parsedData?.result !== undefined) relativeValueNum = parseFloat(parsedData.result);
+                  
+                  if (relativeValueNum === null || isNaN(relativeValueNum)) {
+                    const txt = parsedData?.Summary || parsedData?.summary || '';
+                    const match = txt.match(/by\s+([-+]?\d+\.?\d*)\s*%/);
+                    if (match) {
+                      const val = parseFloat(match[1]);
+                      if (txt.toLowerCase().includes('outperformed')) relativeValueNum = Math.abs(val);
+                      else if (txt.toLowerCase().includes('underperformed')) relativeValueNum = -Math.abs(val);
+                      else relativeValueNum = val;
+                    }
+                  }
+                  
+                  if (relativeValueNum !== null && !isNaN(relativeValueNum)) {
+                    isUp = relativeValueNum >= 0;
+                    return (
+                      <div className="mb-2">
+                        <div className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg ${isUp ? 'bg-green-900 border-green-700' : 'bg-red-900 border-red-700'}`}>
+                          <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Relative Value to Index</span>
+                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-green-300' : 'text-red-300'}`}>
+                            {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+                return null;
+              })()}
+
               {/* 2x3 Grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 <IndicatorTile label="SMA" score={financialData.indicator_json?.SMA?.signal || 0} />
                 <IndicatorTile label="RSI" score={financialData.indicator_json?.RSI?.signal || 0} />
                 <IndicatorTile label="CCI" score={financialData.indicator_json?.CCI?.signal || 0} />
