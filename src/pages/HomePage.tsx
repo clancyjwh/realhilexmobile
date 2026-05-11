@@ -53,15 +53,15 @@ const getShorthand = (name: string) => {
 };
 
 export const getSignalColors = (signal: number) => {
-  if (signal >= 9) return { bg: 'bg-[linear-gradient(145deg,#FFFDF5_0%,#FFF3CC_35%,#EBD48E_70%,#C9A43B_100%)] bg-[length:200%_200%] shadow-[0_0_20px_rgba(201,164,59,0.8)]', border: 'border-yellow-400', text: 'text-black' };
-  if (signal >= 7) return { bg: 'bg-green-900', border: 'border-green-700', text: 'text-green-300' };
-  if (signal >= 4) return { bg: 'bg-green-700', border: 'border-green-600', text: 'text-green-200' };
-  if (signal >= 1) return { bg: 'bg-green-500', border: 'border-green-400', text: 'text-green-100' };
-  if (signal > -1) return { bg: 'bg-slate-600', border: 'border-slate-500', text: 'text-slate-200' };
-  if (signal >= -4) return { bg: 'bg-orange-500', border: 'border-orange-400', text: 'text-orange-100' };
-  if (signal >= -7) return { bg: 'bg-red-600', border: 'border-red-500', text: 'text-red-100' };
-  if (signal <= -9) return { bg: 'bg-gradient-to-br from-red-900 to-red-950', border: 'border-red-600', text: 'text-red-200' };
-  return { bg: 'bg-red-900', border: 'border-red-700', text: 'text-red-300' };
+  if (signal >= 9) return { bg: 'bg-[linear-gradient(145deg,#FFFDF5_0%,#FFF3CC_35%,#EBD48E_70%,#C9A43B_100%)] bg-[length:200%_200%] shadow-[0_0_20px_rgba(201,164,59,0.8)]', border: 'border-yellow-400', text: 'text-black', subtext: 'text-black/60', subtextDark: 'text-black/70', hex: '#facc15' };
+  if (signal >= 7) return { bg: 'bg-green-900', border: 'border-green-700', text: 'text-green-300', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#86efac' };
+  if (signal >= 4) return { bg: 'bg-green-700', border: 'border-green-600', text: 'text-green-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#bbf7d0' };
+  if (signal >= 1) return { bg: 'bg-green-500', border: 'border-green-400', text: 'text-green-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#dcfce7' };
+  if (signal > -1) return { bg: 'bg-slate-600', border: 'border-slate-500', text: 'text-slate-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#e2e8f0' };
+  if (signal >= -4) return { bg: 'bg-orange-500', border: 'border-orange-400', text: 'text-orange-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#ffedd5' };
+  if (signal >= -7) return { bg: 'bg-red-600', border: 'border-red-500', text: 'text-red-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#fecaca' };
+  if (signal <= -9) return { bg: 'bg-gradient-to-br from-red-900 to-red-950', border: 'border-red-600', text: 'text-red-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#fca5a5' };
+  return { bg: 'bg-red-900', border: 'border-red-700', text: 'text-red-300', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#f87171' };
 };
 
 export const getEntityImageUrl = (entity: any) => {
@@ -225,8 +225,8 @@ export default function HomePage() {
               >
                 <div className="flex items-center justify-between gap-1.5 mb-2 w-full">
                   <div className="flex items-center gap-1.5 truncate">
-                    <div className="text-white/60 text-xs font-bold">#{index + 1}</div>
-                    <span className="text-white/70 text-[10px] font-medium truncate">{entity.org || entity.itemType}</span>
+                    <div className={`${colors.subtext} text-xs font-bold`}>#{index + 1}</div>
+                    <span className={`${colors.subtextDark} text-[10px] font-medium truncate`}>{entity.org || entity.itemType}</span>
                   </div>
                   {(() => {
                     const url = getEntityImageUrl(entity);
@@ -250,7 +250,7 @@ export default function HomePage() {
                 </div>
                 
                 <div className="flex items-center justify-between w-full mt-2">
-                  <div className="text-white text-xl font-bold truncate pr-2">
+                  <div className={`${entity.unifiedScore >= 9 ? 'text-black' : 'text-white'} text-xl font-bold truncate pr-2`}>
                     {entity.itemType === 'asset' ? entity.symbol : (entity.type === 'athlete' ? entity.name : getShorthand(entity.name))}
                   </div>
                   <div className={`text-3xl font-bold ${colors.text} flex-shrink-0 ml-1`}>

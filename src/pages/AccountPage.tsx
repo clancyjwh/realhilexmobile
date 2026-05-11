@@ -16,6 +16,8 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [displayName, setDisplayName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [emailEnabled, setEmailEnabled] = useState(true);
 
   useEffect(() => {
     fetchProfile();
@@ -36,6 +38,10 @@ export default function AccountPage() {
       if (data) {
         setProfile({ ...data, email: user.email });
         setDisplayName(data.display_name || '');
+        setPushEnabled(data.notifications_enabled === true);
+        if (data.notification_preferences?.email !== undefined) {
+          setEmailEnabled(data.notification_preferences.email);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -58,6 +64,42 @@ export default function AccountPage() {
       console.error(err);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const togglePush = async () => {
+    const newVal = !pushEnabled;
+    setPushEnabled(newVal);
+    
+    if (newVal && window.OneSignalDeferred) {
+      window.OneSignalDeferred.push(async function(OneSignal: any) {
+        await OneSignal.Slidedown.promptPush();
+      });
+    }
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from('profiles').update({ notifications_enabled: newVal }).eq('id', user.id);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const toggleEmail = async () => {
+    const newVal = !emailEnabled;
+    setEmailEnabled(newVal);
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const newPrefs = { ...profile.notification_preferences, email: newVal };
+        await supabase.from('profiles').update({ notification_preferences: newPrefs }).eq('id', user.id);
+        setProfile({...profile, notification_preferences: newPrefs});
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -103,12 +145,15 @@ export default function AccountPage() {
           <div className="p-5 flex items-center justify-between border-b border-white/5">
             <div className="flex items-center gap-4">
               <div className="p-2 bg-white/5 rounded-lg">
-                <Bell size={18} className="text-slate-400" />
+                <Mail size={18} className="text-slate-400" />
               </div>
               <span className="text-sm font-bold text-white">Email Notifications</span>
             </div>
-            <div className="w-10 h-6 bg-[#00C853] rounded-full relative p-1 shadow-inner cursor-pointer">
-              <div className="w-4 h-4 bg-white rounded-full absolute right-1" />
+            <div 
+              onClick={toggleEmail}
+              className={`w-10 h-6 rounded-full relative p-1 shadow-inner cursor-pointer transition-colors duration-300 ${emailEnabled ? 'bg-[#00C853]' : 'bg-slate-700'}`}
+            >
+              <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${emailEnabled ? 'right-1' : 'left-1'}`} />
             </div>
           </div>
           <div className="p-5 flex items-center justify-between">
@@ -118,8 +163,11 @@ export default function AccountPage() {
               </div>
               <span className="text-sm font-bold text-white">Push Notifications</span>
             </div>
-            <div className="w-10 h-6 bg-[#00C853] rounded-full relative p-1 shadow-inner cursor-pointer">
-              <div className="w-4 h-4 bg-white rounded-full absolute right-1" />
+            <div 
+              onClick={togglePush}
+              className={`w-10 h-6 rounded-full relative p-1 shadow-inner cursor-pointer transition-colors duration-300 ${pushEnabled ? 'bg-[#00C853]' : 'bg-slate-700'}`}
+            >
+              <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${pushEnabled ? 'right-1' : 'left-1'}`} />
             </div>
           </div>
         </div>

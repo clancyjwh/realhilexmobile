@@ -16,6 +16,7 @@ import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
 import NotificationsSettingsPage from './pages/NotificationsSettingsPage';
+import NotificationPromptModal from './components/NotificationPromptModal';
 
 export const UserContext = createContext({ tier: 'Free' });
 
@@ -189,6 +190,7 @@ export default function App() {
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
+        <NotificationPromptModal />
       </AuthProvider>
     </Router>
   );

@@ -49,7 +49,8 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
   // HeatScore Slider Marker Position (-10 to +10)
   const scoreToUse = typeof entity.unifiedScore !== 'undefined' ? entity.unifiedScore : (entity.score || 0);
   const markerPos = ((scoreToUse + 10) / 20) * 100;
-  const finalColor = isFinancial ? getHeatScoreBgColor(scoreToUse) : (entity.score_color || '#00C853');
+  const signalColors = getSignalColors(scoreToUse);
+  const finalColor = isFinancial ? signalColors.hex : (entity.score_color || '#00C853');
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col animate-in fade-in zoom-in-95 duration-200">
@@ -112,7 +113,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
           
           <div className="flex flex-col items-center">
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-1">Global HeatScore</span>
-            <div className="text-6xl font-black italic tracking-tighter" style={{ color: finalColor }}>
+            <div className={`text-6xl font-black italic tracking-tighter ${isFinancial ? signalColors.text : ''}`} style={!isFinancial ? { color: finalColor } : {}}>
               {scoreToUse > 0 ? '+' : ''}{formatScore(scoreToUse, 1)}
             </div>
           </div>
@@ -246,6 +247,12 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
             </p>
           </div>
         )}
+
+        <div className="mt-12 mb-4 text-center">
+          <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+            All scores recalculated every 12 hours
+          </span>
+        </div>
       </div>
     </div>
   );
