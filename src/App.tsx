@@ -77,11 +77,11 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
   const { tier } = useContext(UserContext);
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: HomeIcon, path: '/home' }
+    { id: 'home', label: 'Home', icon: HomeIcon, path: '/home' },
+    { id: 'finance', label: 'Finance', icon: TrendingUp, path: '/finance' },
+    { id: 'sports', label: 'Sports', icon: Trophy, path: '/sports' },
+    { id: 'markets', label: 'Markets', icon: BarChart3, path: '/markets' }
   ];
-  if (['Sports', 'Premium'].includes(tier)) navItems.push({ id: 'sports', label: 'Sports', icon: Trophy, path: '/sports' });
-  if (['Finance', 'Premium'].includes(tier)) navItems.push({ id: 'finance', label: 'Finance', icon: TrendingUp, path: '/finance' });
-  if (['Markets', 'Premium'].includes(tier)) navItems.push({ id: 'markets', label: 'Markets', icon: BarChart3, path: '/markets' });
 
   const drawerItems = [
     { id: 'account', label: 'Account', icon: User, path: '/account' }
