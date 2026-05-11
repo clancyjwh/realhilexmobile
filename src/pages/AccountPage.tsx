@@ -78,7 +78,7 @@ export default function AccountPage() {
         <p className="text-slate-500 text-sm font-medium tracking-tight">{profile?.email}</p>
         
         <div className="mt-4 bg-[#00C853] text-[#0a0a0f] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,200,83,0.3)]">
-          {profile?.subscription_tier || 'Free Tier'}
+          {profile?.tier || 'Free Tier'}
         </div>
       </div>
 

@@ -127,50 +127,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
           {isFinancial && financialData ? (
             <div className="space-y-6">
               
-              {/* Relative Value */}
-              {(() => {
-                const showRelativeValue = entity.org === 'American Stock' || entity.org === 'Canadian Stock' || entity.org === 'Cryptocurrency';
-                if (!showRelativeValue) return null;
 
-                let relativeValueNum = null;
-                let isUp = false;
-                if (financialData?.relative_value || financialData?.relative_value_json) {
-                  let parsedData = financialData.relative_value || financialData.relative_value_json;
-                  if (typeof parsedData === 'string') {
-                    try { parsedData = JSON.parse(parsedData); } catch (e) {}
-                  }
-                  if (parsedData?.relative_value) parsedData = parsedData.relative_value;
-                  
-                  if (parsedData?.Result !== undefined) relativeValueNum = parseFloat(parsedData.Result);
-                  else if (parsedData?.result !== undefined) relativeValueNum = parseFloat(parsedData.result);
-                  
-                  if (relativeValueNum === null || isNaN(relativeValueNum)) {
-                    const txt = String(parsedData?.Summary || parsedData?.summary || '');
-                    const match = txt.match(/by\s+([-+]?\d+\.?\d*)\s*%/);
-                    if (match) {
-                      const val = parseFloat(match[1]);
-                      if (txt.toLowerCase().includes('outperformed')) relativeValueNum = Math.abs(val);
-                      else if (txt.toLowerCase().includes('underperformed')) relativeValueNum = -Math.abs(val);
-                      else relativeValueNum = val;
-                    }
-                  }
-                  
-                  if (relativeValueNum !== null && !isNaN(relativeValueNum)) {
-                    isUp = relativeValueNum >= 0;
-                    return (
-                      <div className="mb-2">
-                        <div className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg ${isUp ? 'bg-green-900 border-green-700' : 'bg-red-900 border-red-700'}`}>
-                          <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Relative Value to Index</span>
-                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-green-300' : 'text-red-300'}`}>
-                            {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  }
-                }
-                return null;
-              })()}
 
               {/* 2x3 Grid */}
               <div className="grid grid-cols-2 gap-2">
@@ -225,6 +182,51 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                     })}
                 </div>
               </div>
+
+              {/* Relative Value */}
+              {(() => {
+                const showRelativeValue = entity.org === 'American Stock' || entity.org === 'Canadian Stock' || entity.org === 'Cryptocurrency';
+                if (!showRelativeValue) return null;
+
+                let relativeValueNum = null;
+                let isUp = false;
+                if (financialData?.relative_value || financialData?.relative_value_json) {
+                  let parsedData = financialData.relative_value || financialData.relative_value_json;
+                  if (typeof parsedData === 'string') {
+                    try { parsedData = JSON.parse(parsedData); } catch (e) {}
+                  }
+                  if (parsedData?.relative_value) parsedData = parsedData.relative_value;
+                  
+                  if (parsedData?.Result !== undefined) relativeValueNum = parseFloat(parsedData.Result);
+                  else if (parsedData?.result !== undefined) relativeValueNum = parseFloat(parsedData.result);
+                  
+                  if (relativeValueNum === null || isNaN(relativeValueNum)) {
+                    const txt = String(parsedData?.Summary || parsedData?.summary || '');
+                    const match = txt.match(/by\s+([-+]?\d+\.?\d*)\s*%/);
+                    if (match) {
+                      const val = parseFloat(match[1]);
+                      if (txt.toLowerCase().includes('outperformed')) relativeValueNum = Math.abs(val);
+                      else if (txt.toLowerCase().includes('underperformed')) relativeValueNum = -Math.abs(val);
+                      else relativeValueNum = val;
+                    }
+                  }
+                  
+                  if (relativeValueNum !== null && !isNaN(relativeValueNum)) {
+                    isUp = relativeValueNum >= 0;
+                    return (
+                      <div className="mt-6 mb-2">
+                        <div className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg ${isUp ? 'bg-[#00C853]/20 border-[#00C853]/40' : 'bg-red-500/20 border-red-500/40'}`}>
+                          <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Relative Value to Index</span>
+                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-[#00C853]' : 'text-red-500'}`}>
+                            {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  }
+                }
+                return null;
+              })()}
             </div>
           ) : (
             <div className="space-y-2">

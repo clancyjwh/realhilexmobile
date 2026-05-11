@@ -28,9 +28,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data } = await supabase.from('profiles').select('subscription_tier').eq('id', user.id).single();
-          if (data?.subscription_tier) {
-            const rawTier = data.subscription_tier.toLowerCase();
+          const { data } = await supabase.from('profiles').select('tier').eq('id', user.id).single();
+          if (data?.tier) {
+            const rawTier = data.tier.toLowerCase();
             if (rawTier === 'pro' || rawTier === 'premium') setTier('Premium');
             else if (rawTier === 'sports') setTier('Sports');
             else if (rawTier === 'finance') setTier('Finance');
