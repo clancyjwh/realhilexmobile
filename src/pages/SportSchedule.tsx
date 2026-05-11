@@ -93,7 +93,7 @@ export default function SportSchedule() {
 
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <Loader2 className="animate-spin text-[#00C853]" size={32} />
+          <Loader2 className="animate-spin text-[#00E5FF]" size={32} />
         </div>
       ) : games.length === 0 ? (
         <div className="text-center text-slate-500 font-bold italic mt-20">No games scheduled for today.</div>
@@ -125,7 +125,7 @@ export default function SportSchedule() {
                 <button 
                   onClick={() => handleAnalyze(game)}
                   disabled={isAnalyzing}
-                  className="bg-[#00C853] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,200,83,0.15)]"
+                  className="bg-[#00E5FF] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,200,83,0.15)]"
                 >
                   {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
                 </button>

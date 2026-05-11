@@ -45,10 +45,10 @@ export default function MarketAnalysisPage() {
         </div>
         <div className="flex flex-col items-center gap-6">
           <div className="w-16 h-16 rounded-2xl bg-[#12121a] border border-white/5 shadow-2xl flex items-center justify-center p-3 relative overflow-hidden">
-             <div className="absolute inset-0 bg-gradient-to-br from-[#00C853]/20 to-transparent opacity-50" />
+             <div className="absolute inset-0 bg-gradient-to-br from-[#00E5FF]/20 to-transparent opacity-50" />
              <img src="/logo.png" alt="HiLEX" className="w-full h-full object-contain relative z-10" />
           </div>
-          <Loader2 className="animate-spin text-[#00C853]" size={32} />
+          <Loader2 className="animate-spin text-[#00E5FF]" size={32} />
           <div className="text-sm font-black italic tracking-widest text-slate-400 uppercase animate-pulse">Analyzing...</div>
         </div>
       </div>
@@ -101,7 +101,7 @@ export default function MarketAnalysisPage() {
           </div>
           
           <div className="w-full max-w-xs mx-auto mt-6 px-2 relative pt-4 pb-2">
-            <div className="relative h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00C853)' }}>
+            <div className="relative h-1.5 rounded-full" style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00E5FF)' }}>
               {/* Marker */}
               <div 
                 className="absolute top-1/2 w-4 h-4 bg-white rounded-full border-2 border-[#12121a] shadow-[0_0_10px_rgba(0,0,0,0.5)] -translate-y-1/2 -translate-x-1/2 transition-all duration-1000 ease-out"
@@ -118,7 +118,7 @@ export default function MarketAnalysisPage() {
         <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/5">
           <div className="space-y-2 flex flex-col items-start">
             <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.2em]">Our Odds</span>
-            <div className="text-4xl font-black italic tracking-tighter text-[#00C853]">
+            <div className="text-4xl font-black italic tracking-tighter text-[#00E5FF]">
               {our_probability}%
             </div>
           </div>

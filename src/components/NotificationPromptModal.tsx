@@ -85,10 +85,10 @@ export default function NotificationPromptModal() {
     <div className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 animate-in fade-in duration-300">
       <div className="bg-[#12121a] border border-white/10 w-full max-w-sm rounded-3xl p-8 flex flex-col items-center text-center shadow-2xl relative overflow-hidden">
         {/* Glow effect */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#00C853]/20 rounded-full blur-[50px] -z-10" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-[#00E5FF]/20 rounded-full blur-[50px] -z-10" />
 
-        <div className="w-16 h-16 bg-[#00C853]/10 border border-[#00C853]/20 rounded-2xl flex items-center justify-center mb-6">
-          <Bell size={28} className="text-[#00C853] animate-pulse" />
+        <div className="w-16 h-16 bg-[#00E5FF]/10 border border-[#00E5FF]/20 rounded-2xl flex items-center justify-center mb-6">
+          <Bell size={28} className="text-[#00E5FF] animate-pulse" />
         </div>
         
         <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-2">
@@ -101,7 +101,7 @@ export default function NotificationPromptModal() {
         <div className="flex flex-col w-full gap-3">
           <button 
             onClick={handleAllow}
-            className="w-full bg-[#00C853] text-black font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-[0_0_20px_rgba(0,200,83,0.3)] active:scale-95 transition-all"
+            className="w-full bg-[#00E5FF] text-black font-black uppercase tracking-widest text-xs py-4 rounded-xl shadow-[0_0_20px_rgba(0,200,83,0.3)] active:scale-95 transition-all"
           >
             Allow Notifications
           </button>

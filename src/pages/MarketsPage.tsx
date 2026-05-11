@@ -27,7 +27,7 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
           
           <div className="flex items-center gap-4">
             {type === 'pulse' && initialData?.week_change !== undefined && (
-              <div className={`flex items-center gap-1 text-[10px] font-black italic ${initialData.direction === 'up' ? 'text-[#00C853]' : 'text-red-500'}`}>
+              <div className={`flex items-center gap-1 text-[10px] font-black italic ${initialData.direction === 'up' ? 'text-[#00E5FF]' : 'text-red-500'}`}>
                 {initialData.direction === 'up' ? '▲' : '▼'} {Math.abs(initialData.week_change * 100).toFixed(1)}%
               </div>
             )}
@@ -41,7 +41,7 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
 
         <button 
           onClick={handleAnalyze}
-          className="bg-[#00C853] text-[#0a0a0f] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 min-w-[80px] flex justify-center items-center shrink-0"
+          className="bg-[#00E5FF] text-[#0a0a0f] px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 min-w-[80px] flex justify-center items-center shrink-0"
         >
           ANALYZE
         </button>
@@ -148,7 +148,7 @@ export default function MarketsPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search any event or question..."
-          className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:outline-none focus:border-[#00C853] text-sm font-medium transition-all text-white placeholder:text-slate-700"
+          className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 pl-12 pr-6 focus:outline-none focus:border-[#00E5FF] text-sm font-medium transition-all text-white placeholder:text-slate-700"
         />
       </form>
 

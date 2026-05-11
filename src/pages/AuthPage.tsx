@@ -61,13 +61,13 @@ export default function AuthPage() {
       <div className="w-full max-w-sm flex border-b border-white/5 mb-10">
         <button 
           onClick={() => { setActiveTab('login'); setError(null); }}
-          className={`flex-1 pb-4 text-sm font-bold uppercase tracking-widest transition-all ${activeTab === 'login' ? 'text-[#00C853] border-b-2 border-[#00C853]' : 'text-slate-600'}`}
+          className={`flex-1 pb-4 text-sm font-bold uppercase tracking-widest transition-all ${activeTab === 'login' ? 'text-[#00E5FF] border-b-2 border-[#00E5FF]' : 'text-slate-600'}`}
         >
           Log In
         </button>
         <button 
           onClick={() => { setActiveTab('signup'); setError(null); }}
-          className={`flex-1 pb-4 text-sm font-bold uppercase tracking-widest transition-all ${activeTab === 'signup' ? 'text-[#00C853] border-b-2 border-[#00C853]' : 'text-slate-600'}`}
+          className={`flex-1 pb-4 text-sm font-bold uppercase tracking-widest transition-all ${activeTab === 'signup' ? 'text-[#00E5FF] border-b-2 border-[#00E5FF]' : 'text-slate-600'}`}
         >
           Sign Up
         </button>
@@ -89,7 +89,7 @@ export default function AuthPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00C853] transition-colors text-sm placeholder:text-slate-700"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00E5FF] transition-colors text-sm placeholder:text-slate-700"
             />
             <input 
               type="password"
@@ -97,12 +97,12 @@ export default function AuthPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00C853] transition-colors text-sm placeholder:text-slate-700"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00E5FF] transition-colors text-sm placeholder:text-slate-700"
             />
             <button 
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00C853] hover:bg-[#00C853]/90 text-[#0a0a0f] py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all active:scale-[0.98] disabled:opacity-50 mt-4 shadow-[0_0_20px_rgba(0,200,83,0.2)]"
+              className="w-full bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#0a0a0f] py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all active:scale-[0.98] disabled:opacity-50 mt-4 shadow-[0_0_20px_rgba(0,200,83,0.2)]"
             >
               {loading ? 'Processing...' : 'Login'}
             </button>
@@ -115,7 +115,7 @@ export default function AuthPage() {
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00C853] transition-colors text-sm placeholder:text-slate-700"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00E5FF] transition-colors text-sm placeholder:text-slate-700"
             />
             <input 
               type="email"
@@ -123,7 +123,7 @@ export default function AuthPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00C853] transition-colors text-sm placeholder:text-slate-700"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00E5FF] transition-colors text-sm placeholder:text-slate-700"
             />
             <input 
               type="password"
@@ -131,12 +131,12 @@ export default function AuthPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00C853] transition-colors text-sm placeholder:text-slate-700"
+              className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-5 focus:outline-none focus:border-[#00E5FF] transition-colors text-sm placeholder:text-slate-700"
             />
             <button 
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00C853] hover:bg-[#00C853]/90 text-[#0a0a0f] py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all active:scale-[0.98] disabled:opacity-50 mt-4 shadow-[0_0_20px_rgba(0,200,83,0.2)]"
+              className="w-full bg-[#00E5FF] hover:bg-[#00E5FF]/90 text-[#0a0a0f] py-4 rounded-xl font-black uppercase tracking-widest text-sm transition-all active:scale-[0.98] disabled:opacity-50 mt-4 shadow-[0_0_20px_rgba(0,200,83,0.2)]"
             >
               {loading ? 'Processing...' : 'Sign Up'}
             </button>

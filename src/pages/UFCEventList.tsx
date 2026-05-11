@@ -51,7 +51,7 @@ export default function UFCEventList() {
 
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <Loader2 className="animate-spin text-[#00C853]" size={32} />
+          <Loader2 className="animate-spin text-[#00E5FF]" size={32} />
         </div>
       ) : events.length === 0 ? (
         <div className="text-center text-slate-500 font-bold italic mt-20">No upcoming events found.</div>
@@ -71,7 +71,7 @@ export default function UFCEventList() {
               {event.main_event && (
                 <div className="bg-white/5 rounded-xl p-4 border border-white/5 flex items-center justify-between">
                   <div className="flex-1">
-                    <span className="text-[9px] font-black text-[#00C853] uppercase tracking-[0.2em] block mb-1">Main Event</span>
+                    <span className="text-[9px] font-black text-[#00E5FF] uppercase tracking-[0.2em] block mb-1">Main Event</span>
                     <span className="text-sm font-black italic tracking-tighter">
                       {event.main_event.fighter_1.name} vs {event.main_event.fighter_2.name}
                     </span>

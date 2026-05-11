@@ -17,13 +17,13 @@ const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
     <div className="space-y-1 mb-3">
       <div className="flex justify-between items-center">
         <span className="text-[8px] font-bold text-white/70 uppercase tracking-widest">{label}</span>
-        <span className={`text-[10px] font-black italic ${isPositive ? 'text-[#00C853]' : 'text-red-500'}`}>
+        <span className={`text-[10px] font-black italic ${isPositive ? 'text-[#00E5FF]' : 'text-red-500'}`}>
           {isPositive ? '+' : ''}{formatScore(value, 1)}
         </span>
       </div>
       <div className="h-1 w-full bg-black/20 rounded-full overflow-hidden">
         <div 
-          className={`h-full rounded-full transition-all duration-1000 ${isPositive ? 'bg-[#00C853]' : 'bg-red-500'}`}
+          className={`h-full rounded-full transition-all duration-1000 ${isPositive ? 'bg-[#00E5FF]' : 'bg-red-500'}`}
           style={{ width: `${Math.min(100, Math.max(0, (value + 10) * 5))}%` }}
         />
       </div>
@@ -39,7 +39,7 @@ const FighterPanel = ({ fighter, type, headshotProp }: { fighter: any; type: 'RE
   console.log(`[FightDetail] Fighter Object for ${fighter.name}:`, JSON.parse(JSON.stringify(fighter)));
   
   // Use heatscore color for numbers, but ring color based on corner
-  const scoreColor = fighter.score > 0 ? 'text-[#00C853]' : 'text-red-500';
+  const scoreColor = fighter.score > 0 ? 'text-[#00E5FF]' : 'text-red-500';
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
 
   const rawHeadshot = headshotProp || fighter.headshot || fighter.headshot_url || fighter.stats?.headshot || fighter.stats?.headshot_url;
@@ -81,7 +81,7 @@ const FighterPanel = ({ fighter, type, headshotProp }: { fighter: any; type: 'RE
       {/* HeatScore Slider */}
       <div 
         className="w-full h-2 rounded-full mb-2" 
-        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00C853)' }}
+        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00E5FF)' }}
       />
       <div className="w-full h-4 mb-4" /> {/* Spacer */}
 

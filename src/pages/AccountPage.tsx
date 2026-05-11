@@ -114,12 +114,12 @@ export default function AccountPage() {
     <div className="flex-grow bg-[#0a0a0f] p-6 pb-12 flex flex-col font-sans">
       <div className="mb-10 pt-4 flex flex-col items-center">
         <div className="w-20 h-20 bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center mb-4 shadow-2xl">
-          <UserIcon size={40} className="text-[#00C853]" />
+          <UserIcon size={40} className="text-[#00E5FF]" />
         </div>
         <h1 className="text-2xl font-black italic uppercase text-white tracking-tight">{profile?.full_name || 'Hilex User'}</h1>
         <p className="text-slate-500 text-sm font-medium tracking-tight">{profile?.email}</p>
         
-        <div className="mt-4 bg-[#00C853] text-[#0a0a0f] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,200,83,0.3)]">
+        <div className="mt-4 bg-[#00E5FF] text-[#0a0a0f] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,200,83,0.3)]">
           {profile?.tier || 'Free Tier'}
         </div>
       </div>
@@ -134,9 +134,9 @@ export default function AccountPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               onBlur={handleUpdateName}
-              className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 px-6 text-sm font-bold text-white focus:outline-none focus:border-[#00C853] transition-all"
+              className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 px-6 text-sm font-bold text-white focus:outline-none focus:border-[#00E5FF] transition-all"
             />
-            {isSaving && <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-[#00C853] uppercase">Saving...</div>}
+            {isSaving && <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-[#00E5FF] uppercase">Saving...</div>}
           </div>
         </div>
 
@@ -151,7 +151,7 @@ export default function AccountPage() {
             </div>
             <div 
               onClick={toggleEmail}
-              className={`w-10 h-6 rounded-full relative p-1 shadow-inner cursor-pointer transition-colors duration-300 ${emailEnabled ? 'bg-[#00C853]' : 'bg-slate-700'}`}
+              className={`w-10 h-6 rounded-full relative p-1 shadow-inner cursor-pointer transition-colors duration-300 ${emailEnabled ? 'bg-[#00E5FF]' : 'bg-slate-700'}`}
             >
               <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${emailEnabled ? 'right-1' : 'left-1'}`} />
             </div>
@@ -165,7 +165,7 @@ export default function AccountPage() {
             </div>
             <div 
               onClick={togglePush}
-              className={`w-10 h-6 rounded-full relative p-1 shadow-inner cursor-pointer transition-colors duration-300 ${pushEnabled ? 'bg-[#00C853]' : 'bg-slate-700'}`}
+              className={`w-10 h-6 rounded-full relative p-1 shadow-inner cursor-pointer transition-colors duration-300 ${pushEnabled ? 'bg-[#00E5FF]' : 'bg-slate-700'}`}
             >
               <div className={`w-4 h-4 bg-white rounded-full absolute top-1 transition-transform duration-300 ${pushEnabled ? 'right-1' : 'left-1'}`} />
             </div>

@@ -70,11 +70,11 @@ const PaywallModal = ({ requiredTier }: { requiredTier: string }) => {
   return (
     <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center p-6 text-center font-sans">
       <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-6 shadow-2xl">
-        <Lock size={32} className="text-[#00C853]" />
+        <Lock size={32} className="text-[#00E5FF]" />
       </div>
       <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mb-4">Access Restricted</h1>
       <p className="text-slate-400 mb-8 font-medium text-sm">Upgrade to {requiredTier} to access this feature.</p>
-      <button onClick={() => window.location.href = 'https://hilex.app/pricing'} className="bg-[#00C853] text-black font-black uppercase tracking-widest px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(0,200,83,0.4)] active:scale-95 transition-all w-full max-w-xs">
+      <button onClick={() => window.location.href = 'https://hilex.app/pricing'} className="bg-[#00E5FF] text-black font-black uppercase tracking-widest px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(0,200,83,0.4)] active:scale-95 transition-all w-full max-w-xs">
         Upgrade to {requiredTier}
       </button>
       <button onClick={() => window.history.back()} className="mt-6 text-slate-500 font-bold uppercase tracking-widest text-xs active:opacity-50">
@@ -117,7 +117,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col font-sans selection:bg-[#00C853]/20">
+    <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col font-sans selection:bg-[#00E5FF]/20">
       {/* Header */}
       <header className="h-16 bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-3">
@@ -152,8 +152,8 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
                   onClick={() => { navigate(item.path); setIsDrawerOpen(false); }}
                   className="flex items-center gap-4 p-5 rounded-2xl active:bg-white/5 transition-all group cursor-pointer"
                 >
-                  <item.icon size={20} className="text-slate-500 group-active:text-[#00C853]" />
-                  <span className="font-bold text-sm tracking-tight group-active:text-[#00C853]">{item.label}</span>
+                  <item.icon size={20} className="text-slate-500 group-active:text-[#00E5FF]" />
+                  <span className="font-bold text-sm tracking-tight group-active:text-[#00E5FF]">{item.label}</span>
                 </div>
               ))}
             </div>
@@ -174,11 +174,11 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
             <button 
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1.5 flex-1 transition-all duration-300 ${isActive ? 'text-[#00C853]' : 'text-slate-600 opacity-60'}`}
+              className={`flex flex-col items-center gap-1.5 flex-1 transition-all duration-300 ${isActive ? 'text-[#00E5FF]' : 'text-slate-600 opacity-60'}`}
             >
               <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
               <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
-              {isActive && <div className="absolute bottom-1 w-1 h-1 bg-[#00C853] rounded-full shadow-[0_0_8px_#00C853]" />}
+              {isActive && <div className="absolute bottom-1 w-1 h-1 bg-[#00E5FF] rounded-full shadow-[0_0_8px_#00E5FF]" />}
             </button>
           );
         })}

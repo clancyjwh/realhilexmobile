@@ -119,7 +119,7 @@ export default function NotificationsSettingsPage() {
   const ToggleSwitch = ({ checked, onChange }: { checked: boolean, onChange: (c: boolean) => void }) => (
     <div 
       onClick={() => onChange(!checked)}
-      className={`w-12 h-7 rounded-full relative p-1 cursor-pointer transition-colors duration-300 shadow-inner ${checked ? 'bg-[#00C853]' : 'bg-white/10'}`}
+      className={`w-12 h-7 rounded-full relative p-1 cursor-pointer transition-colors duration-300 shadow-inner ${checked ? 'bg-[#00E5FF]' : 'bg-white/10'}`}
     >
       <div className={`w-5 h-5 bg-white rounded-full absolute top-1 transition-transform duration-300 shadow-md ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
     </div>
@@ -134,7 +134,7 @@ export default function NotificationsSettingsPage() {
           </button>
           <h1 className="font-black text-xl italic uppercase tracking-tight">Notifications</h1>
         </div>
-        {saving && <span className="text-[10px] text-[#00C853] font-black uppercase tracking-widest animate-pulse">Saving...</span>}
+        {saving && <span className="text-[10px] text-[#00E5FF] font-black uppercase tracking-widest animate-pulse">Saving...</span>}
       </header>
 
       <div className="flex-grow p-6 space-y-6">

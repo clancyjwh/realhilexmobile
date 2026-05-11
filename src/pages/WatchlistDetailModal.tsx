@@ -111,12 +111,12 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
                 return (
                   <div 
                     key={idx}
-                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#00C853]/20 bg-[#00C853]/10' : 'border-red-500/20 bg-red-500/10'}`}
+                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#00E5FF]/20 bg-[#00E5FF]/10' : 'border-red-500/20 bg-red-500/10'}`}
                   >
-                    <span className={`text-3xl font-black ${isCorrect ? 'text-[#00C853]' : 'text-red-500'}`}>
+                    <span className={`text-3xl font-black ${isCorrect ? 'text-[#00E5FF]' : 'text-red-500'}`}>
                       {p.Daysback || p.days}
                     </span>
-                    <span className={`text-[10px] mt-1 font-black uppercase tracking-widest ${isCorrect ? 'text-[#00C853]/70' : 'text-red-500/70'}`}>
+                    <span className={`text-[10px] mt-1 font-black uppercase tracking-widest ${isCorrect ? 'text-[#00E5FF]/70' : 'text-red-500/70'}`}>
                       days
                     </span>
                   </div>

@@ -54,9 +54,9 @@ const getShorthand = (name: string) => {
 
 export const getSignalColors = (signal: number) => {
   if (signal >= 9) return { bg: 'bg-[linear-gradient(145deg,#FFFDF5_0%,#FFF3CC_35%,#EBD48E_70%,#C9A43B_100%)] bg-[length:200%_200%] shadow-[0_0_20px_rgba(201,164,59,0.8)]', border: 'border-yellow-400', text: 'text-black', subtext: 'text-black/60', subtextDark: 'text-black/70', hex: '#facc15' };
-  if (signal >= 7) return { bg: 'bg-green-900', border: 'border-green-700', text: 'text-green-300', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#86efac' };
-  if (signal >= 4) return { bg: 'bg-green-700', border: 'border-green-600', text: 'text-green-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#bbf7d0' };
-  if (signal >= 1) return { bg: 'bg-green-500', border: 'border-green-400', text: 'text-green-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#dcfce7' };
+  if (signal >= 7) return { bg: 'bg-cyan-900', border: 'border-cyan-700', text: 'text-cyan-300', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#67e8f9' };
+  if (signal >= 4) return { bg: 'bg-cyan-700', border: 'border-cyan-600', text: 'text-cyan-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#a5f3fc' };
+  if (signal >= 1) return { bg: 'bg-cyan-500', border: 'border-cyan-400', text: 'text-cyan-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#cffafe' };
   if (signal > -1) return { bg: 'bg-slate-600', border: 'border-slate-500', text: 'text-slate-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#e2e8f0' };
   if (signal >= -4) return { bg: 'bg-orange-500', border: 'border-orange-400', text: 'text-orange-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#ffedd5' };
   if (signal >= -7) return { bg: 'bg-red-600', border: 'border-red-500', text: 'text-red-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#fecaca' };
