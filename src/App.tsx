@@ -31,8 +31,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (user) {
           const { data } = await supabase.from('profiles').select('tier').eq('id', user.id).single();
           if (data?.tier) {
-            const rawTier = data.tier.toLowerCase();
-            if (rawTier === 'pro' || rawTier === 'premium') setTier('Premium');
+            const rawTier = data.tier.toLowerCase().trim();
+            if (rawTier === 'pro' || rawTier === 'premium' || rawTier === 'enterprise') setTier('Premium');
             else if (rawTier === 'sports') setTier('Sports');
             else if (rawTier === 'finance') setTier('Finance');
             else if (rawTier === 'markets') setTier('Markets');
@@ -72,9 +72,16 @@ const PaywallModal = ({ requiredTier }: { requiredTier: string }) => {
 
 const ProtectedRoute = ({ element, requiredTiers }: { element: React.ReactNode, requiredTiers: string[] }) => {
   const { tier } = useContext(UserContext);
-  if (tier === 'Premium' || requiredTiers.includes(tier)) {
+  const normalizedTier = tier.toLowerCase().trim();
+  
+  if (normalizedTier === 'premium' || normalizedTier === 'enterprise') {
     return <>{element}</>;
   }
+  
+  if (requiredTiers.some(t => t.toLowerCase() === normalizedTier)) {
+    return <>{element}</>;
+  }
+  
   return <PaywallModal requiredTier={requiredTiers[0]} />;
 };
 
