@@ -129,6 +129,9 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
               
               {/* Relative Value */}
               {(() => {
+                const showRelativeValue = entity.org === 'American Stock' || entity.org === 'Canadian Stock' || entity.org === 'Cryptocurrency';
+                if (!showRelativeValue) return null;
+
                 let relativeValueNum = null;
                 let isUp = false;
                 if (financialData?.relative_value || financialData?.relative_value_json) {
@@ -142,7 +145,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                   else if (parsedData?.result !== undefined) relativeValueNum = parseFloat(parsedData.result);
                   
                   if (relativeValueNum === null || isNaN(relativeValueNum)) {
-                    const txt = parsedData?.Summary || parsedData?.summary || '';
+                    const txt = String(parsedData?.Summary || parsedData?.summary || '');
                     const match = txt.match(/by\s+([-+]?\d+\.?\d*)\s*%/);
                     if (match) {
                       const val = parseFloat(match[1]);

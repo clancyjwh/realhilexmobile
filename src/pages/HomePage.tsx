@@ -139,21 +139,16 @@ export default function HomePage() {
       });
       const uniqueAssets = Array.from(assetMap.values());
 
-      const getTop3Bottom2 = (list: any[]) => {
-        if (list.length <= 5) return [...list].sort((a, b) => b.score - a.score);
-        const sorted = [...list].sort((a, b) => b.score - a.score);
-        return [...sorted.slice(0, 3), ...sorted.slice(-2)];
-      };
-
       const rawEntities = (entityResult.data || [])
         .filter(e => !e.name?.startsWith('UFC_') && !/^[0-9a-f-]{36}$/.test(e.name));
 
       const athletes = rawEntities.filter(e => e.type === 'athlete');
       const teams = rawEntities.filter(e => e.type === 'team');
 
-      const topAthletes = getTop3Bottom2(athletes).map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }));
-      const topTeams = getTop3Bottom2(teams).map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }));
-      const entityItems = [...topAthletes, ...topTeams];
+      const entityItems = [
+        ...athletes.map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' })),
+        ...teams.map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
+      ];
 
       const combined = [...uniqueAssets, ...entityItems]
         .map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 }))
