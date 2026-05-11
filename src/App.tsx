@@ -18,6 +18,13 @@ import MarketAnalysisPage from './pages/MarketAnalysisPage';
 import NotificationsSettingsPage from './pages/NotificationsSettingsPage';
 import NotificationPromptModal from './components/NotificationPromptModal';
 
+declare global {
+  interface Window {
+    OneSignalDeferred: any[];
+    OneSignal: any;
+  }
+}
+
 export const UserContext = createContext({ tier: 'Free' });
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -37,6 +44,13 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             else if (rawTier === 'finance') setTier('Finance');
             else if (rawTier === 'markets') setTier('Markets');
             else setTier('Free');
+
+            if (window.OneSignalDeferred) {
+              window.OneSignalDeferred.push(async function(OneSignal: any) {
+                await OneSignal.login(user.id);
+                await OneSignal.User.addTags({ tier: data.tier });
+              });
+            }
           }
         }
       } catch (e) {
