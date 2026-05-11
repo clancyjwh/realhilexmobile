@@ -131,8 +131,8 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
               {(() => {
                 let relativeValueNum = null;
                 let isUp = false;
-                if (financialData?.relative_value) {
-                  let parsedData = financialData.relative_value;
+                if (financialData?.relative_value || financialData?.relative_value_json) {
+                  let parsedData = financialData.relative_value || financialData.relative_value_json;
                   if (typeof parsedData === 'string') {
                     try { parsedData = JSON.parse(parsedData); } catch (e) {}
                   }
@@ -216,7 +216,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                       return (
                         <div key={key} className={`rounded-lg p-2 text-center border ${isCorrect ? 'bg-[#00C853]/10 border-[#00C853]/20 text-[#00C853]' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
                           <div className="text-[8px] font-black uppercase mb-1">{key}</div>
-                          <div className="text-[7px] font-bold uppercase tracking-tighter">{isCorrect ? 'Accurate' : 'Miss'}</div>
+                          <div className="text-[7px] font-bold uppercase tracking-tighter">{isCorrect ? 'Accurate' : 'Inaccurate'}</div>
                         </div>
                       );
                     })}

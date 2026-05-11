@@ -66,14 +66,6 @@ export default function AccountPage() {
     navigate('/login');
   };
 
-  const testNotification = async () => {
-    if (window.OneSignalDeferred) {
-      window.OneSignalDeferred.push(async function(OneSignal: any) {
-        await OneSignal.Slidedown.promptPush();
-      });
-    }
-  };
-
   if (loading) return <div className="flex-grow bg-[#0a0a0f] animate-pulse" />;
 
   return (
@@ -86,7 +78,7 @@ export default function AccountPage() {
         <p className="text-slate-500 text-sm font-medium tracking-tight">{profile?.email}</p>
         
         <div className="mt-4 bg-[#00C853] text-[#0a0a0f] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,200,83,0.3)]">
-          {profile?.subscription_tier || 'Pro Tier'}
+          {profile?.subscription_tier || 'Free Tier'}
         </div>
       </div>
 
@@ -129,14 +121,6 @@ export default function AccountPage() {
             <div className="w-10 h-6 bg-[#00C853] rounded-full relative p-1 shadow-inner cursor-pointer">
               <div className="w-4 h-4 bg-white rounded-full absolute right-1" />
             </div>
-          </div>
-          <div className="p-5 flex items-center justify-between border-t border-white/5">
-            <button 
-              onClick={testNotification}
-              className="w-full bg-[#00C853]/10 border border-[#00C853]/20 text-[#00C853] py-3 rounded-xl font-black uppercase tracking-widest text-[10px] active:scale-[0.98] transition-all"
-            >
-              Test Browser Notifications
-            </button>
           </div>
         </div>
       </div>
