@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { supabase } from '../lib/supabase';
+import { UserContext } from '../App';
 import { formatScore } from '../utils/format';
 import AnalysisModal from './AnalysisModal';
 
@@ -74,6 +75,7 @@ export const getEntityImageUrl = (entity: any) => {
 };
 
 export default function HomePage() {
+  const { tier } = useContext(UserContext);
   const [entities, setEntities] = useState<UnifiedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedEntity, setSelectedEntity] = useState<UnifiedItem | null>(null);
@@ -81,7 +83,7 @@ export default function HomePage() {
 
   useEffect(() => {
     fetchEntities();
-  }, []);
+  }, [tier]);
 
   const fetchEntities = async () => {
     setLoading(true);
@@ -157,7 +159,16 @@ export default function HomePage() {
         .map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 }))
         .sort((a, b) => b.unifiedScore - a.unifiedScore);
 
-      setEntities(combined);
+      let finalCombined = combined;
+      if (tier === 'Sports') {
+        finalCombined = combined.filter(item => item.itemType === 'entity');
+      } else if (tier === 'Finance') {
+        finalCombined = combined.filter(item => item.itemType === 'asset');
+      } else if (tier === 'Markets') {
+        finalCombined = combined.filter(item => item.itemType === 'market');
+      }
+
+      setEntities(finalCombined);
     } catch (err) {
       console.error(err);
     } finally {

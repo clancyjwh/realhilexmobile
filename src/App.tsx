@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Bell, Settings } from 'lucide-react';
+import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Bell, Settings, Lock } from 'lucide-react';
+import { supabase } from './lib/supabase';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
 import FinancePage from './pages/FinancePage';
@@ -16,22 +17,74 @@ import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
 import NotificationsSettingsPage from './pages/NotificationsSettingsPage';
 
+export const UserContext = createContext({ tier: 'Free' });
+
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [tier, setTier] = useState('Free');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTier = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data } = await supabase.from('profiles').select('subscription_tier').eq('id', user.id).single();
+          if (data?.subscription_tier) setTier(data.subscription_tier);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTier();
+  }, []);
+
+  if (loading) return <div className="min-h-screen bg-[#0a0a0f] animate-pulse" />;
+  return <UserContext.Provider value={{ tier }}>{children}</UserContext.Provider>;
+};
+
+const PaywallModal = ({ requiredTier }: { requiredTier: string }) => {
+  return (
+    <div className="min-h-screen bg-[#0a0a0f] flex flex-col items-center justify-center p-6 text-center font-sans">
+      <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-full flex items-center justify-center mb-6 shadow-2xl">
+        <Lock size={32} className="text-[#00C853]" />
+      </div>
+      <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mb-4">Access Restricted</h1>
+      <p className="text-slate-400 mb-8 font-medium text-sm">Upgrade to {requiredTier} to access this feature.</p>
+      <button onClick={() => window.location.href = 'https://hilex.app/pricing'} className="bg-[#00C853] text-black font-black uppercase tracking-widest px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(0,200,83,0.4)] active:scale-95 transition-all w-full max-w-xs">
+        Upgrade to {requiredTier}
+      </button>
+      <button onClick={() => window.history.back()} className="mt-6 text-slate-500 font-bold uppercase tracking-widest text-xs active:opacity-50">
+        Go Back
+      </button>
+    </div>
+  );
+};
+
+const ProtectedRoute = ({ element, requiredTiers }: { element: React.ReactNode, requiredTiers: string[] }) => {
+  const { tier } = useContext(UserContext);
+  if (tier === 'Premium' || requiredTiers.includes(tier)) {
+    return <>{element}</>;
+  }
+  return <PaywallModal requiredTier={requiredTiers[0]} />;
+};
+
 const Shell = ({ children }: { children: React.ReactNode }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { tier } = useContext(UserContext);
 
   const navItems = [
-    { id: 'home', label: 'Home', icon: HomeIcon, path: '/home' },
-    { id: 'finance', label: 'Finance', icon: TrendingUp, path: '/finance' },
-    { id: 'sports', label: 'Sports', icon: Trophy, path: '/sports' },
-    { id: 'markets', label: 'Markets', icon: BarChart3, path: '/markets' }
+    { id: 'home', label: 'Home', icon: HomeIcon, path: '/home' }
   ];
+  if (['Sports', 'Premium'].includes(tier)) navItems.push({ id: 'sports', label: 'Sports', icon: Trophy, path: '/sports' });
+  if (['Finance', 'Premium'].includes(tier)) navItems.push({ id: 'finance', label: 'Finance', icon: TrendingUp, path: '/finance' });
+  if (['Markets', 'Premium'].includes(tier)) navItems.push({ id: 'markets', label: 'Markets', icon: BarChart3, path: '/markets' });
 
   const drawerItems = [
-    { id: 'account', label: 'Account', icon: User, path: '/account' },
-    { id: 'alerts', label: 'Alerts', icon: Bell, path: '/alerts' },
-    { id: 'notifications', label: 'Notification Settings', icon: Settings, path: '/settings/notifications' }
+    { id: 'account', label: 'Account', icon: User, path: '/account' }
   ];
 
   return (
@@ -108,26 +161,28 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
 export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<AuthPage />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        
-        <Route path="/home" element={<Shell><HomePage /></Shell>} />
-        <Route path="/finance" element={<Shell><FinancePage /></Shell>} />
-        <Route path="/sports" element={<Shell><SportsPage /></Shell>} />
-        <Route path="/sports/ufc" element={<Shell><UFCEventList /></Shell>} />
-        <Route path="/sports/ufc/event/:eventId" element={<Shell><UFCFightList /></Shell>} />
-        <Route path="/sports/ufc/fight" element={<Shell><FightDetail /></Shell>} />
-        <Route path="/sports/:sport" element={<Shell><SportSchedule /></Shell>} />
-        <Route path="/sports/:sport/matchup" element={<Shell><MatchupDetail /></Shell>} />
-        <Route path="/markets" element={<Shell><MarketsPage /></Shell>} />
-        <Route path="/markets/analyze" element={<MarketAnalysisPage />} />
-        <Route path="/account" element={<Shell><AccountPage /></Shell>} />
-        <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
-        <Route path="/settings/notifications" element={<NotificationsSettingsPage />} />
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<AuthPage />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          <Route path="/home" element={<Shell><HomePage /></Shell>} />
+          <Route path="/finance" element={<ProtectedRoute requiredTiers={['Finance']} element={<Shell><FinancePage /></Shell>} />} />
+          <Route path="/sports" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><SportsPage /></Shell>} />} />
+          <Route path="/sports/ufc" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><UFCEventList /></Shell>} />} />
+          <Route path="/sports/ufc/event/:eventId" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><UFCFightList /></Shell>} />} />
+          <Route path="/sports/ufc/fight" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><FightDetail /></Shell>} />} />
+          <Route path="/sports/:sport" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><SportSchedule /></Shell>} />} />
+          <Route path="/sports/:sport/matchup" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><MatchupDetail /></Shell>} />} />
+          <Route path="/markets" element={<ProtectedRoute requiredTiers={['Markets']} element={<Shell><MarketsPage /></Shell>} />} />
+          <Route path="/markets/analyze" element={<ProtectedRoute requiredTiers={['Markets']} element={<MarketAnalysisPage />} />} />
+          <Route path="/account" element={<Shell><AccountPage /></Shell>} />
+          <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
+          <Route path="/settings/notifications" element={<NotificationsSettingsPage />} />
 
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </AuthProvider>
     </Router>
   );
 }
