@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Bell, Settings, Lock } from 'lucide-react';
+import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Lock } from 'lucide-react';
 import { supabase } from './lib/supabase';
 import AuthPage from './pages/AuthPage';
 import HomePage from './pages/HomePage';
@@ -8,22 +8,12 @@ import FinancePage from './pages/FinancePage';
 import SportsPage from './pages/SportsPage';
 import MarketsPage from './pages/MarketsPage';
 import AccountPage from './pages/AccountPage';
-import AlertsPage from './pages/AlertsPage';
 import SportSchedule from './pages/SportSchedule';
 import UFCEventList from './pages/UFCEventList';
 import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
-import NotificationsSettingsPage from './pages/NotificationsSettingsPage';
-import NotificationPromptModal from './components/NotificationPromptModal';
-
-declare global {
-  interface Window {
-    OneSignalDeferred: any[];
-    OneSignal: any;
-  }
-}
 
 export const UserContext = createContext({ tier: 'Free' });
 
@@ -48,14 +38,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         else if (rawTier === 'markets') mappedTier = 'Markets';
         
         setTier(mappedTier);
-
-        // Sync with OneSignal
-        if (window.OneSignalDeferred) {
-          window.OneSignalDeferred.push(async function(OneSignal: any) {
-            await OneSignal.login(userId);
-            await OneSignal.User.addTags({ tier: profile.tier });
-          });
-        }
       }
     } catch (e) {
       console.error('Error syncing tier:', e);
@@ -242,15 +224,6 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function App() {
-  useEffect(() => {
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async function(OneSignal: any) {
-      await OneSignal.init({
-        appId: "2efbbcb6-11fe-413b-888e-f35439e417e8",
-      });
-    });
-  }, []);
-
   return (
     <Router>
       <AuthProvider>
@@ -269,12 +242,9 @@ export default function App() {
           <Route path="/markets" element={<ProtectedRoute requiredTiers={['Markets']} element={<Shell><MarketsPage /></Shell>} />} />
           <Route path="/markets/analyze" element={<ProtectedRoute requiredTiers={['Markets']} element={<MarketAnalysisPage />} />} />
           <Route path="/account" element={<Shell><AccountPage /></Shell>} />
-          <Route path="/alerts" element={<Shell><AlertsPage /></Shell>} />
-          <Route path="/settings/notifications" element={<NotificationsSettingsPage />} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
-        <NotificationPromptModal />
       </AuthProvider>
     </Router>
   );
