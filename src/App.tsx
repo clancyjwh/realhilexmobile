@@ -31,30 +31,89 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [tier, setTier] = useState('Free');
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchTier = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { data } = await supabase.from('profiles').select('tier').eq('id', user.id).single();
-          if (data?.tier) {
-            const rawTier = data.tier.toLowerCase().trim();
-            if (rawTier === 'pro' || rawTier === 'premium' || rawTier === 'enterprise') setTier('Premium');
-            else if (rawTier === 'sports') setTier('Sports');
-            else if (rawTier === 'finance') setTier('Finance');
-            else if (rawTier === 'markets') setTier('Markets');
-            else setTier('Free');
+  const fetchAndSyncTier = async (userId: string) => {
+    try {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('tier')
+        .eq('id', userId)
+        .single();
 
+      if (profile?.tier) {
+        const rawTier = profile.tier.toLowerCase().trim();
+        let mappedTier = 'Free';
+        if (['pro', 'premium', 'enterprise'].includes(rawTier)) mappedTier = 'Premium';
+        else if (rawTier === 'sports') mappedTier = 'Sports';
+        else if (rawTier === 'finance') mappedTier = 'Finance';
+        else if (rawTier === 'markets') mappedTier = 'Markets';
+        
+        setTier(mappedTier);
 
-          }
+        // Sync with OneSignal
+        if (window.OneSignalDeferred) {
+          window.OneSignalDeferred.push(async function(OneSignal: any) {
+            await OneSignal.login(userId);
+            await OneSignal.User.addTags({ tier: profile.tier });
+          });
         }
-      } catch (e) {
-        console.error(e);
-      } finally {
+      }
+    } catch (e) {
+      console.error('Error syncing tier:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // 1. Initial Session Check
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        fetchAndSyncTier(session.user.id);
+      } else {
         setLoading(false);
       }
+    });
+
+    // 2. Auth State Change Listener
+    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        fetchAndSyncTier(session.user.id);
+      } else {
+        setTier('Free');
+        setLoading(false);
+      }
+    });
+
+    // 3. Realtime Profile Listener
+    let profileSubscription: any = null;
+    
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        profileSubscription = supabase
+          .channel(`profile-updates-${user.id}`)
+          .on(
+            'postgres_changes',
+            { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${user.id}` },
+            (payload) => {
+              if (payload.new && payload.new.tier) {
+                const rawTier = payload.new.tier.toLowerCase().trim();
+                let mappedTier = 'Free';
+                if (['pro', 'premium', 'enterprise'].includes(rawTier)) mappedTier = 'Premium';
+                else if (rawTier === 'sports') mappedTier = 'Sports';
+                else if (rawTier === 'finance') mappedTier = 'Finance';
+                else if (rawTier === 'markets') mappedTier = 'Markets';
+                setTier(mappedTier);
+              }
+            }
+          )
+          .subscribe();
+      }
+    });
+
+    return () => {
+      authListener.unsubscribe();
+      if (profileSubscription) profileSubscription.unsubscribe();
     };
-    fetchTier();
   }, []);
 
   if (loading) return <div className="min-h-screen bg-[#0a0a0f] animate-pulse" />;
@@ -189,26 +248,6 @@ export default function App() {
       await OneSignal.init({
         appId: "2efbbcb6-11fe-413b-888e-f35439e417e8",
       });
-      
-      // Get current user from Supabase auth
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        // Fetch user profile to get tier
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('tier')
-          .eq('id', user.id)
-          .single();
-        
-        if (profile?.tier) {
-          // Login and tag user in OneSignal
-          await OneSignal.login(user.id);
-          await OneSignal.User.addTags({
-            tier: profile.tier
-          });
-        }
-      }
     });
   }, []);
 
