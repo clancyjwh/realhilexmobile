@@ -45,12 +45,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             else if (rawTier === 'markets') setTier('Markets');
             else setTier('Free');
 
-            if (window.OneSignalDeferred) {
-              window.OneSignalDeferred.push(async function(OneSignal: any) {
-                await OneSignal.login(user.id);
-                await OneSignal.User.addTags({ tier: data.tier });
-              });
-            }
+
           }
         }
       } catch (e) {
@@ -188,6 +183,35 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default function App() {
+  useEffect(() => {
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    window.OneSignalDeferred.push(async function(OneSignal: any) {
+      await OneSignal.init({
+        appId: "2efbbcb6-11fe-413b-888e-f35439e417e8",
+      });
+      
+      // Get current user from Supabase auth
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Fetch user profile to get tier
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('tier')
+          .eq('id', user.id)
+          .single();
+        
+        if (profile?.tier) {
+          // Login and tag user in OneSignal
+          await OneSignal.login(user.id);
+          await OneSignal.User.addTags({
+            tier: profile.tier
+          });
+        }
+      }
+    });
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
