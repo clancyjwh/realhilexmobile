@@ -207,8 +207,8 @@ export default function HomePage() {
   return (
     <div className="flex-grow p-4 pb-10 overflow-x-hidden">
       <div className="mb-8 pt-4">
-        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Global Intelligence</h2>
-        <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">Institutional Pulse</h1>
+        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Intelligence Feed</h2>
+        <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">Top Movers</h1>
       </div>
 
       {loading ? (

@@ -22,14 +22,14 @@ export default function SportSchedule() {
   const getScheduleUrl = () => {
     if (sport === 'nhl') return 'https://hilex-nhl-production.up.railway.app/nhl/schedule';
     if (sport === 'nba') return 'https://hilex-nhl-production.up.railway.app/nba/schedule';
-    if (sport === 'soccer') return 'https://hilex-nhl-production.up.railway.app/soccer/schedule'; // Or UCL
+    if (sport === 'soccer') return 'https://hilex-nhl-production.up.railway.app/ucl/schedule'; // Primary soccer is UCL
     return '';
   };
 
   const getAnalyzeUrl = () => {
     if (sport === 'nhl') return 'https://hilex-nhl-production.up.railway.app/nhl/analyze';
     if (sport === 'nba') return 'https://hilex-nhl-production.up.railway.app/nba/analyze';
-    if (sport === 'soccer') return 'https://hilex-nhl-production.up.railway.app/soccer/analyze'; // Assuming standard
+    if (sport === 'soccer') return 'https://hilex-nhl-production.up.railway.app/ucl/analyze';
     return '';
   };
 
@@ -45,7 +45,21 @@ export default function SportSchedule() {
 
       const res = await fetch(url);
       const data = await res.json();
-      const gameList = data.games || [];
+      let gameList = data.games || [];
+
+      // If soccer, also try fetching World Cup schedule and combine
+      if (sport === 'soccer') {
+        try {
+          const wcRes = await fetch('https://hilex-nhl-production.up.railway.app/soccer/wc/schedule');
+          const wcData = await wcRes.json();
+          if (wcData.games) {
+            gameList = [...gameList, ...wcData.games];
+          }
+        } catch (e) {
+          console.warn("WC schedule fetch failed", e);
+        }
+      }
+
       setGames(gameList);
     } catch (err) {
       console.error(err);
@@ -102,13 +116,24 @@ export default function SportSchedule() {
           {games.map((game, idx) => {
             const isAnalyzing = analyzingGameId === game.game_id;
 
-            const awayLogoUrl = sport === 'nhl' 
-              ? `https://assets.nhle.com/logos/nhl/svg/${game.away_team}_light.svg` 
-              : `https://a.espncdn.com/i/teamlogos/nba/500/${game.away_team.toLowerCase()}.png`;
-              
-            const homeLogoUrl = sport === 'nhl' 
-              ? `https://assets.nhle.com/logos/nhl/svg/${game.home_team}_light.svg` 
-              : `https://a.espncdn.com/i/teamlogos/nba/500/${game.home_team.toLowerCase()}.png`;
+            let awayLogoUrl = '';
+            let homeLogoUrl = '';
+
+            if (sport === 'nhl') {
+              awayLogoUrl = `https://assets.nhle.com/logos/nhl/svg/${game.away_team}_light.svg`;
+              homeLogoUrl = `https://assets.nhle.com/logos/nhl/svg/${game.home_team}_light.svg`;
+            } else if (sport === 'nba') {
+              awayLogoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${game.away_team.toLowerCase()}.png`;
+              homeLogoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${game.home_team.toLowerCase()}.png`;
+            } else if (sport === 'soccer') {
+              // Try to find TLA or slug for logo
+              const getSoccerLogo = (teamName: string) => {
+                const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+                return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
+              };
+              awayLogoUrl = getSoccerLogo(game.away_team);
+              homeLogoUrl = getSoccerLogo(game.home_team);
+            }
 
             return (
               <div key={idx} className="bg-[#12121a] border border-white/5 rounded-2xl p-5 flex justify-between items-center shadow-lg">

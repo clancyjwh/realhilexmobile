@@ -175,7 +175,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
         <div className={`absolute top-0 right-0 h-full w-[280px] bg-[#0a0a0f] border-l border-white/5 transition-transform duration-500 ease-out transform ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className="p-6 h-full flex flex-col">
             <div className="flex justify-between items-center mb-10">
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Institutional Hub</span>
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em]">Platform Hub</span>
               <button onClick={() => setIsDrawerOpen(false)} className="p-2 hover:bg-white/5 rounded-full transition-colors">
                 <X size={22} className="text-slate-500" />
               </button>

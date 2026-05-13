@@ -138,7 +138,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
 
         <div className="mb-8 px-2">
           <h2 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.3em] mb-6">
-            {isFinancial || isUFC ? 'Institutional Indicators' : 'Performance Breakdown'}
+            {isFinancial || isUFC ? 'Signal Indicators' : 'Performance Breakdown'}
           </h2>
 
           {isFinancial && financialData ? (

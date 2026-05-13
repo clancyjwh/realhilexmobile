@@ -64,7 +64,7 @@ export default function AuthPage() {
               Welcome to HiLEX
             </h1>
             <p className="text-slate-500 text-center mb-10 font-bold uppercase tracking-[0.2em] text-[10px]">
-              Institutional Intelligence
+              Hylex Intelligence
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -135,7 +135,7 @@ export default function AuthPage() {
                 className="inline-flex items-center gap-2 text-slate-600 hover:text-[#00D8FF] text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
               >
                 <Eye className="w-4 h-4" />
-                Institutional Portal
+                Hylex Portal
               </a>
 
               <p className="text-slate-800 text-[8px] font-black uppercase tracking-[0.3em] text-center italic">

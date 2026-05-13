@@ -14,7 +14,7 @@ export default function SportsPage() {
   return (
     <div className="flex-grow p-5 pb-10 bg-[#0a0a0f]">
       <div className="mb-10 pt-4 px-2">
-        <h2 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-1">Institutional Hub</h2>
+        <h2 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-1">Platform Hub</h2>
         <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Sports</h1>
       </div>
 

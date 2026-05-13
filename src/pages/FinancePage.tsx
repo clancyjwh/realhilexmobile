@@ -53,7 +53,7 @@ export default function FinancePage() {
   return (
     <div className="flex-grow p-4 pb-10 overflow-x-hidden flex flex-col min-h-[calc(100vh-80px)]">
       <div className="mb-8 pt-4 shrink-0">
-        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Institutional Hub</h2>
+        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Finance Hub</h2>
         <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">My Watchlist</h1>
       </div>
 
