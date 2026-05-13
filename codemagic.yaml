@@ -13,7 +13,9 @@ workflows:
         script: npm install
       - name: Build web assets
         script: npx vite build
-      - name: Update Capacitor
+      - name: Add iOS platform
+        script: npx cap add ios
+      - name: Sync Capacitor
         script: npx cap sync ios
       - name: Set up code signing
         script: |
