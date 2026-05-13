@@ -18,7 +18,10 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files com.hilex.mobile --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files com.hilex.mobile \
+            --type IOS_APP_STORE \
+            --create \
+            --strict-match-identifier
           keychain add-certificates
           xcode-project use-profiles
       - name: Build IPA
