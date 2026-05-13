@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 
-
 interface Game {
   game_id: string | number;
   home_team: string;
@@ -22,7 +21,7 @@ export default function SportSchedule() {
   const getScheduleUrl = () => {
     if (sport === 'nhl') return 'https://hilex-nhl-production.up.railway.app/nhl/schedule';
     if (sport === 'nba') return 'https://hilex-nhl-production.up.railway.app/nba/schedule';
-    if (sport === 'soccer') return 'https://hilex-nhl-production.up.railway.app/ucl/schedule'; // Primary soccer is UCL
+    if (sport === 'soccer') return 'https://hilex-nhl-production.up.railway.app/ucl/schedule';
     return '';
   };
 
@@ -48,7 +47,6 @@ export default function SportSchedule() {
       let gameList: any[] = [];
 
       if (sport === 'soccer') {
-        // Handle UCL Matches
         if (data.matches) {
           data.matches.forEach((m: any) => {
             gameList.push({
@@ -66,12 +64,10 @@ export default function SportSchedule() {
           });
         }
 
-        // Fetch and Handle World Cup
         try {
           const wcRes = await fetch('https://hilex-nhl-production.up.railway.app/soccer/wc/schedule');
           if (wcRes.ok) {
             const wcData = await wcRes.json();
-            // Groups
             Object.entries(wcData.groups || {}).forEach(([groupName, groupMatches]: [string, any]) => {
               groupMatches.forEach((m: any) => {
                 gameList.push({
@@ -87,7 +83,6 @@ export default function SportSchedule() {
                 });
               });
             });
-            // Knockout
             (wcData.knockout || []).forEach((m: any) => {
               gameList.push({
                 game_id: m.id,
@@ -254,9 +249,6 @@ export default function SportSchedule() {
           })}
         </div>
       )}
-    </div>
-  );
-}
     </div>
   );
 }
