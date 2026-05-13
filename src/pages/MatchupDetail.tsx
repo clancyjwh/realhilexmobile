@@ -18,6 +18,10 @@ const NHL_KEYS: Record<string, string> = {
 
 const getLabel = (key: string, isNHL: boolean) => {
   if (isNHL && NHL_KEYS[key]) return NHL_KEYS[key];
+  if (key === 'win_rate') return 'Win Rate';
+  if (key === 'home_away') return 'Home/Away';
+  if (key === 'recent_form') return 'Recent Form';
+  if (key === 'goal_difference') return 'Goal Diff';
   return key.replace(/_/g, ' ');
 };
 
@@ -27,13 +31,13 @@ const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
     <div className="space-y-1 mb-3">
       <div className="flex justify-between items-center">
         <span className="text-[8px] font-bold text-white/70 uppercase tracking-widest">{label}</span>
-        <span className={`text-[10px] font-black italic ${isPositive ? 'text-[#00D8FF]' : 'text-red-500'}`}>
+        <span className={`text-[10px] font-black italic ${isPositive ? 'text-[#22c55e]' : 'text-red-500'}`}>
           {isPositive ? '+' : ''}{formatScore(value, 1)}
         </span>
       </div>
       <div className="h-1 w-full bg-black/20 rounded-full overflow-hidden">
         <div 
-          className={`h-full rounded-full transition-all duration-1000 ${isPositive ? 'bg-[#00D8FF]' : 'bg-red-500'}`}
+          className={`h-full rounded-full transition-all duration-1000 ${isPositive ? 'bg-[#22c55e]' : 'bg-red-500'}`}
           style={{ width: `${Math.min(100, Math.max(0, (value + 10) * 5))}%` }}
         />
       </div>
@@ -47,14 +51,20 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
   const markerPos = ((team.score + 10) / 20) * 100;
 
   // Derive Logo URL
-  let logoUrl = '/logo.png';
-  if (isNHL && team.code) {
-    logoUrl = `https://assets.nhle.com/logos/nhl/svg/${team.code.toUpperCase()}_light.svg`;
-  } else if (!isNHL && team.code) {
-    // NBA
-    logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${team.code.toLowerCase()}.png`;
+  let logoUrl = '';
+  if (isNHL && (team.code || team.abbreviation)) {
+    const code = (team.code || team.abbreviation || '').toUpperCase();
+    logoUrl = `https://assets.nhle.com/logos/nhl/svg/${code}_light.svg`;
+  } else if (sport === 'nba' && (team.code || team.abbreviation)) {
+    const code = (team.code || team.abbreviation || '').toLowerCase();
+    logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${code}.png`;
+  } else if (sport === 'soccer') {
+    const slug = (team.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
   } else if (team.logo_url) {
-    logoUrl = `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
+    logoUrl = team.logo_url.startsWith('http') 
+      ? team.logo_url 
+      : `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
   }
 
   return (
@@ -90,11 +100,11 @@ const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; is
       {/* HeatScore Slider */}
       <div 
         className="w-full h-2 rounded-full mb-2" 
-        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00D8FF)' }}
+        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #22c55e)' }}
       />
       <div className="w-full h-4 mb-4" /> {/* Spacer */}
 
-      <div className={`text-4xl font-black italic tracking-tighter mb-8 ${isPositive ? 'text-[#00D8FF]' : 'text-red-500'} drop-shadow-lg`}>
+      <div className={`text-4xl font-black italic tracking-tighter mb-8 ${isPositive ? 'text-[#22c55e]' : 'text-red-500'} drop-shadow-lg`}>
         {isPositive ? '+' : ''}{formatScore(team.score, 1)}
       </div>
 
