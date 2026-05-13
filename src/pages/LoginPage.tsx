@@ -35,8 +35,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#020617] flex flex-col p-6 font-sans text-white relative overflow-hidden">
       {/* Background Glow */}
-      <div className="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] bg-[#00D8FF]/10 rounded-full blur-[80px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#00D8FF]/5 rounded-full blur-[60px] pointer-events-none" />
+      <div className="absolute top-[-10%] right-[-10%] w-[300px] h-[300px] bg-[#22c55e]/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[250px] h-[250px] bg-[#22c55e]/5 rounded-full blur-[60px] pointer-events-none" />
 
       {/* Header / Logo */}
       <div className="flex flex-col items-center mt-12 mb-10">
@@ -57,7 +57,7 @@ export default function LoginPage() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-lg focus:outline-none focus:border-[#00D8FF] focus:ring-1 focus:ring-[#00D8FF] transition-all"
+            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-lg focus:outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-all"
             placeholder="name@email.com"
             required
           />
@@ -72,14 +72,14 @@ export default function LoginPage() {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-lg focus:outline-none focus:border-[#00D8FF] focus:ring-1 focus:ring-[#00D8FF] transition-all"
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-lg focus:outline-none focus:border-[#22c55e] focus:ring-1 focus:ring-[#22c55e] transition-all"
               placeholder="••••••••"
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 active:text-[#00D8FF]"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 active:text-[#22c55e]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -95,7 +95,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#00D8FF] text-black font-bold py-4 rounded-xl text-lg shadow-[0_0_20px_rgba(0,216,255,0.3)] active:scale-[0.98] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
+          className="w-full bg-[#22c55e] text-black font-bold py-4 rounded-xl text-lg shadow-[0_0_20px_rgba(34,197,94,0.3)] active:scale-[0.98] transition-transform disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {loading ? (
             <div className="w-6 h-6 border-2 border-black/30 border-t-black rounded-full animate-spin" />
@@ -111,7 +111,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => navigate('/forgot-password')}
-            className="text-[#00D8FF] text-sm font-medium"
+            className="text-[#22c55e] text-sm font-medium"
           >
             Forgot your password?
           </button>
@@ -125,7 +125,7 @@ export default function LoginPage() {
           onClick={() => navigate('/signup')}
           className="w-full py-4 border border-white/10 rounded-xl font-medium text-slate-300 active:bg-white/5"
         >
-          Don't have an account? <span className="text-[#00D8FF]">Sign Up</span>
+          Don't have an account? <span className="text-[#22c55e]">Sign Up</span>
         </button>
       </div>
     </div>

@@ -42,9 +42,9 @@ export default function AuthPage() {
         backgroundSize: '40px 40px',
       }}
     >
-      {/* Cyan glow blob */}
+      {/* Green glow blob */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(ellipse, rgba(0,212,255,0.1) 0%, transparent 65%)', filter: 'blur(60px)' }}
+        style={{ background: 'radial-gradient(ellipse, rgba(34,197,94,0.1) 0%, transparent 65%)', filter: 'blur(60px)' }}
       />
 
       <div className="flex items-center justify-center p-6 min-h-screen relative z-10">
@@ -55,7 +55,7 @@ export default function AuthPage() {
           >
             {/* Logo */}
             <div className="flex items-center justify-center mb-10">
-              <div className="p-1 rounded-2xl overflow-hidden" style={{ background: 'rgba(0,216,255,0.05)', border: '1px solid rgba(0,216,255,0.1)', boxShadow: '0 0 30px rgba(0,216,255,0.05)' }}>
+              <div className="p-1 rounded-2xl overflow-hidden" style={{ background: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.1)', boxShadow: '0 0 30px rgba(34,197,94,0.05)' }}>
                 <img src="/logo.png" alt="HiLEX Logo" className="w-20 h-20 object-contain rounded-xl" />
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function AuthPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-5 py-4 rounded-2xl text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00D8FF]/30 focus:border-[#00D8FF]/30 transition-all text-sm"
+                  className="w-full px-5 py-4 rounded-2xl text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-[#22c55e]/30 focus:border-[#22c55e]/30 transition-all text-sm"
                   style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
                   placeholder="Enter your email"
                   required
@@ -95,7 +95,7 @@ export default function AuthPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-4 rounded-2xl text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-[#00D8FF]/30 focus:border-[#00D8FF]/30 transition-all text-sm"
+                  className="w-full px-5 py-4 rounded-2xl text-white placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-[#22c55e]/30 focus:border-[#22c55e]/30 transition-all text-sm"
                   style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
                   placeholder="Enter your password"
                   required
@@ -111,9 +111,9 @@ export default function AuthPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full font-black uppercase tracking-widest py-4 px-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-[#0a0a0f] text-sm mt-4 shadow-[0_0_30px_rgba(0,216,255,0.2)]"
+                className="w-full font-black uppercase tracking-widest py-4 px-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-[#0a0a0f] text-sm mt-4 shadow-[0_0_30px_rgba(34,197,94,0.2)]"
                 style={{
-                  background: loading ? 'rgba(0,216,255,0.5)' : '#00D8FF',
+                  background: loading ? 'rgba(34,197,94,0.5)' : '#22c55e',
                 }}
               >
                 {loading ? (
@@ -132,7 +132,7 @@ export default function AuthPage() {
                 href="https://landing.hilex.app"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-slate-600 hover:text-[#00D8FF] text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
+                className="inline-flex items-center gap-2 text-slate-600 hover:text-[#22c55e] text-[10px] font-black uppercase tracking-widest transition-colors duration-300"
               >
                 <Eye className="w-4 h-4" />
                 Hylex Portal
