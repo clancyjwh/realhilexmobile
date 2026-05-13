@@ -28,7 +28,7 @@ export default function SportsPage() {
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
             
             <div className="relative z-10 flex justify-end w-full">
-              <Trophy size={20} className="text-slate-600 group-active:text-[#00E5FF] transition-colors" />
+              <Trophy size={20} className="text-slate-600 group-active:text-[#00D8FF] transition-colors" />
             </div>
             <h3 className="relative z-10 text-3xl font-black italic uppercase text-white leading-none tracking-tighter">
               {sport.name}

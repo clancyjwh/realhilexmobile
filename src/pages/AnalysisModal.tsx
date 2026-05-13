@@ -30,11 +30,11 @@ const BreakdownRow = ({ label, value }: { label: string; value: any }) => {
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{label.replace(/_/g, ' ')}</span>
           <Info size={10} className="text-slate-600" />
         </div>
-        <span className="text-xs font-black italic text-[#00E5FF]">{formatScore(numValue, 1)}</span>
+        <span className="text-xs font-black italic text-[#00D8FF]">{formatScore(numValue, 1)}</span>
       </div>
       <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
         <div 
-          className="h-full bg-[#00E5FF] rounded-full transition-all duration-1000"
+          className="h-full bg-[#00D8FF] rounded-full transition-all duration-1000"
           style={{ width: `${Math.min(100, Math.max(0, (numValue + 10) * 5))}%` }}
         />
       </div>
@@ -50,7 +50,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
   const scoreToUse = typeof entity.unifiedScore !== 'undefined' ? entity.unifiedScore : (entity.score || 0);
   const markerPos = ((scoreToUse + 10) / 20) * 100;
   const signalColors = getSignalColors(scoreToUse);
-  const finalColor = isFinancial ? signalColors.hex : (entity.score_color || '#00E5FF');
+  const finalColor = isFinancial ? signalColors.hex : (entity.score_color || '#00D8FF');
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col animate-in fade-in zoom-in-95 duration-200">
@@ -100,7 +100,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
 
         {/* HeatScore Slider Section */}
         <div className="bg-[#12121a] border border-white/5 rounded-3xl p-6 mb-8 shadow-2xl">
-          <div className="relative h-2 w-full rounded-full mb-4 overflow-visible bg-gradient-to-r from-[#B71C1C] via-[#9E9E9E] to-[#00E5FF]">
+          <div className="relative h-2 w-full rounded-full mb-4 overflow-visible bg-gradient-to-r from-[#B71C1C] via-[#9E9E9E] to-[#00D8FF]">
             {/* White Marker */}
             <div 
               className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white border-2 border-black rounded-sm shadow-[0_0_10px_rgba(255,255,255,0.5)] transition-all duration-1000"
@@ -144,7 +144,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Top Historical Parameter</h3>
-                  <span className="text-[8px] font-black text-[#00E5FF] uppercase tracking-widest opacity-60">
+                  <span className="text-[8px] font-black text-[#00D8FF] uppercase tracking-widest opacity-60">
                     Monthly Snapshots
                   </span>
                 </div>
@@ -175,7 +175,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                       }
                       const isCorrect = val && (val.Correct === true || val.Correct === 'true' || val.correct === true || val.Correct === 'True');
                       return (
-                        <div key={key} className={`rounded-lg p-2 text-center border ${isCorrect ? 'bg-[#00E5FF]/10 border-[#00E5FF]/20 text-[#00E5FF]' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
+                        <div key={key} className={`rounded-lg p-2 text-center border ${isCorrect ? 'bg-[#00D8FF]/10 border-[#00D8FF]/20 text-[#00D8FF]' : 'bg-red-500/10 border-red-500/20 text-red-500'}`}>
                           <div className="text-[8px] font-black uppercase mb-1">{key}</div>
                           <div className="text-[7px] font-bold uppercase tracking-tighter">{isCorrect ? 'Accurate' : 'Inaccurate'}</div>
                         </div>
@@ -216,9 +216,9 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                     isUp = relativeValueNum >= 0;
                     return (
                       <div className="mt-6 mb-2">
-                        <div className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg ${isUp ? 'bg-[#00E5FF]/20 border-[#00E5FF]/40' : 'bg-red-500/20 border-red-500/40'}`}>
+                        <div className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg ${isUp ? 'bg-[#00D8FF]/20 border-[#00D8FF]/40' : 'bg-red-500/20 border-red-500/40'}`}>
                           <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Relative Value to Index</span>
-                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-[#00E5FF]' : 'text-red-500'}`}>
+                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-[#00D8FF]' : 'text-red-500'}`}>
                             {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
                           </span>
                         </div>
@@ -240,7 +240,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
 
         {/* Intelligence Quote */}
         {entity.why && (
-          <div className="bg-[#12121a] border-l-4 border-[#00E5FF] p-6 rounded-r-2xl shadow-xl">
+          <div className="bg-[#12121a] border-l-4 border-[#00D8FF] p-6 rounded-r-2xl shadow-xl">
             <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-3 block">Scouting Intelligence</span>
             <p className="text-sm font-medium text-slate-300 italic leading-relaxed">
               "{entity.why}"

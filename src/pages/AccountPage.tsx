@@ -69,12 +69,12 @@ export default function AccountPage() {
     <div className="flex-grow bg-[#0a0a0f] p-6 pb-12 flex flex-col font-sans">
       <div className="mb-10 pt-4 flex flex-col items-center">
         <div className="w-20 h-20 bg-white/5 rounded-3xl border border-white/10 flex items-center justify-center mb-4 shadow-2xl">
-          <UserIcon size={40} className="text-[#00E5FF]" />
+          <UserIcon size={40} className="text-[#00D8FF]" />
         </div>
         <h1 className="text-2xl font-black italic uppercase text-white tracking-tight">{profile?.full_name || 'Hilex User'}</h1>
         <p className="text-slate-500 text-sm font-medium tracking-tight">{profile?.email}</p>
         
-        <div className="mt-4 bg-[#00E5FF] text-[#0a0a0f] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,200,83,0.3)]">
+        <div className="mt-4 bg-[#00D8FF] text-[#0a0a0f] px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(0,216,255,0.4)]">
           {profile?.tier || 'Free Tier'}
         </div>
       </div>
@@ -89,9 +89,9 @@ export default function AccountPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               onBlur={handleUpdateName}
-              className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 px-6 text-sm font-bold text-white focus:outline-none focus:border-[#00E5FF] transition-all"
+              className="w-full bg-[#12121a] border border-white/5 rounded-2xl py-4 px-6 text-sm font-bold text-white focus:outline-none focus:border-[#00D8FF] transition-all"
             />
-            {isSaving && <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-[#00E5FF] uppercase">Saving...</div>}
+            {isSaving && <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-[#00D8FF] uppercase">Saving...</div>}
           </div>
         </div>
 

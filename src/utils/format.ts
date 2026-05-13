@@ -22,7 +22,7 @@ export const getHeatScoreBgColor = (score: number | any) => {
   const s = Number(score);
   if (isNaN(s)) return '#1c1c24'; // Fallback
   
-  if (s >= 7) return '#00E5FF';
+  if (s >= 7) return '#00D8FF';
   if (s >= 4) return '#64DD17';
   if (s >= 1) return '#AEEA00';
   if (s > -1) return '#9E9E9E';

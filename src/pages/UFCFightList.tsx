@@ -80,7 +80,7 @@ export default function UFCFightList() {
                 <button 
                   onClick={() => handleAnalyze(fight)}
                   disabled={isAnalyzing}
-                  className="bg-[#00E5FF] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,200,83,0.15)] shrink-0"
+                  className="bg-[#00D8FF] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,216,255,0.4)] shrink-0"
                 >
                   {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
                 </button>
