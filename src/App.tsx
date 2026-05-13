@@ -32,7 +32,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (profile?.tier) {
         const rawTier = profile.tier.toLowerCase().trim();
         let mappedTier = 'Free';
-        if (['pro', 'premium', 'enterprise'].includes(rawTier)) mappedTier = 'Premium';
+        if (['pro', 'premium', 'enterprise', 'prediction'].includes(rawTier)) mappedTier = 'Premium';
         else if (rawTier === 'sports') mappedTier = 'Sports';
         else if (rawTier === 'finance') mappedTier = 'Finance';
         else if (rawTier === 'markets') mappedTier = 'Markets';

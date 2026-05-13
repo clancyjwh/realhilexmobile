@@ -11,7 +11,6 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [displayName, setDisplayName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -29,6 +28,7 @@ export default function AccountPage() {
         .eq('id', user.id)
         .single();
 
+      if (data) {
         setProfile({ ...data, email: user.email });
         setDisplayName(data.display_name || '');
       }
