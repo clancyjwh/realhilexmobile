@@ -23,22 +23,21 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const fetchAndSyncTier = async (userId: string) => {
     try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('tier')
-        .eq('id', userId)
-        .single();
+      // Fetch both profile tier and user subscription status for robustness
+      const [{ data: profile }, { data: userRecord }] = await Promise.all([
+        supabase.from('profiles').select('tier').eq('id', userId).single(),
+        supabase.from('users').select('subscription_status').eq('id', userId).maybeSingle()
+      ]);
 
-      if (profile?.tier) {
-        const rawTier = profile.tier.toLowerCase().trim();
-        let mappedTier = 'Free';
-        if (['pro', 'premium', 'enterprise', 'prediction'].includes(rawTier)) mappedTier = 'Premium';
-        else if (rawTier === 'sports') mappedTier = 'Sports';
-        else if (rawTier === 'finance') mappedTier = 'Finance';
-        else if (rawTier === 'markets') mappedTier = 'Markets';
-        
-        setTier(mappedTier);
-      }
+      const rawTier = (profile?.tier || userRecord?.subscription_status || 'free').toLowerCase().trim();
+      let mappedTier = 'Free';
+      
+      if (['pro', 'premium', 'enterprise', 'prediction', 'active'].includes(rawTier)) mappedTier = 'Premium';
+      else if (rawTier === 'sports') mappedTier = 'Sports';
+      else if (rawTier === 'finance') mappedTier = 'Finance';
+      else if (rawTier === 'markets') mappedTier = 'Markets';
+      
+      setTier(mappedTier);
     } catch (e) {
       console.error('Error syncing tier:', e);
     } finally {
