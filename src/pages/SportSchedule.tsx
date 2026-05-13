@@ -203,38 +203,62 @@ export default function SportSchedule() {
               homeLogoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${game.home_team.toLowerCase()}.png`;
             } else if (sport === 'soccer') {
               // Try to find TLA or slug for logo
-              const getSoccerLogo = (teamName: string) => {
-                const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-                return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
-              };
-              awayLogoUrl = getSoccerLogo(game.away_team);
-              homeLogoUrl = getSoccerLogo(game.home_team);
-            }
+            const getSoccerLogo = (teamName: string, type: string) => {
+              const slug = teamName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+              if (type === 'WC') {
+                const WC_MAP: Record<string, string> = {
+                  "Mexico": "mx", "South Africa": "za", "South Korea": "kr", "Czech Republic": "cz",
+                  "Canada": "ca", "Bosnia and Herzegovina": "ba", "Qatar": "qa", "Switzerland": "ch",
+                  "Brazil": "br", "Morocco": "ma", "Haiti": "ht", "Scotland": "gb-sct",
+                  "United States": "us", "USA": "us", "Paraguay": "py", "Australia": "au",
+                  "Turkey": "tr", "Germany": "de", "Curacao": "cw", "Curaçao": "cw",
+                  "Ivory Coast": "ci", "Côte d'Ivoire": "ci", "Ecuador": "ec", "Netherlands": "nl",
+                  "Japan": "jp", "Sweden": "se", "Tunisia": "tn", "Belgium": "be",
+                  "Egypt": "eg", "Iran": "ir", "New Zealand": "nz", "Spain": "es",
+                  "Cape Verde": "cv", "Saudi Arabia": "sa", "Uruguay": "uy", "France": "fr",
+                  "Senegal": "sn", "Iraq": "iq", "Norway": "no", "Argentina": "ar",
+                  "Algeria": "dz", "Austria": "at", "Jordan": "jo", "Portugal": "pt",
+                  "DR Congo": "cd", "Democratic Republic of the Congo": "cd", "Uzbekistan": "uz",
+                  "Colombia": "co", "England": "gb-eng", "Croatia": "hr", "Ghana": "gh",
+                  "Panama": "pa", "Korea Republic": "kr", "Czechia": "cz"
+                };
+                const code = WC_MAP[teamName] || WC_MAP[teamName.replace(' Republic', '')] || slug;
+                return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
+              }
+              return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
+            };
+            awayLogoUrl = getSoccerLogo(game.away_team, (game as any).type);
+            homeLogoUrl = getSoccerLogo(game.home_team, (game as any).type);
+          }
 
-            return (
-              <div key={idx} className="bg-[#12121a] border border-white/5 rounded-2xl p-5 flex justify-between items-center shadow-lg">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 flex items-center justify-center">
-                     <img src={awayLogoUrl} alt={game.away_team} className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                  </div>
-                  <span className="font-black text-lg italic tracking-tight">{game.away_team} @ {game.home_team}</span>
-                  <div className="w-8 h-8 flex items-center justify-center">
-                     <img src={homeLogoUrl} alt={game.home_team} className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
-                  </div>
+          return (
+            <div key={idx} className="bg-[#12121a] border border-white/5 rounded-2xl p-5 flex justify-between items-center shadow-lg">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 flex items-center justify-center">
+                   <img src={awayLogoUrl} alt={game.away_team} className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
                 </div>
-                
-                <button 
-                  onClick={() => handleAnalyze(game)}
-                  disabled={isAnalyzing}
-                  className="bg-[#00D8FF] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(0,216,255,0.4)]"
-                >
-                  {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
-                </button>
+                <span className="font-black text-lg italic tracking-tight">{game.away_team} @ {game.home_team}</span>
+                <div className="w-8 h-8 flex items-center justify-center">
+                   <img src={homeLogoUrl} alt={game.home_team} className="w-full h-full object-contain" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+              
+              <button 
+                onClick={() => handleAnalyze(game)}
+                disabled={isAnalyzing}
+                className="bg-[#22c55e] text-[#0a0a0f] px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 disabled:opacity-50 min-w-[100px] flex justify-center items-center shadow-[0_0_15px_rgba(34,197,94,0.4)]"
+              >
+                {isAnalyzing ? <Loader2 size={14} className="animate-spin" /> : 'ANALYZE'}
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div className="flex justify-center items-center h-40">
+        <Loader2 className="animate-spin text-[#22c55e]" size={32} />
+      </div>
+    )}
     </div>
   );
 }

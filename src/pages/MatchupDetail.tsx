@@ -26,20 +26,26 @@ const getLabel = (key: string, isNHL: boolean) => {
 };
 
 const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
-  const isPositive = value > 0;
+  const isPositive = value >= 0;
+  const barWidth = Math.abs(value) * 5; // 0 to 50%
+  
   return (
     <div className="space-y-1 mb-3">
       <div className="flex justify-between items-center">
         <span className="text-[8px] font-bold text-white/70 uppercase tracking-widest">{label}</span>
-        <span className={`text-[10px] font-black italic ${isPositive ? 'text-[#22c55e]' : 'text-red-500'}`}>
-          {isPositive ? '+' : ''}{formatScore(value, 1)}
+        <span className={`text-[10px] font-black italic ${value > 0 ? 'text-[#22c55e]' : value < 0 ? 'text-red-500' : 'text-slate-500'}`}>
+          {value > 0 ? '+' : ''}{formatScore(value, 1)}
         </span>
       </div>
-      <div className="h-1 w-full bg-black/20 rounded-full overflow-hidden">
+      <div className="h-1 w-full bg-white/5 rounded-full relative overflow-hidden">
         <div 
-          className={`h-full rounded-full transition-all duration-1000 ${isPositive ? 'bg-[#22c55e]' : 'bg-red-500'}`}
-          style={{ width: `${Math.min(100, Math.max(0, (value + 10) * 5))}%` }}
+          className={`absolute h-full transition-all duration-1000 ${value >= 0 ? 'bg-[#22c55e]' : 'bg-red-500'}`}
+          style={{ 
+            left: value >= 0 ? '50%' : `${50 - barWidth}%`, 
+            width: `${barWidth}%` 
+          }}
         />
+        <div className="absolute left-1/2 top-0 bottom-0 w-[1px] bg-white/10" />
       </div>
     </div>
   );
@@ -59,11 +65,30 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
     } else if (sport === 'nba' && teamCode) {
       logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${teamCode.toLowerCase()}.png`;
     } else if (sport === 'soccer') {
-      if (teamTla) {
+      const WC_MAP: Record<string, string> = {
+        "Mexico": "mx", "South Africa": "za", "South Korea": "kr", "Czech Republic": "cz",
+        "Canada": "ca", "Bosnia and Herzegovina": "ba", "Qatar": "qa", "Switzerland": "ch",
+        "Brazil": "br", "Morocco": "ma", "Haiti": "ht", "Scotland": "gb-sct",
+        "United States": "us", "USA": "us", "Paraguay": "py", "Australia": "au",
+        "Turkey": "tr", "Germany": "de", "Curacao": "cw", "Curaçao": "cw",
+        "Ivory Coast": "ci", "Côte d'Ivoire": "ci", "Ecuador": "ec", "Netherlands": "nl",
+        "Japan": "jp", "Sweden": "se", "Tunisia": "tn", "Belgium": "be",
+        "Egypt": "eg", "Iran": "ir", "New Zealand": "nz", "Spain": "es",
+        "Cape Verde": "cv", "Saudi Arabia": "sa", "Uruguay": "uy", "France": "fr",
+        "Senegal": "sn", "Iraq": "iq", "Norway": "no", "Argentina": "ar",
+        "Algeria": "dz", "Austria": "at", "Jordan": "jo", "Portugal": "pt",
+        "DR Congo": "cd", "Democratic Republic of the Congo": "cd", "Uzbekistan": "uz",
+        "Colombia": "co", "England": "gb-eng", "Croatia": "hr", "Ghana": "gh",
+        "Panama": "pa", "Korea Republic": "kr", "Czechia": "cz"
+      };
+      
+      const teamName = team.name || "";
+      const code = WC_MAP[teamName] || WC_MAP[teamName.replace(' Republic', '')];
+      
+      if (code) {
+        logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
+      } else if (teamTla) {
         logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${teamTla}.png`;
-      } else {
-        const slug = (team.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-        logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
       }
     } else if (team.logo_url) {
       logoUrl = team.logo_url.startsWith('http') 
@@ -94,7 +119,6 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
         <span className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{team.code || team.abbreviation || teamTla?.toUpperCase()}</span>
       </div>
 
-      {/* HeatScore Slider */}
       <div 
         className="w-full h-2 rounded-full mb-2" 
         style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #22c55e)' }}
@@ -107,9 +131,17 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
 
       <div className="w-full">
         <h4 className="text-[9px] font-black text-white/50 uppercase tracking-widest mb-4 text-center border-b border-white/10 pb-2">Indicators</h4>
-        {Object.entries(team.breakdown || {}).map(([key, val]) => (
-          <BreakdownRow key={key} label={getLabel(key, isNHL)} value={Number(val)} />
-        ))}
+        <div className="space-y-1">
+          {(() => {
+            const breakdown = { ...team.breakdown };
+            if (team.squad_strength !== undefined && breakdown.squad_strength === undefined) {
+              breakdown.squad_strength = team.squad_strength;
+            }
+            return Object.entries(breakdown).map(([key, val]) => (
+              <BreakdownRow key={key} label={getLabel(key, isNHL)} value={Number(val)} />
+            ));
+          })()}
+        </div>
       </div>
     </div>
   );
