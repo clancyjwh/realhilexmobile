@@ -45,19 +45,68 @@ export default function SportSchedule() {
 
       const res = await fetch(url);
       const data = await res.json();
-      let gameList = data.games || [];
+      let gameList: any[] = [];
 
-      // If soccer, also try fetching World Cup schedule and combine
       if (sport === 'soccer') {
+        // Handle UCL Matches
+        if (data.matches) {
+          data.matches.forEach((m: any) => {
+            gameList.push({
+              game_id: m.match_id,
+              home_team: m.home_team.name,
+              away_team: m.away_team.name,
+              home_team_id: m.home_team.id,
+              away_team_id: m.away_team.id,
+              home_crest: m.home_team.crest,
+              away_crest: m.away_team.crest,
+              date: m.utc_date,
+              type: 'UCL',
+              stage: (m.stage || '').replace(/_/g, ' ')
+            });
+          });
+        }
+
+        // Fetch and Handle World Cup
         try {
           const wcRes = await fetch('https://hilex-nhl-production.up.railway.app/soccer/wc/schedule');
-          const wcData = await wcRes.json();
-          if (wcData.games) {
-            gameList = [...gameList, ...wcData.games];
+          if (wcRes.ok) {
+            const wcData = await wcRes.json();
+            // Groups
+            Object.entries(wcData.groups || {}).forEach(([groupName, groupMatches]: [string, any]) => {
+              groupMatches.forEach((m: any) => {
+                gameList.push({
+                  game_id: m.id,
+                  home_team: m.home_team || 'TBD',
+                  away_team: m.away_team || 'TBD',
+                  home_team_code: m.home_team_code,
+                  away_team_code: m.away_team_code,
+                  date: m.kickoff_utc,
+                  type: 'WC',
+                  stage: `Group ${groupName}`,
+                  status: m.status
+                });
+              });
+            });
+            // Knockout
+            (wcData.knockout || []).forEach((m: any) => {
+              gameList.push({
+                game_id: m.id,
+                home_team: m.home_team || 'TBD',
+                away_team: m.away_team || 'TBD',
+                home_team_code: m.home_team_code,
+                away_team_code: m.away_team_code,
+                date: m.kickoff_utc,
+                type: 'WC',
+                stage: m.round,
+                status: m.status
+              });
+            });
           }
         } catch (e) {
           console.warn("WC schedule fetch failed", e);
         }
+      } else {
+        gameList = data.games || [];
       }
 
       setGames(gameList);
@@ -71,21 +120,48 @@ export default function SportSchedule() {
   const handleAnalyze = async (game: Game) => {
     setAnalyzingGameId(game.game_id);
     try {
-      const body: any = { home_team: game.home_team, away_team: game.away_team };
-      if (sport === 'nhl' && game.home_series_wins !== undefined) {
-        body.home_series_wins = game.home_series_wins;
-        body.away_series_wins = game.away_series_wins;
+      let body: any = {};
+      let endpoint = getAnalyzeUrl();
+
+      if (sport === 'soccer') {
+        const isWC = (game as any).type === 'WC';
+        if (isWC) {
+          endpoint = 'https://hilex-nhl-production.up.railway.app/soccer/wc/analyze';
+          body = {
+            home_team: game.home_team,
+            away_team: game.away_team,
+            home_team_code: (game as any).home_team_code,
+            away_team_code: (game as any).away_team_code,
+            stage: (game as any).stage,
+            match_id: game.game_id.toString()
+          };
+        } else {
+          endpoint = 'https://hilex-nhl-production.up.railway.app/ucl/analyze';
+          body = {
+            home_team_id: (game as any).home_team_id,
+            away_team_id: (game as any).away_team_id,
+            home_team_name: game.home_team,
+            away_team_name: game.away_team,
+            stage: (game as any).stage,
+            match_date: game.date
+          };
+        }
+      } else {
+        body = { home_team: game.home_team, away_team: game.away_team };
+        if (sport === 'nhl' && game.home_series_wins !== undefined) {
+          body.home_series_wins = game.home_series_wins;
+          body.away_series_wins = game.away_series_wins;
+        }
       }
 
-      const res = await fetch(getAnalyzeUrl(), {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
       });
       const analysisData = await res.json();
       
-      // Navigate to detail screen, passing data in state
-      navigate(`/sports/${sport}/matchup`, { state: { analysis: analysisData } });
+      navigate(`/sports/${sport}/matchup`, { state: { analysis: analysisData, game: game } });
     } catch (err) {
       console.error(err);
     } finally {
