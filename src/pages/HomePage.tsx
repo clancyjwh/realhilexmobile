@@ -96,7 +96,7 @@ export default function HomePage() {
         .select('id, name, type, sport, org, score, score_color, headshot_url, logo_url, position, why, updated_at')
         .gte('updated_at', twentyFourHoursAgo)
         .order('score', { ascending: false })
-        .limit(35);
+        .limit(100);
 
       const mapAsset = (row: any, orgLabel: string, nameField: string, symbolField: string): UnifiedItem => ({
         id: row[symbolField] || row.symbol,
@@ -142,15 +142,32 @@ export default function HomePage() {
         .map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 }))
         .sort((a, b) => b.unifiedScore - a.unifiedScore);
 
-      let finalCombined = combined;
-      if (tier === 'Sports') {
-        finalCombined = combined.filter(item => item.itemType === 'entity');
-      } else if (tier === 'Finance') {
-        finalCombined = combined.filter(item => item.itemType === 'asset');
-      } else if (tier === 'Markets') {
-        finalCombined = combined.filter(item => item.itemType === 'market');
+      let filtered = combined;
+      if (tier === 'Sports') filtered = combined.filter(item => item.itemType === 'entity');
+      else if (tier === 'Finance') filtered = combined.filter(item => item.itemType === 'asset');
+      else if (tier === 'Markets') filtered = combined.filter(item => item.itemType === 'market');
+
+      // Selection logic: Top 15 Highest, Top 15 Lowest, 5 Neutrals
+      if (filtered.length > 35) {
+        const sorted = [...filtered].sort((a, b) => b.unifiedScore - a.unifiedScore);
+        const top15 = sorted.slice(0, 15);
+        const bottom15 = sorted.slice(-15);
+        
+        // Filter out items already in top/bottom to find neutrals
+        const remaining = sorted.filter(item => 
+          !top15.some(t => t.id === item.id) && 
+          !bottom15.some(b => b.id === item.id)
+        );
+        
+        const neutrals = remaining
+          .sort((a, b) => Math.abs(a.unifiedScore) - Math.abs(b.unifiedScore))
+          .slice(0, 5);
+
+        const final35 = [...top15, ...neutrals, ...bottom15].sort((a, b) => b.unifiedScore - a.unifiedScore);
+        setEntities(final35);
+      } else {
+        setEntities(filtered);
       }
-      setEntities(finalCombined.slice(0, 35));
     } catch (err) {
       console.error(err);
     } finally {
