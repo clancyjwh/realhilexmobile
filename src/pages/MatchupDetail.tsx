@@ -16,22 +16,13 @@ const NHL_KEYS: Record<string, string> = {
   series: 'Series'
 };
 
-const INDICATOR_INFO: Record<string, { label: string; icon: any }> = {
-  win_rate: { label: 'Win Rate', icon: Zap },
-  home_away: { label: 'Home/Away', icon: Shield },
-  recent_form: { label: 'Recent Form', icon: Activity },
-  goal_difference: { label: 'Goal Diff', icon: Target }
-};
-
 const getLabel = (key: string, isNHL: boolean) => {
   if (isNHL && NHL_KEYS[key]) return NHL_KEYS[key];
-  if (INDICATOR_INFO[key]) return INDICATOR_INFO[key].label;
+  if (key === 'win_rate') return 'Win Rate';
+  if (key === 'home_away') return 'Home/Away';
+  if (key === 'recent_form') return 'Recent Form';
+  if (key === 'goal_difference') return 'Goal Diff';
   return key.replace(/_/g, ' ');
-};
-
-const getIcon = (key: string) => {
-  if (INDICATOR_INFO[key]) return INDICATOR_INFO[key].icon;
-  return Activity;
 };
 
 const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
