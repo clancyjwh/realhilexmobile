@@ -96,7 +96,7 @@ export default function HomePage() {
         .select('id, name, type, sport, org, score, score_color, headshot_url, logo_url, position, why, updated_at')
         .gte('updated_at', twentyFourHoursAgo)
         .order('score', { ascending: false })
-        .limit(100);
+        .limit(35);
 
       const mapAsset = (row: any, orgLabel: string, nameField: string, symbolField: string): UnifiedItem => ({
         id: row[symbolField] || row.symbol,
