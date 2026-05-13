@@ -13,8 +13,6 @@ workflows:
         script: npm install
       - name: Build web assets
         script: npx vite build
-      - name: Add iOS platform
-        script: npx cap add ios
       - name: Sync Capacitor
         script: npx cap sync ios
       - name: Set up code signing
@@ -25,7 +23,7 @@ workflows:
       - name: Build IPA
         script: |
           xcode-project build-ipa \
-            --workspace ios/App/App.xcworkspace \
+            --project ios/App/App.xcodeproj \
             --scheme App
     artifacts:
       - build/ios/ipa/*.ipa
