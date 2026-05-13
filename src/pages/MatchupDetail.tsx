@@ -45,7 +45,7 @@ const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
   );
 };
 
-const TeamPanel = ({ team, type, isNHL }: { team: any; type: 'AWAY' | 'HOME'; isNHL: boolean }) => {
+const TeamPanel = ({ team, type, isNHL, sport }: { team: any; type: 'AWAY' | 'HOME'; isNHL: boolean; sport?: string }) => {
   const isPositive = team.score > 0;
   const bgColor = isPositive ? 'bg-green-900/40' : 'bg-red-900/40';
   const markerPos = ((team.score + 10) / 20) * 100;
@@ -146,8 +146,8 @@ export default function MatchupDetail() {
       </div>
 
       <div className="flex-grow flex overflow-y-auto">
-        <TeamPanel team={analysis.away_team} type="AWAY" isNHL={isNHL} />
-        <TeamPanel team={analysis.home_team} type="HOME" isNHL={isNHL} />
+        <TeamPanel team={analysis.away_team} type="AWAY" isNHL={isNHL} sport={sport} />
+        <TeamPanel team={analysis.home_team} type="HOME" isNHL={isNHL} sport={sport} />
       </div>
     </div>
   );
