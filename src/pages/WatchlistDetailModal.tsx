@@ -1,6 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import { getHeatScoreBgColor, formatScore } from '../utils/format';
+import { getHeatScoreBgColor, formatScore, getSignalColors } from '../utils/format';
 
 interface WatchlistDetailModalProps {
   item: any; // The full user_watchlist row or the webhook response 'data'
@@ -70,18 +70,20 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
               { label: 'BOLL', value: parseFloat(indicators.BOLL?.signal) },
               { label: 'MACD', value: parseFloat(indicators.MACD?.signal) },
               { label: 'ROC', value: parseFloat(roc.signal) }
-            ].map((ind, idx) => (
-              <div 
-                key={idx}
-                className="rounded-2xl p-4 flex flex-col items-center justify-center space-y-1 shadow-lg"
-                style={{ backgroundColor: getHeatScoreBgColor(ind.value) }}
-              >
-                <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{ind.label}</span>
-                <span className="text-2xl font-black text-white drop-shadow-sm">
-                  {!isNaN(ind.value) ? ind.value : 'NaN'}
-                </span>
-              </div>
-            ))}
+            ].map((ind, idx) => {
+              const colors = getSignalColors(ind.value);
+              return (
+                <div 
+                  key={idx}
+                  className={`rounded-2xl p-4 flex flex-col items-center justify-center space-y-1 shadow-lg ${colors.bg} border-2 ${colors.border}`}
+                >
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${colors.subtext}`}>{ind.label}</span>
+                  <span className={`text-2xl font-black ${colors.text} drop-shadow-sm`}>
+                    {!isNaN(ind.value) ? ind.value : 'NaN'}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 

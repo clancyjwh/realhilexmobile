@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { formatScore, getHeatScoreBgColor } from '../utils/format';
+import { formatScore, getHeatScoreBgColor, getSignalColors } from '../utils/format';
 import WatchlistDetailModal from './WatchlistDetailModal';
 
 interface WatchlistItem {
@@ -10,18 +10,6 @@ interface WatchlistItem {
   price: number;
   indicators: any;
 }
-
-const getSignalColors = (signal: number) => {
-  if (signal >= 9) return { bg: 'bg-[linear-gradient(145deg,#FFFDF5_0%,#FFF3CC_35%,#EBD48E_70%,#C9A43B_100%)] bg-[length:200%_200%] shadow-[0_0_20px_rgba(201,164,59,0.8)]', border: 'border-yellow-400', text: 'text-black' };
-  if (signal >= 7) return { bg: 'bg-green-900', border: 'border-green-700', text: 'text-green-300' };
-  if (signal >= 4) return { bg: 'bg-green-700', border: 'border-green-600', text: 'text-green-200' };
-  if (signal >= 1) return { bg: 'bg-green-500', border: 'border-green-400', text: 'text-green-100' };
-  if (signal > -1) return { bg: 'bg-slate-600', border: 'border-slate-500', text: 'text-slate-200' };
-  if (signal >= -4) return { bg: 'bg-orange-500', border: 'border-orange-400', text: 'text-orange-100' };
-  if (signal >= -7) return { bg: 'bg-red-600', border: 'border-red-500', text: 'text-red-100' };
-  if (signal <= -9) return { bg: 'bg-gradient-to-br from-red-900 to-red-950', border: 'border-red-600', text: 'text-red-200' };
-  return { bg: 'bg-red-900', border: 'border-red-700', text: 'text-red-300' };
-};
 
 export default function FinancePage() {
   const [items, setItems] = useState<WatchlistItem[]>([]);
@@ -93,13 +81,13 @@ export default function FinancePage() {
               >
                 <div className="flex items-center justify-between gap-1.5 mb-2 w-full">
                   <div className="flex items-center gap-1.5 truncate">
-                    <div className="text-white/60 text-xs font-bold">#{index + 1}</div>
-                    <span className="text-white/70 text-[10px] font-medium truncate">WATCHLIST</span>
+                    <div className={`${colors.subtext} text-xs font-bold`}>#{index + 1}</div>
+                    <span className={`${colors.subtextDark} text-[10px] font-medium truncate`}>WATCHLIST</span>
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-between w-full">
-                  <div className="text-white text-xl font-bold truncate pr-2">
+                  <div className={`${colors.isGold ? 'text-black' : 'text-white'} text-xl font-bold truncate pr-2`}>
                     {item.symbol}
                   </div>
                   <div className={`text-3xl font-bold ${colors.text} flex-shrink-0`}>

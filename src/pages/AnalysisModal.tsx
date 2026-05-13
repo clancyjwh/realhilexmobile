@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Info } from 'lucide-react';
-import { formatScore, getHeatScoreBgColor } from '../utils/format';
-import { getEntityImageUrl, getSignalColors } from './HomePage';
+import { formatScore, getHeatScoreBgColor, getSignalColors } from '../utils/format';
+import { getEntityImageUrl } from './HomePage';
 
 interface AnalysisModalProps {
   entity: any;
@@ -94,7 +94,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                 const isValid = url && (url.startsWith('http') || url.startsWith('/'));
                 return (
                   <div className="relative w-full h-full flex items-center justify-center">
-                    <span className="text-4xl font-black text-white/30 uppercase absolute inset-0 flex items-center justify-center z-0">
+                    <span className={`text-4xl font-black ${signalColors.isGold ? 'text-black/30' : 'text-white/30'} uppercase absolute inset-0 flex items-center justify-center z-0`}>
                       {entity.name.charAt(0)}
                     </span>
                     {isValid && (
