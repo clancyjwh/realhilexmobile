@@ -15,6 +15,12 @@ import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
 
+declare global {
+  interface Window {
+    OneSignalDeferred: any[];
+  }
+}
+
 export const UserContext = createContext({ tier: 'Free' });
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -38,6 +44,20 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       else if (rawTier === 'markets') mappedTier = 'Markets';
       
       setTier(mappedTier);
+
+      // OneSignal Integration
+      if (window.OneSignalDeferred) {
+        window.OneSignalDeferred.push(async function(OneSignal: any) {
+          await OneSignal.init({
+            appId: "2efbbcb6-11fe-413b-888e-f35439e417e8"
+          });
+          
+          await OneSignal.login(userId);
+          await OneSignal.User.addTags({
+            tier: mappedTier
+          });
+        });
+      }
     } catch (e) {
       console.error('Error syncing tier:', e);
     } finally {
