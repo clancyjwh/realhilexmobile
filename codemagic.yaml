@@ -18,14 +18,18 @@ workflows:
       - name: Set up code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files com.hilex.mobile \
-            --type IOS_APP_STORE \
-            --create \
-            --strict-match-identifier
           keychain add-certificates
           xcode-project use-profiles
       - name: Build IPA
         script: |
-          xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
+          xcode-project build-ipa \
+            --workspace ios/App/App.xcworkspace \
+            --scheme App
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
+        submit_to_testflight: true
