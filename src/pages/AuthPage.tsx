@@ -60,11 +60,11 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white text-center mb-2">
-              Welcome to HiLEX
+            <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight">
+              Welcome to HilEX
             </h1>
-            <p className="text-slate-500 text-center mb-10 font-bold uppercase tracking-[0.2em] text-[10px]">
-              Hylex Intelligence
+            <p className="text-slate-400 text-center mb-8 font-mono text-sm">
+              Optimized Trends Platform
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5">

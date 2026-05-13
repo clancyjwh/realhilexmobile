@@ -45,29 +45,31 @@ const BreakdownRow = ({ label, value }: { label: string; value: number }) => {
   );
 };
 
-const TeamPanel = ({ team, type, isNHL, sport }: { team: any; type: 'AWAY' | 'HOME'; isNHL: boolean; sport?: string }) => {
+const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'AWAY' | 'HOME'; isNHL: boolean; sport?: string; crestUrl?: string }) => {
   const isPositive = team.score > 0;
   const bgColor = isPositive ? 'bg-green-900/10' : 'bg-red-900/10';
 
-  let logoUrl = '';
+  let logoUrl = crestUrl || '';
   const teamTla = (team.tla || '').toLowerCase();
   const teamCode = (team.code || team.abbreviation || '').toUpperCase();
 
-  if (isNHL && teamCode) {
-    logoUrl = `https://assets.nhle.com/logos/nhl/svg/${teamCode}_light.svg`;
-  } else if (sport === 'nba' && teamCode) {
-    logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${teamCode.toLowerCase()}.png`;
-  } else if (sport === 'soccer') {
-    if (teamTla) {
-      logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${teamTla}.png`;
-    } else {
-      const slug = (team.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-      logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
+  if (!logoUrl) {
+    if (isNHL && teamCode) {
+      logoUrl = `https://assets.nhle.com/logos/nhl/svg/${teamCode}_light.svg`;
+    } else if (sport === 'nba' && teamCode) {
+      logoUrl = `https://a.espncdn.com/i/teamlogos/nba/500/${teamCode.toLowerCase()}.png`;
+    } else if (sport === 'soccer') {
+      if (teamTla) {
+        logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${teamTla}.png`;
+      } else {
+        const slug = (team.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+        logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
+      }
+    } else if (team.logo_url) {
+      logoUrl = team.logo_url.startsWith('http') 
+        ? team.logo_url 
+        : `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
     }
-  } else if (team.logo_url) {
-    logoUrl = team.logo_url.startsWith('http') 
-      ? team.logo_url 
-      : `https://hilex-nhl-production.up.railway.app/proxy/image?url=${encodeURIComponent(team.logo_url)}`;
   }
 
   return (
@@ -118,6 +120,7 @@ export default function MatchupDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const analysis = location.state?.analysis;
+  const game = location.state?.game;
 
   if (!analysis) {
     return (
@@ -141,8 +144,20 @@ export default function MatchupDetail() {
       </div>
 
       <div className="flex-grow flex overflow-y-auto">
-        <TeamPanel team={analysis.away_team} type="AWAY" isNHL={isNHL} sport={sport} />
-        <TeamPanel team={analysis.home_team} type="HOME" isNHL={isNHL} sport={sport} />
+        <TeamPanel 
+          team={analysis.away_team} 
+          type="AWAY" 
+          isNHL={isNHL} 
+          sport={sport} 
+          crestUrl={game?.away_crest}
+        />
+        <TeamPanel 
+          team={analysis.home_team} 
+          type="HOME" 
+          isNHL={isNHL} 
+          sport={sport} 
+          crestUrl={game?.home_crest}
+        />
       </div>
     </div>
   );
