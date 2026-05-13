@@ -1,21 +1,13 @@
 {
   "cli": {
-    "version": ">= 18.12.3",
-    "appVersionSource": "remote"
+    "version": ">= 13.2.1"
   },
   "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "preview": {
-      "distribution": "internal"
-    },
     "production": {
-      "autoIncrement": true
+      "ios": {
+        "buildConfiguration": "Release",
+        "scheme": "App"
+      }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }
