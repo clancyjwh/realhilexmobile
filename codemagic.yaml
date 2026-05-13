@@ -16,14 +16,15 @@ workflows:
         script: |
           xcodebuild -workspace ios/App/App.xcworkspace \
             -scheme App \
+            -sdk iphoneos \
             -configuration Release \
-            -archivePath build/App.xcarchive \
-            archive
+            -archivePath $CM_BUILD_DIR/build/App.xcarchive \
+            clean archive | xcpretty
       - name: Export IPA
         script: |
           xcodebuild -exportArchive \
-            -archivePath build/App.xcarchive \
-            -exportPath build \
-            -exportOptionsPlist ios/App/exportOptions.plist
+            -archivePath $CM_BUILD_DIR/build/App.xcarchive \
+            -exportOptionsPlist $CM_BUILD_DIR/ios/App/exportOptions.plist \
+            -exportPath $CM_BUILD_DIR/build
     artifacts:
       - build/*.ipa
