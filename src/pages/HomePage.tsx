@@ -55,9 +55,36 @@ const getShorthand = (name: string) => {
 export const getEntityImageUrl = (entity: any) => {
   if (entity.headshot_url) return entity.headshot_url;
   if (entity.logo_url) return entity.logo_url;
-  if (entity.type === 'team' && entity.name?.length <= 3) {
-    if (entity.sport?.toLowerCase() === 'nhl') return `https://assets.nhle.com/logos/nhl/svg/${entity.name.toUpperCase()}_light.svg`;
-    if (entity.sport?.toLowerCase() === 'nba') return `https://a.espncdn.com/i/teamlogos/nba/500/${entity.name.toLowerCase()}.png`;
+  if (entity.type === 'team') {
+    const name = entity.name || "";
+    const sport = entity.sport?.toLowerCase();
+    
+    if (sport === 'nhl' && name.length <= 3) return `https://assets.nhle.com/logos/nhl/svg/${name.toUpperCase()}_light.svg`;
+    if (sport === 'nba' && name.length <= 3) return `https://a.espncdn.com/i/teamlogos/nba/500/${name.toLowerCase()}.png`;
+    
+    if (sport === 'soccer') {
+      const WC_MAP: Record<string, string> = {
+        "Mexico": "mx", "South Africa": "za", "South Korea": "kr", "Czech Republic": "cz",
+        "Canada": "ca", "Bosnia and Herzegovina": "ba", "Qatar": "qa", "Switzerland": "ch",
+        "Brazil": "br", "Morocco": "ma", "Haiti": "ht", "Scotland": "gb-sct",
+        "United States": "us", "USA": "us", "Paraguay": "py", "Australia": "au",
+        "Turkey": "tr", "Germany": "de", "Curacao": "cw", "Curaçao": "cw",
+        "Ivory Coast": "ci", "Côte d'Ivoire": "ci", "Ecuador": "ec", "Netherlands": "nl",
+        "Japan": "jp", "Sweden": "se", "Tunisia": "tn", "Belgium": "be",
+        "Egypt": "eg", "Iran": "ir", "New Zealand": "nz", "Spain": "es",
+        "Cape Verde": "cv", "Saudi Arabia": "sa", "Uruguay": "uy", "France": "fr",
+        "Senegal": "sn", "Iraq": "iq", "Norway": "no", "Argentina": "ar",
+        "Algeria": "dz", "Austria": "at", "Jordan": "jo", "Portugal": "pt",
+        "DR Congo": "cd", "Democratic Republic of the Congo": "cd", "Uzbekistan": "uz",
+        "Colombia": "co", "England": "gb-eng", "Croatia": "hr", "Ghana": "gh",
+        "Panama": "pa", "Korea Republic": "kr", "Czechia": "cz"
+      };
+      const code = WC_MAP[name] || WC_MAP[name.replace(' Republic', '')];
+      if (code) return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
+      
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
+    }
   }
   return null;
 };
@@ -128,7 +155,12 @@ export default function HomePage() {
       const uniqueAssets = Array.from(assetMap.values());
 
       const rawEntities = (entityResult.data || [])
-        .filter(e => !e.name?.startsWith('UFC_') && !/^[0-9a-f-]{36}$/.test(e.name));
+        .filter(e => 
+          !e.name?.startsWith('UFC_') && 
+          !/^[0-9a-f-]{36}$/.test(e.name) && 
+          e.org !== 'World Cup' && 
+          e.sport !== 'World Cup'
+        );
 
       const athletes = rawEntities.filter(e => e.type === 'athlete');
       const teams = rawEntities.filter(e => e.type === 'team');
