@@ -5,6 +5,9 @@ workflows:
     environment:
       xcode: latest
       node: 22
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.hilex.mobile
     scripts:
       - name: Install dependencies
         script: npm install
@@ -12,19 +15,24 @@ workflows:
         script: npx vite build
       - name: Update Capacitor
         script: npx cap sync ios
+      - name: Set up code signing
+        script: |
+          keychain initialize
+          app-store-connect fetch-signing-files com.hilex.mobile \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
+          xcode-project use-profiles
       - name: Build iOS
         script: |
-          xcodebuild -workspace ios/App/App.xcworkspace \
-            -scheme App \
-            -sdk iphoneos \
-            -configuration Release \
-            -archivePath $CM_BUILD_DIR/build/App.xcarchive \
-            clean archive | xcpretty
-      - name: Export IPA
-        script: |
-          xcodebuild -exportArchive \
-            -archivePath $CM_BUILD_DIR/build/App.xcarchive \
-            -exportOptionsPlist $CM_BUILD_DIR/ios/App/exportOptions.plist \
-            -exportPath $CM_BUILD_DIR/build
+          xcode-project build-ipa \
+            --workspace ios/App/App.xcworkspace \
+            --scheme App
     artifacts:
-      - build/*.ipa
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
+        key_id: $APP_STORE_CONNECT_KEY_IDENTIFIER
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
