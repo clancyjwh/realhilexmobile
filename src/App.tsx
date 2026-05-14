@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Lock } from 'lucide-react';
@@ -14,7 +15,7 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
-import OneSignal from '@onesignal/capacitor-plugin';
+;
 
 declare global {
   interface Window {
@@ -52,15 +53,31 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         await FirebaseMessaging.requestPermissions();
         const { token } = await FirebaseMessaging.getToken();
         if (token) {
-          // Native OneSignal login and tags
-          await OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
-          await OneSignal.login(userId);
-          await OneSignal.User.addTags({
-            tier: mappedTier
+          // Register FCM token with OneSignal via API
+          await fetch('https://onesignal.com/api/v1/players', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              app_id: '2efbbcb6-11fe-413b-888e-f35439e417e8',
+              device_type: 0,
+              identifier: token,
+              external_user_id: userId,
+              tags: { tier: mappedTier }
+            })
           });
         }
+      } catch (fcmErr) {
+        console.error('FCM error:', fcmErr);
+      }
+      // OneSignal Web Integration
+      try {
+        await (window as any).OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
+        await (window as any).OneSignal.login(userId);
+        await (window as any).OneSignal.User.addTags({
+          tier: mappedTier
+        });
       } catch (err) {
-        console.error('OneSignal/FCM error:', err);
+        console.error('OneSignal initialization error:', err);
       }
     } catch (e) {
       console.error('Error syncing tier:', e);
