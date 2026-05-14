@@ -38,8 +38,8 @@ const FighterPanel = ({ fighter, type, headshotProp }: { fighter: any; type: 'RE
   // Debug Log for Headshots
   console.log(`[FightDetail] Fighter Object for ${fighter.name}:`, JSON.parse(JSON.stringify(fighter)));
   
-  // Use heatscore color for numbers, but ring color based on corner
-  const scoreColor = fighter.score > 0 ? 'text-[#00D8FF]' : 'text-red-500';
+  // Use green for heatscores as requested, but ring color based on corner
+  const scoreColor = fighter.score > 0 ? 'text-[#10b981]' : 'text-red-500';
   const ringColor = isRed ? 'border-red-500' : 'border-blue-500';
 
   const rawHeadshot = headshotProp || fighter.headshot || fighter.headshot_url || fighter.stats?.headshot || fighter.stats?.headshot_url;
@@ -81,7 +81,7 @@ const FighterPanel = ({ fighter, type, headshotProp }: { fighter: any; type: 'RE
       {/* HeatScore Slider */}
       <div 
         className="w-full h-2 rounded-full mb-2" 
-        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #00D8FF)' }}
+        style={{ background: 'linear-gradient(to right, #B71C1C, #6B7280, #10b981)' }}
       />
       <div className="w-full h-4 mb-4" /> {/* Spacer */}
 

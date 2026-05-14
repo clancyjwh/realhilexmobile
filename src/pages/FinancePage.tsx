@@ -165,41 +165,6 @@ export default function FinancePage() {
                     <div className={`text-3xl font-bold ${colors.text} flex-shrink-0 ml-1`}>
                       {item.signal > 0 ? '+' : ''}{formatScore(item.signal, 1)}
                     </div>
-                    {(() => {
-                      // Extract relative value
-                      let relVal = null;
-                      const rawRel = item.relative_value_analysis || item.relative_value_json || item.relative_value;
-                      if (rawRel) {
-                        try {
-                          const parsed = typeof rawRel === 'string' ? JSON.parse(rawRel) : rawRel;
-                          relVal = parsed.relative_value ?? parsed.value ?? parsed.diff ?? parsed.result ?? parsed.Result;
-                        } catch (e) {}
-                      }
-                      
-                      // Fallback to indicators
-                      if (relVal === null && item.indicators) {
-                        try {
-                          const ind = typeof item.indicators === 'string' ? JSON.parse(item.indicators) : item.indicators;
-                          if (ind['JSON 1']) {
-                            const j1 = typeof ind['JSON 1'] === 'string' ? JSON.parse(ind['JSON 1']) : ind['JSON 1'];
-                            if (j1['RELATIVE VALUE']) {
-                              const rv = typeof j1['RELATIVE VALUE'] === 'string' ? JSON.parse(j1['RELATIVE VALUE']) : j1['RELATIVE VALUE'];
-                              relVal = rv.relative_value ?? rv.value;
-                            }
-                          }
-                        } catch (e) {}
-                      }
-
-                      if (relVal !== null && !isNaN(Number(relVal))) {
-                        const v = Number(relVal);
-                        return (
-                          <div className={`text-[10px] font-black italic ${v >= 0 ? 'text-[#10b981]' : 'text-red-500'}`}>
-                            {v >= 0 ? '+' : ''}{v.toFixed(2)}% REL
-                          </div>
-                        );
-                      }
-                      return null;
-                    })()}
                   </div>
                 </div>
               </button>
