@@ -15,7 +15,7 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
-import OneSignal from '@onesignal/capacitor-plugin';
+;
 
 declare global {
   interface Window {
@@ -49,9 +49,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // OneSignal Integration
       try {
-        await OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
-        await OneSignal.login(userId);
-        await OneSignal.User.addTags({
+        await (window as any).OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
+        await (window as any).OneSignal.login(userId);
+        await (window as any).OneSignal.User.addTags({
           tier: mappedTier
         });
       } catch (err) {
