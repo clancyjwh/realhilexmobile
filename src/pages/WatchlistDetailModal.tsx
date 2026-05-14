@@ -136,11 +136,11 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
           let relativeValueNum = null;
           let isUp = false;
           
-          const rawRel = item.relative_value_json || item.relative_value;
+          const rawRel = item.relative_value_analysis || item.relative_value_json || item.relative_value;
           if (rawRel) {
             try {
               const parsed = typeof rawRel === 'string' ? JSON.parse(rawRel) : rawRel;
-              relativeValueNum = parsed.relative_value ?? parsed.value ?? parsed.diff;
+              relativeValueNum = parsed.relative_value ?? parsed.value ?? parsed.diff ?? parsed.result ?? parsed.Result;
             } catch (e) {}
           }
           

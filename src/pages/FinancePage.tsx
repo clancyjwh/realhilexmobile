@@ -149,11 +149,11 @@ export default function FinancePage() {
                     {(() => {
                       // Extract relative value
                       let relVal = null;
-                      const rawRel = item.relative_value_json || item.relative_value;
+                      const rawRel = item.relative_value_analysis || item.relative_value_json || item.relative_value;
                       if (rawRel) {
                         try {
                           const parsed = typeof rawRel === 'string' ? JSON.parse(rawRel) : rawRel;
-                          relVal = parsed.relative_value ?? parsed.value ?? parsed.diff;
+                          relVal = parsed.relative_value ?? parsed.value ?? parsed.diff ?? parsed.result ?? parsed.Result;
                         } catch (e) {}
                       }
                       
