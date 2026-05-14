@@ -1,4 +1,4 @@
-import OneSignal from 'onesignal-cordova-plugin';
+import OneSignal from '@onesignal/onesignal-capacitor';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Lock } from 'lucide-react';
