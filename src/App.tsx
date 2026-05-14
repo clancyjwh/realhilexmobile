@@ -14,7 +14,7 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
-import OneSignal from 'onesignal-capacitor-plugin';
+import OneSignal from '@onesignal/capacitor-plugin';
 
 declare global {
   interface Window {

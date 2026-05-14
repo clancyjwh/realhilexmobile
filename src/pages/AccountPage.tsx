@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { User as UserIcon, CreditCard, LogOut, Bell } from 'lucide-react';
-import OneSignal from 'onesignal-capacitor-plugin';
+import OneSignal from '@onesignal/capacitor-plugin';
 import { Preferences } from '@capacitor/preferences';
 
 
