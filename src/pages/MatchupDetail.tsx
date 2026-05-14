@@ -175,12 +175,12 @@ export default function MatchupDetail() {
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col text-white">
-      <div className="p-4 bg-[#12121a] border-b border-white/5 flex items-center justify-between shrink-0">
+      <div className="bg-[#12121a] border-b border-white/5 flex items-center justify-between shrink-0 px-4 py-4" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <button onClick={() => navigate(-1)} className="p-2 bg-white/5 rounded-full text-slate-400 active:bg-white/10 transition-colors">
-          <ChevronLeft size={20} />
+          <ChevronLeft size={24} />
         </button>
         <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Matchup Intelligence</span>
-        <div className="w-9" /> {/* Spacer */}
+        <div className="w-10" /> {/* Spacer */}
       </div>
 
       <div className="flex-grow flex overflow-y-auto">
@@ -201,7 +201,7 @@ export default function MatchupDetail() {
       </div>
 
       {/* Mobile Disclaimer */}
-      <div className="p-6 text-center bg-[#0a0a0f] border-t border-white/5 shrink-0">
+      <div className="p-6 text-center bg-[#0a0a0f] border-t border-white/5 shrink-0" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 80px)' }}>
         <p className="text-[8px] text-slate-700 font-black uppercase tracking-[0.2em] italic max-w-[200px] mx-auto leading-relaxed">
           Mobile analysis limited; check desktop app for more in-depth information
         </p>

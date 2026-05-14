@@ -38,7 +38,7 @@ export default function MarketAnalysisPage() {
   if (loading) {
     return (
       <div className="flex-grow bg-[#0a0a0f] text-white flex flex-col justify-center items-center relative p-5 h-full">
-        <div className="absolute top-0 left-0 w-full p-4 pt-6">
+        <div className="absolute top-0 left-0 w-full p-4 flex justify-between items-center" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
           <button onClick={() => navigate('/markets')} className="p-2 bg-[#12121a] rounded-full text-slate-400 active:bg-white/10 transition-colors">
             <ChevronLeft size={24} />
           </button>
@@ -81,8 +81,8 @@ export default function MarketAnalysisPage() {
   const polyProb = polymarket_yes_prob !== null ? parseFloat((polymarket_yes_prob * 100).toFixed(1)) : null;
 
   return (
-    <div className="flex-grow p-4 bg-[#0a0a0f] text-white h-auto pb-12">
-      <div className="flex items-center gap-4 mb-8 pt-2">
+    <div className="flex-grow p-4 bg-[#0a0a0f] text-white h-auto" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 120px)' }}>
+      <div className="flex items-center gap-4 mb-8" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <button onClick={() => navigate('/markets')} className="p-2 bg-[#12121a] rounded-full text-slate-400 active:bg-white/10 transition-colors">
           <ChevronLeft size={24} />
         </button>
