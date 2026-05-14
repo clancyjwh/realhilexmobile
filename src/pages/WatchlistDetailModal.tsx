@@ -31,7 +31,8 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
 
   return (
     <div className="fixed inset-0 bg-[#0a0a0f]/95 backdrop-blur-xl z-[100] flex flex-col animate-in slide-in-from-bottom-full duration-300">
-      <div className="sticky top-0 bg-[#0a0a0f]/95 backdrop-blur-xl z-50 p-6 flex items-center justify-between border-b border-white/5" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 bg-[#0a0a0f]/95 backdrop-blur-xl z-50 p-6 flex items-center justify-between border-b border-white/5" style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(80px + env(safe-area-inset-top))' }}>
         <div className="space-y-1">
           <div className="text-[10px] font-black text-white bg-white/10 px-2 py-1 rounded-lg inline-block uppercase tracking-widest">
             {item.symbol}
@@ -48,7 +49,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
         </button>
       </div>
 
-      <div className="flex-grow overflow-y-auto p-6 space-y-8" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 120px)' }}>
+      <div className="flex-grow overflow-y-auto p-6 space-y-8" style={{ paddingTop: 'calc(80px + env(safe-area-inset-top))', paddingBottom: 'calc(env(safe-area-inset-bottom) + 120px)' }}>
         
         {/* HeatScore Section */}
         <div className="flex flex-col items-center justify-center space-y-2 py-6 bg-[#12121a] border border-white/5 rounded-[2rem] shadow-xl relative overflow-hidden">
