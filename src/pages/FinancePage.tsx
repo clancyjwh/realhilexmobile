@@ -162,6 +162,13 @@ export default function FinancePage() {
           onClose={() => setSelectedEntity(null)} 
         />
       )}
+
+      {/* Scheduling Note */}
+      <div className="mt-auto pt-10 pb-4 text-center">
+        <p className="text-[8px] text-slate-700 font-black uppercase tracking-[0.2em] italic max-w-[240px] mx-auto leading-relaxed opacity-60">
+          Watchlist and Top Movers analyze on different schedules; discrepancies between them are expected
+        </p>
+      </div>
     </div>
   );
 }
