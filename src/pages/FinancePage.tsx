@@ -25,13 +25,18 @@ export default function FinancePage() {
     setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('user_watchlist')
         .select('symbol, name, signal, price, indicators, optimized_parameters, relative_value_json')
         .eq('user_id', user.id)
         .order('signal', { ascending: false });
+
+      if (error) throw error;
 
       if (data) {
         const sorted = [...data]
@@ -40,11 +45,24 @@ export default function FinancePage() {
         setItems(sorted);
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching watchlist:', err);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        fetchWatchlist();
+      } else if (event === 'SIGNED_OUT') {
+        setItems([]);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const handleCardClick = (item: any) => {
     setSelectedEntity(item);

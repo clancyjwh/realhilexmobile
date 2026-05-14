@@ -203,7 +203,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                         return (
                           <div 
                             key={idx}
-                            className={`rounded-xl p-3 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#22c55e]/20 bg-[#22c55e]/10' : 'border-red-500/20 bg-red-500/10'}`}
+                            className={`rounded-xl p-3 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}
                           >
                             <span className={`text-xl font-black ${isCorrect ? 'text-[#22c55e]' : 'text-red-500'}`}>
                               {p.Daysback || p.days}
@@ -255,7 +255,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                             title: "Relative Value", 
                             def: `Compare ${entity.symbol || entity.name}'s historical price movements against a selected index to observe how closely they have moved together in the past.` 
                           })}
-                          className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg active:scale-95 transition-all cursor-pointer ${isUp ? 'bg-[#22c55e]/20 border-[#22c55e]/40' : 'bg-red-500/20 border-red-500/40'}`}
+                          className={`rounded-xl p-4 border-2 flex items-center justify-between shadow-lg active:scale-95 transition-all cursor-pointer ${isUp ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'}`}
                         >
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Relative Value to Index</span>

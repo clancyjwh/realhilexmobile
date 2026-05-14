@@ -115,7 +115,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
                 return (
                   <div 
                     key={idx}
-                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#22c55e]/20 bg-[#22c55e]/10' : 'border-red-500/20 bg-red-500/10'}`}
+                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}
                   >
                     <span className={`text-3xl font-black ${isCorrect ? 'text-[#22c55e]' : 'text-red-500'}`}>
                       {p.Daysback || p.days}
@@ -160,7 +160,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
             isUp = relativeValueNum >= 0;
             return (
               <div className="pt-2">
-                <div className={`rounded-3xl p-6 border-2 flex items-center justify-between shadow-xl ${isUp ? 'bg-[#22c55e]/10 border-[#22c55e]/20' : 'bg-red-500/10 border-red-500/20'}`}>
+                <div className={`rounded-3xl p-6 border-2 flex items-center justify-between shadow-xl ${isUp ? 'bg-green-500/10 border-green-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-1">Relative Value to Index</span>
                     <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Benchmark Comparison</span>
