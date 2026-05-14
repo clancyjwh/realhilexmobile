@@ -1,34 +1,93 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, Eye } from 'lucide-react';
+import { LogIn, Fingerprint } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { BiometricAuth } from '@aparajita/capacitor-biometric-auth';
+import { Preferences } from '@capacitor/preferences';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [hasStoredCreds, setHasStoredCreds] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
+    // 1. Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate('/home', { replace: true });
+      } else {
+        // 2. Check for stored credentials to show biometric option
+        checkStoredCredentials();
       }
     });
   }, [navigate]);
+
+  const checkStoredCredentials = async () => {
+    try {
+      const { value } = await Preferences.get({ key: 'user_creds' });
+      if (value) {
+        setHasStoredCreds(true);
+        // Automatically attempt biometric auth on open if creds exist
+        handleBiometricAuth();
+      }
+    } catch (e) {
+      console.error('Error checking stored creds:', e);
+    }
+  };
+
+  const handleBiometricAuth = async () => {
+    try {
+      const available = await BiometricAuth.checkBiometry();
+      if (!available.isAvailable) return;
+
+      const result = await BiometricAuth.authenticate({
+        reason: 'Authorize access to HilEX Intelligence',
+        cancelTitle: 'Cancel',
+      });
+
+      if (result) {
+        setLoading(true);
+        const { value } = await Preferences.get({ key: 'user_creds' });
+        if (value) {
+          const { email: storedEmail, password: storedPassword } = JSON.parse(value);
+          const { error } = await supabase.auth.signInWithPassword({ 
+            email: storedEmail, 
+            password: storedPassword 
+          });
+
+          if (error) {
+            setError(error.message);
+            setLoading(false);
+          } else {
+            navigate('/home', { replace: true });
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Biometric auth failed:', e);
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       setError(error.message);
       setLoading(false);
-    } else {
+    } else if (data.session) {
+      // Save credentials for future biometric login
+      await Preferences.set({
+        key: 'user_creds',
+        value: JSON.stringify({ email, password })
+      });
       navigate('/home', { replace: true });
     }
   };
@@ -108,28 +167,41 @@ export default function AuthPage() {
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full font-black uppercase tracking-widest py-4 px-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-[#0a0a0f] text-sm mt-4 shadow-[0_0_30px_rgba(0,216,255,0.2)]"
-                style={{
-                  background: loading ? 'rgba(0,216,255,0.5)' : '#00D8FF',
-                }}
-              >
-                {loading ? (
-                  <span className="animate-pulse">Authorizing...</span>
-                ) : (
-                  <>
-                    <LogIn className="w-5 h-5" />
-                    <span>Access Terminal</span>
-                  </>
+              <div className="space-y-3 pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full font-black uppercase tracking-widest py-4 px-4 rounded-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 text-[#0a0a0f] text-sm shadow-[0_0_30px_rgba(0,216,255,0.2)]"
+                  style={{
+                    background: loading ? 'rgba(0,216,255,0.5)' : '#00D8FF',
+                  }}
+                >
+                  {loading ? (
+                    <span className="animate-pulse text-[10px]">Authorizing...</span>
+                  ) : (
+                    <>
+                      <LogIn className="w-5 h-5" />
+                      <span>Access Terminal</span>
+                    </>
+                  )}
+                </button>
+
+                {hasStoredCreds && !loading && (
+                  <button
+                    type="button"
+                    onClick={handleBiometricAuth}
+                    className="w-full font-black uppercase tracking-widest py-4 px-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 text-white text-sm bg-white/5 border border-white/10 hover:bg-white/10"
+                  >
+                    <Fingerprint className="w-5 h-5 text-[#00D8FF]" />
+                    <span>Use Face ID</span>
+                  </button>
                 )}
-              </button>
+              </div>
             </form>
 
             <div className="mt-10 pt-8 border-t border-white/5 flex flex-col items-center gap-6">
               <p className="text-slate-800 text-[8px] font-black uppercase tracking-[0.3em] text-center italic">
-                HilEX Mobile Intelligence v1.0
+                HilEX Mobile Intelligence v1.2
               </p>
             </div>
           </div>

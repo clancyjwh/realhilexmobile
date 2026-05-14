@@ -176,7 +176,10 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col font-sans selection:bg-[#00D8FF]/20">
       {/* Header */}
-      <header className="bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40 pt-safe">
+      <header 
+        className="bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40"
+        style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(4rem + env(safe-area-inset-top))' }}
+      >
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="HilEX" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
           <span className="font-black text-2xl tracking-tighter italic uppercase text-white drop-shadow-md">HilEX</span>
@@ -224,18 +227,21 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {/* Bottom Nav */}
-      <nav className="bg-[#12121a] border-t border-white/5 px-4 flex items-center justify-around shrink-0 sticky bottom-0 z-40 pb-safe">
+      <nav 
+        className="bg-[#12121a] border-t border-white/5 px-4 flex items-center justify-around shrink-0 sticky bottom-0 z-40"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)', height: 'calc(4.5rem + env(safe-area-inset-bottom))' }}
+      >
         {navItems.map(item => {
           const isActive = location.pathname === item.path;
           return (
             <button 
               key={item.id}
               onClick={() => navigate(item.path)}
-              className={`flex flex-col items-center gap-1.5 flex-1 transition-all duration-300 ${isActive ? 'text-[#00D8FF]' : 'text-slate-600 opacity-60'}`}
+              className={`flex flex-col items-center gap-1.5 flex-1 transition-all duration-300 relative ${isActive ? 'text-[#00D8FF]' : 'text-slate-600 opacity-60'}`}
             >
               <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />
               <span className="text-[9px] font-black uppercase tracking-widest">{item.label}</span>
-              {isActive && <div className="absolute bottom-1 w-1 h-1 bg-[#00D8FF] rounded-full shadow-[0_0_8px_#00D8FF]" />}
+              {isActive && <div className="absolute -bottom-1 w-1 h-1 bg-[#00D8FF] rounded-full shadow-[0_0_8px_#00D8FF]" />}
             </button>
           );
         })}
