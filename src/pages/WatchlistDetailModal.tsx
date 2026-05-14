@@ -175,7 +175,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
                     <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Benchmark Comparison</span>
                   </div>
                   <span className={`text-4xl font-black italic tracking-tighter ${isUp ? 'text-[#10b981]' : 'text-red-500'} drop-shadow-md`}>
-                    {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
+                    {isUp ? '+' : ''}{Number(relativeValueNum).toFixed(2)}%
                   </span>
                 </div>
               </div>

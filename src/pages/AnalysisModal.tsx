@@ -262,7 +262,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                             <Info size={10} className="text-white/40" />
                           </div>
                           <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-[#10b981]' : 'text-red-500'}`}>
-                            {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
+                            {isUp ? '+' : ''}{Number(relativeValueNum).toFixed(2)}%
                           </span>
                         </div>
                       </div>
