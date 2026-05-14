@@ -136,15 +136,24 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
           let relativeValueNum = null;
           let isUp = false;
           
-          let rawRel = item.relative_value_json || item.relative_value || {};
-          if (typeof rawRel === 'string') {
-            try { rawRel = JSON.parse(rawRel); } catch (e) {}
+          const rawRel = item.relative_value_json || item.relative_value;
+          if (rawRel) {
+            try {
+              const parsed = typeof rawRel === 'string' ? JSON.parse(rawRel) : rawRel;
+              relativeValueNum = parsed.relative_value ?? parsed.value ?? parsed.diff;
+            } catch (e) {}
           }
-          if (rawRel?.relative_value) rawRel = rawRel.relative_value;
           
-          if (rawRel?.Result !== undefined) relativeValueNum = parseFloat(rawRel.Result);
-          else if (rawRel?.result !== undefined) relativeValueNum = parseFloat(rawRel.result);
-          
+          if (relativeValueNum === null && indicators['JSON 1']) {
+            try {
+              const json1 = typeof indicators['JSON 1'] === 'string' ? JSON.parse(indicators['JSON 1']) : indicators['JSON 1'];
+              if (json1['RELATIVE VALUE']) {
+                const relData = typeof json1['RELATIVE VALUE'] === 'string' ? JSON.parse(json1['RELATIVE VALUE']) : json1['RELATIVE VALUE'];
+                relativeValueNum = relData.relative_value ?? relData.value;
+              }
+            } catch (e) {}
+          }
+
           if (relativeValueNum === null || isNaN(relativeValueNum)) {
             const txt = String(rawRel?.Summary || rawRel?.summary || '');
             const match = txt.match(/by\s+([-+]?\d+\.?\d*)\s*%/);
