@@ -181,8 +181,6 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
               </div>
             );
           }
-            );
-          }
           return null;
         })()}
 
