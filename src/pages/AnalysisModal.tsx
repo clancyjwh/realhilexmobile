@@ -177,9 +177,46 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Accuracy Rate</span>
-                    <span className="text-sm font-black text-white">{financialData.horizon_json?.['Win Rate'] || 'N/A'}</span>
+                    <span className="text-sm font-black text-[#22c55e]">{financialData.horizon_json?.['Win Rate'] || 'N/A'}</span>
                   </div>
                 </div>
+
+                {/* Monthly Snapshots Grid */}
+                {(() => {
+                  const rawParams = financialData.horizon_json || {};
+                  const params: any[] = [];
+                  Object.keys(rawParams).forEach(key => {
+                    if (['Analysis', 'Parameters', 'Win Rate'].includes(key)) return;
+                    try {
+                      const parsed = typeof rawParams[key] === 'string' ? JSON.parse(rawParams[key]) : rawParams[key];
+                      params.push({ days: parseInt(key), ...parsed });
+                    } catch (e) {}
+                  });
+                  params.sort((a, b) => a.days - b.days);
+
+                  if (params.length === 0) return null;
+
+                  return (
+                    <div className="grid grid-cols-3 gap-2 mt-2">
+                      {params.map((p, idx) => {
+                        const isCorrect = p.Correct === 'true' || p.Correct === true;
+                        return (
+                          <div 
+                            key={idx}
+                            className={`rounded-xl p-3 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#22c55e]/20 bg-[#22c55e]/10' : 'border-red-500/20 bg-red-500/10'}`}
+                          >
+                            <span className={`text-xl font-black ${isCorrect ? 'text-[#22c55e]' : 'text-red-500'}`}>
+                              {p.Daysback || p.days}
+                            </span>
+                            <span className={`text-[8px] mt-0.5 font-black uppercase tracking-widest ${isCorrect ? 'text-[#22c55e]/70' : 'text-red-500/70'}`}>
+                              days
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })()}
               </div>
 
               {(() => {

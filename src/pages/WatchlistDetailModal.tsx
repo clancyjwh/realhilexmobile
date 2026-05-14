@@ -90,9 +90,11 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
         {/* Optimized Parameters Backtest */}
         {params.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 pl-2">Top Historical Parameter: Monthly Snapshots</h3>
+            <div className="flex items-center justify-between pl-2">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Top Historical Parameter: Monthly Snapshots</h3>
+            </div>
             
-            <div className="flex flex-col bg-[#12121a] p-5 rounded-2xl border border-white/5 space-y-4">
+            <div className="flex flex-col bg-[#12121a] p-5 rounded-2xl border border-white/5 space-y-4 shadow-lg">
               <div className="flex justify-between items-center border-b border-white/5 pb-3">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Indicator</span>
                 <span className="text-sm font-black text-white">{rawParams.Analysis || 'N/A'}</span>
@@ -103,7 +105,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Accuracy Rate</span>
-                <span className="text-sm font-black text-white">{rawParams['Win Rate'] || 'N/A'}</span>
+                <span className="text-sm font-black text-[#22c55e]">{rawParams['Win Rate'] || 'N/A'}</span>
               </div>
             </div>
 
@@ -113,12 +115,12 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
                 return (
                   <div 
                     key={idx}
-                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#00D8FF]/20 bg-[#00D8FF]/10' : 'border-red-500/20 bg-red-500/10'}`}
+                    className={`rounded-2xl p-5 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-[#22c55e]/20 bg-[#22c55e]/10' : 'border-red-500/20 bg-red-500/10'}`}
                   >
-                    <span className={`text-3xl font-black ${isCorrect ? 'text-[#00D8FF]' : 'text-red-500'}`}>
+                    <span className={`text-3xl font-black ${isCorrect ? 'text-[#22c55e]' : 'text-red-500'}`}>
                       {p.Daysback || p.days}
                     </span>
-                    <span className={`text-[10px] mt-1 font-black uppercase tracking-widest ${isCorrect ? 'text-[#00D8FF]/70' : 'text-red-500/70'}`}>
+                    <span className={`text-[10px] mt-1 font-black uppercase tracking-widest ${isCorrect ? 'text-[#22c55e]/70' : 'text-red-500/70'}`}>
                       days
                     </span>
                   </div>
@@ -127,6 +129,51 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
             </div>
           </div>
         )}
+
+        {/* Relative Value Section */}
+        {(() => {
+          const indicators = item.indicators || {};
+          let relativeValueNum = null;
+          let isUp = false;
+          
+          let rawRel = item.relative_value_json || item.relative_value || {};
+          if (typeof rawRel === 'string') {
+            try { rawRel = JSON.parse(rawRel); } catch (e) {}
+          }
+          if (rawRel?.relative_value) rawRel = rawRel.relative_value;
+          
+          if (rawRel?.Result !== undefined) relativeValueNum = parseFloat(rawRel.Result);
+          else if (rawRel?.result !== undefined) relativeValueNum = parseFloat(rawRel.result);
+          
+          if (relativeValueNum === null || isNaN(relativeValueNum)) {
+            const txt = String(rawRel?.Summary || rawRel?.summary || '');
+            const match = txt.match(/by\s+([-+]?\d+\.?\d*)\s*%/);
+            if (match) {
+              const val = parseFloat(match[1]);
+              if (txt.toLowerCase().includes('outperformed')) relativeValueNum = Math.abs(val);
+              else if (txt.toLowerCase().includes('underperformed')) relativeValueNum = -Math.abs(val);
+              else relativeValueNum = val;
+            }
+          }
+
+          if (relativeValueNum !== null && !isNaN(relativeValueNum)) {
+            isUp = relativeValueNum >= 0;
+            return (
+              <div className="pt-2">
+                <div className={`rounded-3xl p-6 border-2 flex items-center justify-between shadow-xl ${isUp ? 'bg-[#22c55e]/10 border-[#22c55e]/20' : 'bg-red-500/10 border-red-500/20'}`}>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-1">Relative Value to Index</span>
+                    <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Benchmark Comparison</span>
+                  </div>
+                  <span className={`text-4xl font-black italic tracking-tighter ${isUp ? 'text-[#22c55e]' : 'text-red-500'} drop-shadow-md`}>
+                    {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+            );
+          }
+          return null;
+        })()}
       </div>
     </div>
   );

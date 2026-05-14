@@ -30,6 +30,7 @@ export const getHeatScoreBgColor = (score: number | any) => {
   if (s >= -7) return '#DD2C00';
   return '#B71C1C';
 };
+
 export const getSignalColors = (signal: number) => {
   if (signal >= 9) return { isGold: true, bg: 'bg-[linear-gradient(145deg,#FFFDF5_0%,#FFF3CC_35%,#EBD48E_70%,#C9A43B_100%)] bg-[length:200%_200%] shadow-[0_0_20px_rgba(201,164,59,0.8)]', border: 'border-yellow-400', text: 'text-black', subtext: 'text-black/60', subtextDark: 'text-black/70', hex: '#facc15' };
   if (signal >= 7) return { isGold: false, bg: 'bg-green-900', border: 'border-green-700', text: 'text-green-300', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#22c55e' };
@@ -40,4 +41,40 @@ export const getSignalColors = (signal: number) => {
   if (signal >= -7) return { isGold: false, bg: 'bg-red-600', border: 'border-red-500', text: 'text-red-100', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#fecaca' };
   if (signal <= -9) return { isGold: false, bg: 'bg-gradient-to-br from-red-900 to-red-950', border: 'border-red-600', text: 'text-red-200', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#fca5a5' };
   return { isGold: false, bg: 'bg-red-900', border: 'border-red-700', text: 'text-red-300', subtext: 'text-white/60', subtextDark: 'text-white/70', hex: '#f87171' };
+};
+
+export const formatMarketQuestion = (q: string): string => {
+  if (!q) return q;
+  
+  // If it already starts with a question word, leave it
+  const questionWords = ['will', 'can', 'is', 'does', 'should', 'would', 'could', 'who', 'what', 'where', 'when', 'why', 'how'];
+  const firstWord = q.trim().split(' ')[0].toLowerCase();
+  if (questionWords.includes(firstWord)) return q;
+
+  // Handle "Team A vs Team B"
+  if (q.toLowerCase().includes(' vs ')) {
+    const parts = q.split(/ vs /i);
+    if (parts.length === 2) {
+      // Strip any common prefix like "NHL: " or "Soccer: "
+      let teamA = parts[0].trim();
+      const prefixMatch = teamA.match(/^[^:]+:\s*(.+)$/);
+      if (prefixMatch) teamA = prefixMatch[1];
+      
+      const teamB = parts[1].trim();
+      
+      // Clean up punctuation
+      teamA = teamA.replace(/[.!?]+$/, '');
+      const teamB_clean = teamB.replace(/[.!?]+$/, '');
+      
+      return `Will ${teamA} beat ${teamB_clean}?`;
+    }
+  }
+
+  // Fallback: If it's a statement, make it a question
+  if (!q.endsWith('?')) {
+    const trimmed = q.trim();
+    return `Will ${trimmed.charAt(0).toLowerCase() + trimmed.slice(1)}?`;
+  }
+
+  return q;
 };

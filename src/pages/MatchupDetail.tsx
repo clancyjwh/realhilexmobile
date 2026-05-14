@@ -10,10 +10,8 @@ const NHL_KEYS: Record<string, string> = {
   home_away: 'Venue Edge',
   streak: 'Streak',
   goalie: 'Goalie',
-  pp_pk: 'PP/PK',
   h2h: 'H2H',
-  rest: 'Rest',
-  series: 'Series'
+  rest: 'Rest'
 };
 
 const getLabel = (key: string, isNHL: boolean) => {
@@ -87,8 +85,11 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
       
       if (code) {
         logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
-      } else if (teamTla) {
-        logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${teamTla}.png`;
+      } else if (teamTla || teamName) {
+        const slug = (teamName === 'Paris Saint-Germain' || teamTla?.toUpperCase() === 'PSG') ? 'psg' : (teamTla || '').toLowerCase();
+        if (slug) {
+          logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
+        }
       }
     } else if (team.logo_url) {
       logoUrl = team.logo_url.startsWith('http') 
@@ -134,6 +135,11 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
         <div className="space-y-1">
           {(() => {
             const breakdown = { ...team.breakdown };
+            delete breakdown.pp_pk;
+            delete breakdown.series;
+            delete breakdown.is_back_to_back;
+            delete breakdown.days_rest;
+            
             if (team.squad_strength !== undefined && breakdown.squad_strength === undefined) {
               breakdown.squad_strength = team.squad_strength;
             }

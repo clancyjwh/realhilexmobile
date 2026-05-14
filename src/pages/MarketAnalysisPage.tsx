@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Loader2 } from 'lucide-react';
-import { getHeatScoreColor, formatScore } from '../utils/format';
+import { getHeatScoreColor, formatScore, formatMarketQuestion } from '../utils/format';
 
 export default function MarketAnalysisPage() {
   const location = useLocation();
@@ -19,7 +19,7 @@ export default function MarketAnalysisPage() {
         const response = await fetch('https://hook.us2.make.com/5qbkt4iyi3e52o8auyjssk4bxar6f8ay', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ event_description: question, source: 'mobile', slug: location.state?.slug || null })
+          body: JSON.stringify({ event_description: formatMarketQuestion(question), source: 'mobile', slug: location.state?.slug || null })
         });
         const data = await response.json();
         if (mounted) {
@@ -90,7 +90,7 @@ export default function MarketAnalysisPage() {
       </div>
 
       <div className="mb-10">
-        <h1 className="text-2xl font-bold text-white leading-tight">{question}</h1>
+        <h1 className="text-2xl font-bold text-white leading-tight">{formatMarketQuestion(question)}</h1>
       </div>
 
       <div className="bg-[#12121a] border border-white/5 rounded-[2rem] p-8 shadow-2xl space-y-6">

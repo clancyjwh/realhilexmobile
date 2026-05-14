@@ -40,7 +40,8 @@ const SHORTHANDS: Record<string, string> = {
   'Florida Panthers': 'FLA',
   'Dallas Stars': 'DAL',
   'Winnipeg Jets': 'WPG',
-  'Vancouver Canucks': 'VAN'
+  'Vancouver Canucks': 'VAN',
+  'Paris Saint-Germain': 'PSG'
 };
 
 const getShorthand = (name: string) => {
@@ -82,7 +83,7 @@ export const getEntityImageUrl = (entity: any) => {
       const code = WC_MAP[name] || WC_MAP[name.replace(' Republic', '')];
       if (code) return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
       
-      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const slug = name === 'Paris Saint-Germain' ? 'psg' : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
     }
   }
