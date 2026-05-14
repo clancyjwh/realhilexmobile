@@ -23,7 +23,7 @@ const MarketPulseCard = ({ question, initialData, type = 'trending' }: { questio
     <div className="mb-4">
       <div className="bg-[#12121a] border border-white/5 rounded-2xl p-5 shadow-xl flex justify-between items-center gap-4">
         <div className="flex-1 space-y-2">
-          <h3 className="font-bold text-sm text-white leading-snug line-clamp-2">{formatMarketQuestion(question)}</h3>
+          <h3 className="font-bold text-sm text-white leading-snug line-clamp-2">{question}</h3>
           
           <div className="flex items-center gap-4">
             {type === 'pulse' && initialData?.week_change !== undefined && (

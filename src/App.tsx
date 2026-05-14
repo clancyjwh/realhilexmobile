@@ -216,7 +216,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="mt-auto pb-6">
               <p className="text-[8px] text-slate-800 font-black uppercase tracking-widest text-center italic">
-                HilEX Mobile Intelligence v1.0
+                HilEX Mobile Intelligence v1.1
               </p>
             </div>
           </div>

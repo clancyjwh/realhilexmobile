@@ -44,37 +44,5 @@ export const getSignalColors = (signal: number) => {
 };
 
 export const formatMarketQuestion = (q: string): string => {
-  if (!q) return q;
-  
-  // If it already starts with a question word, leave it
-  const questionWords = ['will', 'can', 'is', 'does', 'should', 'would', 'could', 'who', 'what', 'where', 'when', 'why', 'how'];
-  const firstWord = q.trim().split(' ')[0].toLowerCase();
-  if (questionWords.includes(firstWord)) return q;
-
-  // Handle "Team A vs Team B"
-  if (q.toLowerCase().includes(' vs ')) {
-    const parts = q.split(/ vs /i);
-    if (parts.length === 2) {
-      // Strip any common prefix like "NHL: " or "Soccer: "
-      let teamA = parts[0].trim();
-      const prefixMatch = teamA.match(/^[^:]+:\s*(.+)$/);
-      if (prefixMatch) teamA = prefixMatch[1];
-      
-      const teamB = parts[1].trim();
-      
-      // Clean up punctuation
-      teamA = teamA.replace(/[.!?]+$/, '');
-      const teamB_clean = teamB.replace(/[.!?]+$/, '');
-      
-      return `Will ${teamA} beat ${teamB_clean}?`;
-    }
-  }
-
-  // Fallback: If it's a statement, make it a question
-  if (!q.endsWith('?')) {
-    const trimmed = q.trim();
-    return `Will ${trimmed.charAt(0).toLowerCase() + trimmed.slice(1)}?`;
-  }
-
   return q;
 };
