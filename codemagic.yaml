@@ -17,6 +17,10 @@ workflows:
         script: npx vite build
       - name: Sync Capacitor
         script: npx cap sync ios
+      - name: Remove OneSignal frameworks
+        script: |
+          find ios -name "*OneSignal*" -delete 2>/dev/null || true
+          find ~/Library -name "*OneSignal*" -delete 2>/dev/null || true
       - name: Set up code signing
         script: |
           keychain initialize
