@@ -47,7 +47,19 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       setTier(mappedTier);
 
-      // OneSignal Integration
+      // FCM + OneSignal Integration
+      try {
+        const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
+        await FirebaseMessaging.requestPermissions();
+        const { token } = await FirebaseMessaging.getToken();
+        if (token) {
+          await (window as any).OneSignal?.login(userId);
+          await (window as any).OneSignal?.User?.addTags({ tier: mappedTier });
+        }
+      } catch (fcmErr) {
+        console.error('FCM error:', fcmErr);
+      }
+      // OneSignal Web Integration
       try {
         await (window as any).OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
         await (window as any).OneSignal.login(userId);
