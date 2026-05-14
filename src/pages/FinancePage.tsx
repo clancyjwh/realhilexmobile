@@ -9,6 +9,8 @@ interface WatchlistItem {
   signal: number;
   price: number;
   indicators: any;
+  relative_value_json?: any;
+  relative_value?: any;
 }
 
 export default function FinancePage() {
