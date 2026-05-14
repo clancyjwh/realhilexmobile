@@ -15,6 +15,7 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
+import OneSignal from '@onesignal/capacitor-plugin';
 
 declare global {
   interface Window {
@@ -47,18 +48,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setTier(mappedTier);
 
       // OneSignal Integration
-      if (window.OneSignalDeferred) {
-        window.OneSignalDeferred.push(async function(OneSignal: any) {
-          await OneSignal.init({
-            appId: "2efbbcb6-11fe-413b-888e-f35439e417e8"
-          });
-          
-          await OneSignal.login(userId);
-          await OneSignal.User.addTags({
-            tier: mappedTier
-          });
-          await OneSignal.Notifications.requestPermission();
+      try {
+        await OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
+        await OneSignal.login(userId);
+        await OneSignal.User.addTags({
+          tier: mappedTier
         });
+      } catch (err) {
+        console.error('OneSignal initialization error:', err);
       }
     } catch (e) {
       console.error('Error syncing tier:', e);
