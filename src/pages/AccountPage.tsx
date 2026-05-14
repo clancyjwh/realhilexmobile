@@ -33,7 +33,7 @@ export default function AccountPage() {
       if (enabled) {
         await OneSignal.Notifications.requestPermission(true);
       } else {
-        await OneSignal.User.PushSubscription.optOut();
+        await OneSignal.User.pushSubscription.optOut();
       }
     } catch (err) {
       console.error('OneSignal error:', err);
