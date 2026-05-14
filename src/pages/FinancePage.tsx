@@ -28,20 +28,25 @@ export default function FinancePage() {
 
       const { data, error } = await supabase
         .from('user_watchlist')
-        .select('symbol, name, signal, price, indicators, optimized_parameters, relative_value_json')
+        .select('*')
         .eq('user_id', user.id)
         .order('signal', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase Query Error:', error);
+        throw error;
+      }
+
+      console.log('Watchlist Data Fetched:', data?.length, 'items');
 
       if (data) {
         const sorted = [...data]
           .map(item => ({ 
             ...item, 
-            signal: Number(item.signal) || 0,
-            unifiedScore: Number(item.signal) || 0, // For compatibility with HomePage logic if needed
+            signal: Number(item.signal || item.signal_score || 0),
+            unifiedScore: Number(item.signal || item.signal_score || 0),
             itemType: 'asset',
-            org: 'WATCHLIST'
+            org: 'Watchlist'
           }))
           .sort((a, b) => b.signal - a.signal);
         setItems(sorted);
