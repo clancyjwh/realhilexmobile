@@ -41,7 +41,9 @@ const SHORTHANDS: Record<string, string> = {
   'Dallas Stars': 'DAL',
   'Winnipeg Jets': 'WPG',
   'Vancouver Canucks': 'VAN',
-  'Paris Saint-Germain': 'PSG'
+  'Paris Saint-Germain': 'PSG',
+  'Paris Saint-Germain FC': 'PSG',
+  'Paris Saint-Germain Football Club': 'PSG'
 };
 
 const getShorthand = (name: string) => {
@@ -83,7 +85,9 @@ export const getEntityImageUrl = (entity: any) => {
       const code = WC_MAP[name] || WC_MAP[name.replace(' Republic', '')];
       if (code) return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
       
-      const slug = name === 'Paris Saint-Germain' ? 'psg' : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+      const lowerName = name.toLowerCase();
+      const isPSG = lowerName.includes('paris saint-germain') || lowerName.includes('psg');
+      const slug = isPSG ? 'psg' : name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
       return `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
     }
   }
@@ -171,8 +175,33 @@ export default function HomePage() {
         ...teams.map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
       ];
 
-      const combined = [...uniqueAssets, ...entityItems]
+      // Selection logic:
+      // 1. Financial Assets: Top 25
+      // 2. Athletes: Top 3, Bottom 2
+      // 3. Teams: Top 3, Bottom 2
+      
+      const sortedAssets = uniqueAssets
         .map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 }))
+        .sort((a, b) => b.unifiedScore - a.unifiedScore)
+        .slice(0, 25);
+
+      const sortedAthletes = athletes
+        .map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
+        .sort((a, b) => b.unifiedScore - a.unifiedScore);
+      
+      const topAthletes = sortedAthletes.slice(0, 3);
+      const bottomAthletes = sortedAthletes.slice(-2);
+      const selectedAthletes = [...topAthletes, ...bottomAthletes];
+
+      const sortedTeams = teams
+        .map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
+        .sort((a, b) => b.unifiedScore - a.unifiedScore);
+      
+      const topTeams = sortedTeams.slice(0, 3);
+      const bottomTeams = sortedTeams.slice(-2);
+      const selectedTeams = [...topTeams, ...bottomTeams];
+
+      const combined = [...sortedAssets, ...selectedAthletes, ...selectedTeams]
         .sort((a, b) => b.unifiedScore - a.unifiedScore);
 
       let filtered = combined;
@@ -180,27 +209,7 @@ export default function HomePage() {
       else if (tier === 'Finance') filtered = combined.filter(item => item.itemType === 'asset');
       else if (tier === 'Markets') filtered = combined.filter(item => item.itemType === 'market');
 
-      // Selection logic: Top 15 Highest, Top 15 Lowest, 5 Neutrals
-      if (filtered.length > 35) {
-        const sorted = [...filtered].sort((a, b) => b.unifiedScore - a.unifiedScore);
-        const top15 = sorted.slice(0, 15);
-        const bottom15 = sorted.slice(-15);
-        
-        // Filter out items already in top/bottom to find neutrals
-        const remaining = sorted.filter(item => 
-          !top15.some(t => t.id === item.id) && 
-          !bottom15.some(b => b.id === item.id)
-        );
-        
-        const neutrals = remaining
-          .sort((a, b) => Math.abs(a.unifiedScore) - Math.abs(b.unifiedScore))
-          .slice(0, 5);
-
-        const final35 = [...top15, ...neutrals, ...bottom15].sort((a, b) => b.unifiedScore - a.unifiedScore);
-        setEntities(final35);
-      } else {
-        setEntities(filtered);
-      }
+      setEntities(filtered);
     } catch (err) {
       console.error(err);
     } finally {
@@ -288,7 +297,7 @@ export default function HomePage() {
                 
                 <div className="flex items-center justify-between w-full mt-2">
                   <div className={`${entity.unifiedScore >= 9 ? 'text-black' : 'text-white'} text-xl font-bold truncate pr-2`}>
-                    {entity.itemType === 'asset' ? entity.symbol : (entity.type === 'athlete' ? entity.name : getShorthand(entity.name))}
+                    {entity.itemType === 'asset' ? entity.symbol : (entity.type === 'athlete' ? entity.name : (entity.name.toUpperCase().includes('PARIS SAINT-GERMAIN') ? 'PSG' : getShorthand(entity.name)))}
                   </div>
                   <div className={`text-3xl font-bold ${colors.text} flex-shrink-0 ml-1`}>
                     {entity.unifiedScore > 0 ? '+' : ''}{formatScore(entity.unifiedScore, 1)}

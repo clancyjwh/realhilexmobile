@@ -29,7 +29,7 @@ export default function FinancePage() {
 
       const { data } = await supabase
         .from('user_watchlist')
-        .select('symbol, name, signal, price, indicators, optimized_parameters')
+        .select('symbol, name, signal, price, indicators, optimized_parameters, relative_value_json')
         .eq('user_id', user.id)
         .order('signal', { ascending: false });
 
@@ -66,7 +66,7 @@ export default function FinancePage() {
       ) : items.length === 0 ? (
         <div className="flex-grow flex items-center justify-center text-center p-8">
           <p className="text-slate-500 font-bold text-sm leading-relaxed">
-            Add assets to your watchlist in the HiLEX desktop app to see them here
+            Add assets to your watchlist in the HilEX desktop app to see them here
           </p>
         </div>
       ) : (

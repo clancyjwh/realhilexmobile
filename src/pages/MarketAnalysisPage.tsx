@@ -46,7 +46,7 @@ export default function MarketAnalysisPage() {
         <div className="flex flex-col items-center gap-6">
           <div className="w-16 h-16 rounded-2xl bg-[#12121a] border border-white/5 shadow-2xl flex items-center justify-center p-3 relative overflow-hidden">
              <div className="absolute inset-0 bg-gradient-to-br from-[#00D8FF]/20 to-transparent opacity-50" />
-             <img src="/logo.png" alt="HiLEX" className="w-full h-full object-contain relative z-10" />
+             <img src="/logo.png" alt="HilEX" className="w-full h-full object-contain relative z-10" />
           </div>
           <Loader2 className="animate-spin text-[#00D8FF]" size={32} />
           <div className="text-sm font-black italic tracking-widest text-slate-400 uppercase animate-pulse">Analyzing...</div>

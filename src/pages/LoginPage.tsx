@@ -41,9 +41,9 @@ export default function LoginPage() {
       {/* Header / Logo */}
       <div className="flex flex-col items-center mt-12 mb-10">
         <div className="w-20 h-20 bg-white/5 rounded-2xl border border-white/10 p-4 mb-4 backdrop-blur-md shadow-2xl">
-          <img src="/logo.png" alt="HiLEX" className="w-full h-full object-contain" />
+          <img src="/logo.png" alt="HilEX" className="w-full h-full object-contain" />
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">HiLEX</h1>
+        <h1 className="text-3xl font-bold tracking-tight">HilEX</h1>
         <p className="text-slate-400 text-sm mt-1 uppercase tracking-widest font-mono">Mobile App</p>
       </div>
 

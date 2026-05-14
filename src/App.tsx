@@ -178,8 +178,8 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
       {/* Header */}
       <header className="h-16 bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="HiLEX" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
-          <span className="font-black text-2xl tracking-tighter italic uppercase text-white drop-shadow-md">HiLEX</span>
+          <img src="/logo.png" alt="HilEX" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
+          <span className="font-black text-2xl tracking-tighter italic uppercase text-white drop-shadow-md">HilEX</span>
         </div>
         <button onClick={() => setIsDrawerOpen(true)} className="p-2 active:opacity-50 transition-opacity">
           <Menu size={24} />
@@ -216,7 +216,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
             </div>
             <div className="mt-auto pb-6">
               <p className="text-[8px] text-slate-800 font-black uppercase tracking-widest text-center italic">
-                HiLEX Mobile Intelligence v1.0
+                HilEX Mobile Intelligence v1.0
               </p>
             </div>
           </div>

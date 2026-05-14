@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { formatScore } from '../utils/format';
+import { formatTeamName } from '../utils/text';
 
 const NHL_KEYS: Record<string, string> = {
   points_pct: 'Points %',
@@ -86,7 +87,8 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
       if (code) {
         logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/world-cup/${code}.png`;
       } else if (teamTla || teamName) {
-        const slug = (teamName === 'Paris Saint-Germain' || teamTla?.toUpperCase() === 'PSG') ? 'psg' : (teamTla || '').toLowerCase();
+        const lowerName = teamName.toLowerCase();
+        const slug = (lowerName.includes('paris saint-germain') || teamTla?.toUpperCase() === 'PSG') ? 'psg' : (teamTla || '').toLowerCase();
         if (slug) {
           logoUrl = `https://avijzlkdukanneylvtrd.supabase.co/storage/v1/object/public/images/football/ucl/${slug}.png`;
         }
@@ -115,7 +117,7 @@ const TeamPanel = ({ team, type, isNHL, sport, crestUrl }: { team: any; type: 'A
         )}
       </div>
 
-      <h3 className="text-sm font-black italic uppercase text-center leading-tight mb-2 h-10 flex items-center">{team.name}</h3>
+      <h3 className="text-sm font-black italic uppercase text-center leading-tight mb-2 h-10 flex items-center">{formatTeamName(team.name)}</h3>
       <div className="flex items-center gap-2 mb-6">
         <span className="text-[9px] font-bold text-white/50 uppercase tracking-widest">{team.code || team.abbreviation || teamTla?.toUpperCase()}</span>
       </div>

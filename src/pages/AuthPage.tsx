@@ -56,12 +56,12 @@ export default function AuthPage() {
             {/* Logo */}
             <div className="flex items-center justify-center mb-10">
               <div className="p-1 rounded-2xl overflow-hidden" style={{ background: 'rgba(0,216,255,0.05)', border: '1px solid rgba(0,216,255,0.1)', boxShadow: '0 0 30px rgba(0,216,255,0.05)' }}>
-                <img src="/logo.png" alt="HiLEX Logo" className="w-20 h-20 object-contain rounded-xl" />
+                <img src="/logo.png" alt="HilEX Logo" className="w-20 h-20 object-contain rounded-xl" />
               </div>
             </div>
 
             <h1 className="text-3xl font-bold text-white text-center mb-2 tracking-tight">
-              Welcome to HiLEX
+              Welcome to HilEX
             </h1>
             <p className="text-slate-400 text-center mb-8 font-mono text-sm">
               Optimized Trends Platform
@@ -129,7 +129,7 @@ export default function AuthPage() {
 
             <div className="mt-10 pt-8 border-t border-white/5 flex flex-col items-center gap-6">
               <p className="text-slate-800 text-[8px] font-black uppercase tracking-[0.3em] text-center italic">
-                HiLEX Mobile Intelligence v1.0
+                HilEX Mobile Intelligence v1.0
               </p>
             </div>
           </div>
