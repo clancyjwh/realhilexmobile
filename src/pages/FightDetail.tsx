@@ -131,6 +131,13 @@ export default function FightDetail() {
         <FighterPanel fighter={analysis.fighter_1} type="RED CORNER" headshotProp={headshots.f1} />
         <FighterPanel fighter={analysis.fighter_2} type="BLUE CORNER" headshotProp={headshots.f2} />
       </div>
+
+      {/* Mobile Disclaimer */}
+      <div className="p-6 text-center bg-[#0a0a0f] border-t border-white/5 shrink-0">
+        <p className="text-[8px] text-slate-700 font-black uppercase tracking-[0.2em] italic max-w-[200px] mx-auto leading-relaxed">
+          Mobile analysis limited; check desktop app for more in-depth information
+        </p>
+      </div>
     </div>
   );
 }

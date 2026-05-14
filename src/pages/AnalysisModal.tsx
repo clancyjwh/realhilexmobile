@@ -302,6 +302,13 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
             </p>
           </div>
         )}
+
+        {/* Mobile Disclaimer */}
+        <div className="mt-12 mb-8 text-center px-4">
+          <p className="text-[9px] text-slate-700 font-black uppercase tracking-[0.2em] italic leading-relaxed">
+            Mobile analysis limited; check desktop app for more in-depth information
+          </p>
+        </div>
       </div>
 
       {activeDef && (

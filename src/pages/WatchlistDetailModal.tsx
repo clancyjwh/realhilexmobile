@@ -181,7 +181,12 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
               </div>
             );
           }
-          return null;
+          {/* Mobile Disclaimer */}
+          <div className="pt-8 text-center">
+            <p className="text-[8px] text-slate-600 font-black uppercase tracking-[0.2em] italic max-w-[200px] mx-auto leading-relaxed">
+              Mobile analysis limited; check desktop app for more in-depth information
+            </p>
+          </div>
         })()}
       </div>
     </div>
