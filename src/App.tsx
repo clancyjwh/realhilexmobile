@@ -176,7 +176,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white flex flex-col font-sans selection:bg-[#00D8FF]/20">
       {/* Header */}
-      <header className="h-16 bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40">
+      <header className="bg-[#12121a] px-6 flex items-center justify-between border-b border-white/5 shrink-0 sticky top-0 z-40 pt-safe">
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="HilEX" className="w-8 h-8 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
           <span className="font-black text-2xl tracking-tighter italic uppercase text-white drop-shadow-md">HilEX</span>
@@ -224,7 +224,7 @@ const Shell = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {/* Bottom Nav */}
-      <nav className="h-20 bg-[#12121a] border-t border-white/5 px-4 flex items-center justify-around shrink-0 sticky bottom-0 z-40">
+      <nav className="bg-[#12121a] border-t border-white/5 px-4 flex items-center justify-around shrink-0 sticky bottom-0 z-40 pb-safe">
         {navItems.map(item => {
           const isActive = location.pathname === item.path;
           return (

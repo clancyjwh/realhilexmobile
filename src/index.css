@@ -19,3 +19,11 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+/* iOS Safe Area */
+.pt-safe { padding-top: env(safe-area-inset-top); }
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+/* Touch responsiveness */
+* { -webkit-tap-highlight-color: transparent; }
+body { -webkit-overflow-scrolling: touch; }
