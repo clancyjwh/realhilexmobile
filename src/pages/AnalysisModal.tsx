@@ -133,6 +133,14 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
             <div className={`text-6xl font-black italic tracking-tighter ${isFinancial ? signalColors.text : ''}`} style={!isFinancial ? { color: finalColor } : {}}>
               {scoreToUse > 0 ? '+' : ''}{formatScore(scoreToUse, 1)}
             </div>
+            {isFinancial && (
+              <div className={`text-sm font-bold uppercase tracking-widest mt-1 ${signalColors.text}`}>
+                {scoreToUse >= 7 ? 'Strong Bullish' : 
+                 scoreToUse >= 3 ? 'Bullish' : 
+                 scoreToUse >= -3 ? 'Neutral' : 
+                 scoreToUse >= -7 ? 'Bearish' : 'Strong Bearish'}
+              </div>
+            )}
           </div>
         </div>
 
@@ -144,12 +152,17 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
           {isFinancial && financialData ? (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-2">
-                <IndicatorTile label="SMA" score={financialData.indicator_json?.SMA?.signal || 0} definition="Simple Moving Average" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
-                <IndicatorTile label="RSI" score={financialData.indicator_json?.RSI?.signal || 0} definition="Relative Strength Index" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
                 <IndicatorTile label="CCI" score={financialData.indicator_json?.CCI?.signal || 0} definition="Commodity Channel Index" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
-                <IndicatorTile label="MACD" score={financialData.indicator_json?.MACD?.signal || 0} definition="Moving Average Convergence Divergence" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
+                <IndicatorTile label="RSI" score={financialData.indicator_json?.RSI?.signal || 0} definition="Relative Strength Index" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
+                <IndicatorTile label="SMA" score={financialData.indicator_json?.SMA?.signal || 0} definition="Simple Moving Average" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
                 <IndicatorTile label="BOLL" score={financialData.indicator_json?.BOLL?.signal || 0} definition="Bollinger Bands" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
-                <IndicatorTile label="ROC" score={financialData.indicator_json?.Rate_of_Change?.rate_of_change?.signal || 0} definition="Rate of Change" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
+                <IndicatorTile label="MACD" score={financialData.indicator_json?.MACD?.signal || 0} definition="Moving Average Convergence Divergence" onShowDef={(t, d) => setActiveDef({ title: t, def: d })} />
+                <IndicatorTile 
+                  label="ROC" 
+                  score={financialData.indicator_json?.ROC?.signal ?? financialData.indicator_json?.Rate_of_Change?.rate_of_change?.signal ?? financialData.indicator_json?.Rate_of_Change?.signal ?? 0} 
+                  definition="Rate of Change" 
+                  onShowDef={(t, d) => setActiveDef({ title: t, def: d })} 
+                />
               </div>
 
               <div className="space-y-4">
