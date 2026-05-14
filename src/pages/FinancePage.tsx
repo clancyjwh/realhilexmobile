@@ -22,13 +22,9 @@ export default function FinancePage() {
   }, []);
 
   const fetchWatchlist = async () => {
-    setLoading(true);
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
+      if (!user) return;
 
       const { data, error } = await supabase
         .from('user_watchlist')
@@ -40,7 +36,13 @@ export default function FinancePage() {
 
       if (data) {
         const sorted = [...data]
-          .map(item => ({ ...item, signal: Number(item.signal) || 0 }))
+          .map(item => ({ 
+            ...item, 
+            signal: Number(item.signal) || 0,
+            unifiedScore: Number(item.signal) || 0, // For compatibility with HomePage logic if needed
+            itemType: 'asset',
+            org: 'WATCHLIST'
+          }))
           .sort((a, b) => b.signal - a.signal);
         setItems(sorted);
       }
@@ -52,6 +54,28 @@ export default function FinancePage() {
   };
 
   useEffect(() => {
+    // 1. Initial Fetch
+    fetchWatchlist();
+
+    // 2. Real-time Subscription
+    let channel: any = null;
+    
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        channel = supabase
+          .channel(`watchlist-realtime-${user.id}`)
+          .on(
+            'postgres_changes',
+            { event: '*', schema: 'public', table: 'user_watchlist', filter: `user_id=eq.${user.id}` },
+            () => {
+              fetchWatchlist();
+            }
+          )
+          .subscribe();
+      }
+    });
+
+    // 3. Auth Listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
         fetchWatchlist();
@@ -61,7 +85,10 @@ export default function FinancePage() {
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      if (channel) supabase.removeChannel(channel);
+    };
   }, []);
 
   const handleCardClick = (item: any) => {
@@ -100,15 +127,15 @@ export default function FinancePage() {
                 <div className="flex items-center justify-between gap-1.5 mb-2 w-full">
                   <div className="flex items-center gap-1.5 truncate">
                     <div className={`${colors.subtext} text-xs font-bold`}>#{index + 1}</div>
-                    <span className={`${colors.subtextDark} text-[10px] font-medium truncate`}>WATCHLIST</span>
+                    <span className={`${colors.subtextDark} text-[10px] font-medium truncate uppercase`}>Watchlist</span>
                   </div>
                 </div>
                 
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full mt-2">
                   <div className={`${colors.isGold ? 'text-black' : 'text-white'} text-xl font-bold truncate pr-2`}>
                     {item.symbol}
                   </div>
-                  <div className={`text-3xl font-bold ${colors.text} flex-shrink-0`}>
+                  <div className={`text-3xl font-bold ${colors.text} flex-shrink-0 ml-1`}>
                     {item.signal > 0 ? '+' : ''}{formatScore(item.signal, 1)}
                   </div>
                 </div>

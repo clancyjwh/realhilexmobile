@@ -205,10 +205,10 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                             key={idx}
                             className={`rounded-xl p-3 flex flex-col justify-center items-center text-center border aspect-square ${isCorrect ? 'border-green-500/20 bg-green-500/10' : 'border-red-500/20 bg-red-500/10'}`}
                           >
-                            <span className={`text-xl font-black ${isCorrect ? 'text-[#22c55e]' : 'text-red-500'}`}>
+                            <span className={`text-xl font-black ${isCorrect ? 'text-[#10b981]' : 'text-red-500'}`}>
                               {p.Daysback || p.days}
                             </span>
-                            <span className={`text-[8px] mt-0.5 font-black uppercase tracking-widest ${isCorrect ? 'text-[#22c55e]/70' : 'text-red-500/70'}`}>
+                            <span className={`text-[8px] mt-0.5 font-black uppercase tracking-widest ${isCorrect ? 'text-[#10b981]/70' : 'text-red-500/70'}`}>
                               days
                             </span>
                           </div>
@@ -261,7 +261,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
                             <span className="text-[10px] font-black text-white/70 uppercase tracking-widest">Relative Value to Index</span>
                             <Info size={10} className="text-white/40" />
                           </div>
-                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-[#22c55e]' : 'text-red-500'}`}>
+                          <span className={`text-2xl font-black italic tracking-tighter ${isUp ? 'text-[#10b981]' : 'text-red-500'}`}>
                             {isUp ? '+' : ''}{relativeValueNum.toFixed(2)}%
                           </span>
                         </div>
