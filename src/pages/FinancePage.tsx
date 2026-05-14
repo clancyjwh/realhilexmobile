@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { formatScore, getHeatScoreBgColor, getSignalColors } from '../utils/format';
-import AnalysisModal from './AnalysisModal';
 import { supabase } from '../lib/supabase';
+import { formatScore, getHeatScoreBgColor, getSignalColors } from '../utils/format';
+import WatchlistDetailModal from './WatchlistDetailModal';
 
 interface WatchlistItem {
   name: string;
@@ -17,10 +17,8 @@ interface WatchlistItem {
 export default function FinancePage() {
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [modalLoading, setModalLoading] = useState(false);
 
   const [selectedEntity, setSelectedEntity] = useState<any>(null);
-  const [financialAnalysis, setFinancialAnalysis] = useState<any>(null);
 
   useEffect(() => {
     fetchWatchlist();
@@ -101,24 +99,8 @@ export default function FinancePage() {
     };
   }, []);
 
-  const handleCardClick = async (item: any) => {
-    try {
-      setModalLoading(true);
-      const { data } = await supabase
-        .from('asset_daily_analysis')
-        .select('*')
-        .eq('symbol', item.symbol)
-        .order('created_at', { ascending: false })
-        .limit(1);
-
-      setSelectedEntity(item);
-      setFinancialAnalysis(data?.[0] || null);
-    } catch (err) {
-      console.error('Error fetching fresh analysis:', err);
-      setSelectedEntity(item);
-    } finally {
-      setModalLoading(false);
-    }
+  const handleCardClick = (item: any) => {
+    setSelectedEntity(item);
   };
 
   return (
@@ -175,24 +157,10 @@ export default function FinancePage() {
 
       {/* Detail Modal */}
       {selectedEntity && (
-        <AnalysisModal 
-          entity={selectedEntity}
-          financialData={financialAnalysis}
-          onClose={() => {
-            setSelectedEntity(null);
-            setFinancialAnalysis(null);
-          }} 
+        <WatchlistDetailModal 
+          item={selectedEntity} 
+          onClose={() => setSelectedEntity(null)} 
         />
-      )}
-
-      {/* Modal Loading Overlay */}
-      {modalLoading && (
-        <div className="fixed inset-0 z-[150] bg-black/40 backdrop-blur-sm flex items-center justify-center">
-          <div className="bg-[#12121a] p-6 rounded-3xl border border-white/10 flex flex-col items-center gap-3">
-            <div className="w-8 h-8 border-4 border-[#10b981] border-t-transparent rounded-full animate-spin" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-white/50">Syncing Intelligence...</span>
-          </div>
-        </div>
       )}
     </div>
   );
