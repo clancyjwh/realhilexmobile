@@ -11,6 +11,7 @@ interface WatchlistItem {
   indicators: any;
   relative_value_json?: any;
   relative_value?: any;
+  relative_value_analysis?: any;
 }
 
 export default function FinancePage() {
