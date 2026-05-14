@@ -11,16 +11,14 @@ let package = Package(
             targets: ["CapApp-SPM"])
     ],
     dependencies: [
-        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "8.3.4"),
-        .package(url: "https://github.com/OneSignal/OneSignal-iOS-SDK", from: "5.0.0")
+        .package(url: "https://github.com/ionic-team/capacitor-swift-pm.git", exact: "8.3.4")
     ],
     targets: [
         .target(
             name: "CapApp-SPM",
             dependencies: [
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
-                .product(name: "Cordova", package: "capacitor-swift-pm"),
-                .product(name: "OneSignalFramework", package: "OneSignal-iOS-SDK")
+                .product(name: "Cordova", package: "capacitor-swift-pm")
             ]
         )
     ]
