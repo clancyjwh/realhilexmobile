@@ -43,27 +43,25 @@ export default function AuthPage() {
       const available = await BiometricAuth.checkBiometry();
       if (!available.isAvailable) return;
 
-      const result = await BiometricAuth.authenticate({
+      await BiometricAuth.authenticate({
         reason: 'Authorize access to HilEX Intelligence',
         cancelTitle: 'Cancel',
       });
 
-      if (result) {
-        setLoading(true);
-        const { value } = await Preferences.get({ key: 'user_creds' });
-        if (value) {
-          const { email: storedEmail, password: storedPassword } = JSON.parse(value);
-          const { error } = await supabase.auth.signInWithPassword({ 
-            email: storedEmail, 
-            password: storedPassword 
-          });
+      setLoading(true);
+      const { value } = await Preferences.get({ key: 'user_creds' });
+      if (value) {
+        const { email: storedEmail, password: storedPassword } = JSON.parse(value);
+        const { error } = await supabase.auth.signInWithPassword({ 
+          email: storedEmail, 
+          password: storedPassword 
+        });
 
-          if (error) {
-            setError(error.message);
-            setLoading(false);
-          } else {
-            navigate('/home', { replace: true });
-          }
+        if (error) {
+          setError(error.message);
+          setLoading(false);
+        } else {
+          navigate('/home', { replace: true });
         }
       }
     } catch (e) {
