@@ -1,3 +1,4 @@
+import OneSignal from 'onesignal-cordova-plugin';
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Lock } from 'lucide-react';
@@ -38,6 +39,14 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       else if (rawTier === 'markets') mappedTier = 'Markets';
       
       setTier(mappedTier);
+
+      // OneSignal native sync
+      try {
+        OneSignal.login(userId);
+        await OneSignal.User.addTags({ tier: mappedTier });
+      } catch (osErr) {
+        console.error('OneSignal sync error:', osErr);
+      }
     } catch (e) {
       console.error('Error syncing tier:', e);
     } finally {
@@ -46,6 +55,10 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    // OneSignal init
+    OneSignal.initialize('2efbbcb6-11fe-413b-888e-f35439e417e8');
+    OneSignal.Notifications.requestPermission(true);
+
     // 1. Initial Session Check
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
