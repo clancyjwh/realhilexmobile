@@ -133,14 +133,6 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
             <div className={`text-6xl font-black italic tracking-tighter ${isFinancial ? signalColors.text : ''}`} style={!isFinancial ? { color: finalColor } : {}}>
               {scoreToUse > 0 ? '+' : ''}{formatScore(scoreToUse, 1)}
             </div>
-            {isFinancial && (
-              <div className={`text-sm font-bold uppercase tracking-widest mt-1 ${signalColors.text}`}>
-                {scoreToUse >= 7 ? 'Strong Bullish' : 
-                 scoreToUse >= 3 ? 'Bullish' : 
-                 scoreToUse >= -3 ? 'Neutral' : 
-                 scoreToUse >= -7 ? 'Bearish' : 'Strong Bearish'}
-              </div>
-            )}
           </div>
         </div>
 
