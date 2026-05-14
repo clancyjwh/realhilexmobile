@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { Home as HomeIcon, TrendingUp, Trophy, BarChart3, Menu, X, User, Lock } from 'lucide-react';
@@ -56,6 +57,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await OneSignal.User.addTags({
             tier: mappedTier
           });
+          await OneSignal.Notifications.requestPermission();
         });
       }
     } catch (e) {
