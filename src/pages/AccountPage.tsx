@@ -31,12 +31,10 @@ export default function AccountPage() {
     
     try {
       if (enabled) {
-        await (window as any).OneSignal.Notifications.requestPermission(true);
+        const { FirebaseMessaging } = await import('@capacitor-firebase/messaging'); await FirebaseMessaging.requestPermissions();
       } else {
-        await (window as any).OneSignal.User.pushSubscription.optOut();
       }
     } catch (err) {
-      console.error('OneSignal error:', err);
     }
   };
 
