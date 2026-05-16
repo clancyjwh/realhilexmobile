@@ -15,7 +15,6 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
-;
 
 declare global {
   interface Window {
@@ -47,37 +46,19 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       setTier(mappedTier);
 
-      // FCM + OneSignal Integration
-      try {
-        const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
-        await FirebaseMessaging.requestPermissions();
-        const { token } = await FirebaseMessaging.getToken();
-        if (token) {
-          // Register FCM token with OneSignal via API
-          await fetch('https://onesignal.com/api/v1/players', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              app_id: '2efbbcb6-11fe-413b-888e-f35439e417e8',
-              device_type: 0,
-              identifier: token,
-              external_user_id: userId,
-              tags: { tier: mappedTier }
-            })
+      // OneSignal Integration
+      if (window.OneSignalDeferred) {
+        window.OneSignalDeferred.push(async function(OneSignal: any) {
+          await OneSignal.init({
+            appId: "2efbbcb6-11fe-413b-888e-f35439e417e8"
           });
-        }
-      } catch (fcmErr) {
-        console.error('FCM error:', fcmErr);
-      }
-      // OneSignal Web Integration
-      try {
-        await (window as any).OneSignal.initialize("2efbbcb6-11fe-413b-888e-f35439e417e8");
-        await (window as any).OneSignal.login(userId);
-        await (window as any).OneSignal.User.addTags({
-          tier: mappedTier
+          
+          await OneSignal.login(userId);
+          await OneSignal.User.addTags({
+            tier: mappedTier
+          });
+          await OneSignal.Notifications.requestPermission();
         });
-      } catch (err) {
-        console.error('OneSignal initialization error:', err);
       }
     } catch (e) {
       console.error('Error syncing tier:', e);

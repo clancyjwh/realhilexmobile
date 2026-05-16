@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { User as UserIcon, CreditCard, LogOut, Bell } from 'lucide-react';
-import OneSignal from '@onesignal/capacitor-plugin';
+
 import { Preferences } from '@capacitor/preferences';
 
 
@@ -31,9 +31,9 @@ export default function AccountPage() {
     
     try {
       if (enabled) {
-        await OneSignal.Notifications.requestPermission(true);
+        await (window as any).OneSignal.Notifications.requestPermission(true);
       } else {
-        await OneSignal.User.pushSubscription.optOut();
+        await (window as any).OneSignal.User.pushSubscription.optOut();
       }
     } catch (err) {
       console.error('OneSignal error:', err);
