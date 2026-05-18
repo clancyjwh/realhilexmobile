@@ -31,7 +31,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
 
   return (
     <div className="fixed inset-0 bg-[#0a0a0f]/95 backdrop-blur-xl z-[100] flex flex-col animate-in slide-in-from-bottom-full duration-300">
-      <div className="sticky top-0 bg-[#0a0a0f]/95 backdrop-blur-xl z-50 p-6 flex items-center justify-between border-b border-white/5" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="flex items-center justify-between p-6 pb-2 shrink-0">
         <div className="space-y-1">
           <div className="text-[10px] font-black text-white bg-white/10 px-2 py-1 rounded-lg inline-block uppercase tracking-widest">
             {item.symbol}
@@ -48,7 +48,7 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
         </button>
       </div>
 
-      <div className="flex-grow overflow-y-auto p-6 space-y-8" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 120px)' }}>
+      <div className="flex-grow overflow-y-auto p-6 space-y-8 pb-32">
         
         {/* HeatScore Section */}
         <div className="flex flex-col items-center justify-center space-y-2 py-6 bg-[#12121a] border border-white/5 rounded-[2rem] shadow-xl relative overflow-hidden">
@@ -181,17 +181,13 @@ export default function WatchlistDetailModal({ item, onClose }: WatchlistDetailM
               </div>
             );
           }
-            );
-          }
-          return null;
+          {/* Mobile Disclaimer */}
+          <div className="pt-8 text-center">
+            <p className="text-[8px] text-slate-600 font-black uppercase tracking-[0.2em] italic max-w-[200px] mx-auto leading-relaxed">
+              Mobile analysis limited; check desktop app for more in-depth information
+            </p>
+          </div>
         })()}
-
-        {/* Mobile Disclaimer */}
-        <div className="pt-8 text-center pb-4">
-          <p className="text-[8px] text-slate-600 font-black uppercase tracking-[0.2em] italic max-w-[200px] mx-auto leading-relaxed">
-            Mobile analysis limited; check desktop app for more in-depth information
-          </p>
-        </div>
       </div>
     </div>
   );

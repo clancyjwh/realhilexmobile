@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
-import { User as UserIcon, CreditCard, LogOut, Bell } from 'lucide-react';
-import { OneSignal } from 'onesignal-capacitor';
-import { Preferences } from '@capacitor/preferences';
+import { User as UserIcon, CreditCard, LogOut } from 'lucide-react';
 
 
 
@@ -13,32 +11,10 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true);
   const [displayName, setDisplayName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
     fetchProfile();
-    loadNotificationPreference();
   }, []);
-
-  const loadNotificationPreference = async () => {
-    const { value } = await Preferences.get({ key: 'notifications_enabled' });
-    setNotificationsEnabled(value === 'true');
-  };
-
-  const toggleNotifications = async (enabled: boolean) => {
-    setNotificationsEnabled(enabled);
-    await Preferences.set({ key: 'notifications_enabled', value: enabled.toString() });
-    
-    try {
-      if (enabled) {
-        await OneSignal.Notifications.requestPermission(true);
-      } else {
-        await OneSignal.User.PushSubscription.optOut();
-      }
-    } catch (err) {
-      console.error('OneSignal error:', err);
-    }
-  };
 
   const fetchProfile = async () => {
     setLoading(true);
@@ -117,27 +93,9 @@ export default function AccountPage() {
             />
             {isSaving && <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-[#00D8FF] uppercase">Saving...</div>}
           </div>
-        {/* Notifications Section */}
-        <div className="space-y-4">
-          <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-2">Preferences</label>
-          <div className="bg-[#12121a] border border-white/5 rounded-2xl p-5 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-[#00D8FF]/10 rounded-xl flex items-center justify-center">
-                <Bell size={20} className="text-[#00D8FF]" />
-              </div>
-              <div>
-                <p className="text-sm font-bold text-white leading-none mb-1">Push Notifications</p>
-                <p className="text-[10px] text-slate-500 font-medium">Receive real-time intelligence</p>
-              </div>
-            </div>
-            <button 
-              onClick={() => toggleNotifications(!notificationsEnabled)}
-              className={`w-12 h-6 rounded-full transition-all duration-300 relative ${notificationsEnabled ? 'bg-[#00D8FF]' : 'bg-white/10'}`}
-            >
-              <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all duration-300 ${notificationsEnabled ? 'left-7' : 'left-1'}`} />
-            </button>
-          </div>
         </div>
+
+
       </div>
 
       <div className="mt-auto pt-10">
