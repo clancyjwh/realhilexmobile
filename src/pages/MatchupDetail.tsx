@@ -175,8 +175,7 @@ export default function MatchupDetail() {
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col text-white">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#12121a] border-b border-white/5 flex items-center justify-between shrink-0 px-4 py-4" style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(64px + env(safe-area-inset-top))' }}>
+      <div className="bg-[#12121a] border-b border-white/5 flex items-center justify-between shrink-0 px-4 py-4" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <button onClick={() => navigate(-1)} className="p-2 bg-white/5 rounded-full text-slate-400 active:bg-white/10 transition-colors">
           <ChevronLeft size={24} />
         </button>
@@ -184,7 +183,7 @@ export default function MatchupDetail() {
         <div className="w-10" /> {/* Spacer */}
       </div>
 
-      <div className="flex-grow flex overflow-y-auto" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top))' }}>
+      <div className="flex-grow flex overflow-y-auto">
         <TeamPanel 
           team={analysis.away_team} 
           type="AWAY" 

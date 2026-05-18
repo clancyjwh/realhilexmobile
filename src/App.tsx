@@ -45,17 +45,6 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       else if (rawTier === 'markets') mappedTier = 'Markets';
       
       setTier(mappedTier);
-      // Firebase push registration
-      try {
-        const { FirebaseMessaging } = await import('@capacitor-firebase/messaging');
-        await FirebaseMessaging.requestPermissions();
-        const { token } = await FirebaseMessaging.getToken();
-        if (token) {
-          await supabase.from('profiles').update({ fcm_token: token }).eq('id', userId);
-        }
-      } catch (fcmErr) {
-        console.error('FCM error:', fcmErr);
-      }
 
       // OneSignal Integration
       if (window.OneSignalDeferred) {

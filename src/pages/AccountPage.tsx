@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import { User as UserIcon, CreditCard, LogOut, Bell } from 'lucide-react';
-
+import { OneSignal } from 'onesignal-capacitor';
 import { Preferences } from '@capacitor/preferences';
 
 
@@ -31,10 +31,12 @@ export default function AccountPage() {
     
     try {
       if (enabled) {
-        const { FirebaseMessaging } = await import('@capacitor-firebase/messaging'); await FirebaseMessaging.requestPermissions();
+        await OneSignal.Notifications.requestPermission(true);
       } else {
+        await OneSignal.User.PushSubscription.optOut();
       }
     } catch (err) {
+      console.error('OneSignal error:', err);
     }
   };
 
@@ -115,7 +117,6 @@ export default function AccountPage() {
             />
             {isSaving && <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[8px] font-black text-[#00D8FF] uppercase">Saving...</div>}
           </div>
-        </div>
         {/* Notifications Section */}
         <div className="space-y-4">
           <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest pl-2">Preferences</label>

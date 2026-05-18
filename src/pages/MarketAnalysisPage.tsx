@@ -81,9 +81,8 @@ export default function MarketAnalysisPage() {
   const polyProb = polymarket_yes_prob !== null ? parseFloat((polymarket_yes_prob * 100).toFixed(1)) : null;
 
   return (
-    <div className="flex-grow p-4 bg-[#0a0a0f] text-white h-auto" style={{ paddingTop: 'calc(64px + env(safe-area-inset-top))', paddingBottom: 'calc(env(safe-area-inset-bottom) + 120px)' }}>
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0f] px-4 py-4 flex items-center gap-4 border-b border-white/5" style={{ paddingTop: 'env(safe-area-inset-top)', height: 'calc(64px + env(safe-area-inset-top))' }}>
+    <div className="flex-grow p-4 bg-[#0a0a0f] text-white h-auto" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 120px)' }}>
+      <div className="flex items-center gap-4 mb-8" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
         <button onClick={() => navigate('/markets')} className="p-2 bg-[#12121a] rounded-full text-slate-400 active:bg-white/10 transition-colors">
           <ChevronLeft size={24} />
         </button>
