@@ -11,6 +11,7 @@ export default function AuthPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [hasStoredCreds, setHasStoredCreds] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,6 +31,10 @@ export default function AuthPage() {
       const { value } = await Preferences.get({ key: 'user_creds' });
       if (value) {
         setHasStoredCreds(true);
+        const creds = JSON.parse(value);
+        if (creds.email) setEmail(creds.email);
+        if (creds.password) setPassword(creds.password);
+        setRememberMe(true);
         // Automatically attempt biometric auth on open if creds exist
         handleBiometricAuth();
       }
@@ -81,11 +86,15 @@ export default function AuthPage() {
       setError(error.message);
       setLoading(false);
     } else if (data.session) {
-      // Save credentials for future biometric login
-      await Preferences.set({
-        key: 'user_creds',
-        value: JSON.stringify({ email, password })
-      });
+      if (rememberMe) {
+        // Save credentials for future login
+        await Preferences.set({
+          key: 'user_creds',
+          value: JSON.stringify({ email, password })
+        });
+      } else {
+        await Preferences.remove({ key: 'user_creds' });
+      }
       navigate('/home', { replace: true });
     }
   };
@@ -164,6 +173,19 @@ export default function AuthPage() {
                   <p className="text-red-400 text-xs font-bold text-center">{error}</p>
                 </div>
               )}
+
+              <div className="flex items-center">
+                <input
+                  id="rememberMe"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="w-4 h-4 rounded border-white/20 bg-white/5 text-[#00D8FF] focus:ring-[#00D8FF]/30 accent-[#00D8FF]"
+                />
+                <label htmlFor="rememberMe" className="ml-2 block text-xs text-slate-400 font-medium">
+                  Remember me
+                </label>
+              </div>
 
               <div className="space-y-3 pt-2">
                 <button
