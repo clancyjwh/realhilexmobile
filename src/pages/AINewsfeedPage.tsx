@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Newspaper, ChevronLeft, ExternalLink, Loader2, Zap } from 'lucide-react';
 import { getTieredNewsfeed } from '../lib/newsfeed';
 
-export default function AINewsfeedPage() {
-  const { category } = useParams<{ category: string }>();
+export default function AINewsfeedPage({ categoryOverride }: { categoryOverride?: string }) {
+  const params = useParams<{ category: string }>();
+  const category = categoryOverride || params.category;
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<any[]>([]);
