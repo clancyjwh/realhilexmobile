@@ -112,7 +112,7 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
               })()}
             </div>
           )}
-          <h1 className={`font-black italic uppercase tracking-tighter text-white mb-2 leading-none ${isFinancial ? 'text-6xl mt-4' : 'text-4xl'}`}>
+          <h1 className="font-black italic uppercase tracking-tighter text-white mb-2 leading-none text-4xl">
             {isFinancial ? (entity.symbol || entity.name) : entity.name}
           </h1>
           <div className="text-[10px] font-black text-white bg-white/10 px-3 py-1 rounded-full uppercase tracking-widest" style={{ color: finalColor, borderColor: finalColor, borderWidth: '1px' }}>

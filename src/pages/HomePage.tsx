@@ -114,12 +114,13 @@ export default function HomePage() {
       const commoditySymbols = ['XAU/USD', 'XAG/USD', 'WTI/USD', 'NG/USD', 'HG1'];
       const caStockSymbols = ['SHOP', 'CSU', 'LSPD', 'CLS', 'SPAI'];
 
-      const [stocksResult, caStocksResult, cryptoResult, forexResult, commoditiesResult] = await Promise.all([
+      const [stocksResult, caStocksResult, cryptoResult, forexResult, commoditiesResult, etfsRawResult] = await Promise.all([
         supabase.from('stocks_top_picks').select('*').in('symbol', americanStocks),
         supabase.from('ca_stocks_top_picks').select('*').in('symbol', caStockSymbols),
         supabase.from('crypto_top_picks').select('*').in('symbol', cryptoSymbols),
         supabase.from('forex_top_picks').select('*').in('symbol', forexSymbols),
         supabase.from('commodities_top_picks').select('*').in('symbol', commoditySymbols),
+        supabase.from('etf_analytical_data').select('*').order('run_date', { ascending: false }).order('updated_at', { ascending: false })
       ]);
 
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -130,11 +131,11 @@ export default function HomePage() {
         .order('score', { ascending: false })
         .limit(100);
 
-      const mapAsset = (row: any, orgLabel: string, nameField: string, symbolField: string): UnifiedItem => ({
+      const mapAsset = (row: any, orgLabel: string, nameField: string, symbolField: string, scoreField: string = 'signal'): UnifiedItem => ({
         id: row[symbolField] || row.symbol,
         name: row[nameField] || row.symbol,
         symbol: row.symbol,
-        unifiedScore: Number(row.signal) || 0,
+        unifiedScore: Number(row[scoreField]) || 0,
         itemType: 'asset',
         org: orgLabel,
         score_color: row.score_color || '#1c1c24',
@@ -143,12 +144,25 @@ export default function HomePage() {
         updated_at: row.updated_at
       });
 
+      const latestEtfsMap = new Map();
+      (etfsRawResult.data || []).forEach((item: any) => {
+        if (!latestEtfsMap.has(item.symbol)) {
+          latestEtfsMap.set(item.symbol, item);
+        }
+      });
+      const sortedEtfs = Array.from(latestEtfsMap.values())
+        .sort((a: any, b: any) => parseFloat(b.final_score || 0) - parseFloat(a.final_score || 0));
+      const top3Etfs = sortedEtfs.slice(0, 3);
+      const bottom2Etfs = sortedEtfs.slice(-2);
+      const selectedEtfs = [...top3Etfs, ...bottom2Etfs];
+
       const allAssets = [
         ...(stocksResult.data || []).map(r => mapAsset(r, 'American Stock', 'stock_name', 'symbol')),
         ...(caStocksResult.data || []).map(r => mapAsset(r, 'Canadian Stock', 'stock_name', 'symbol')),
         ...(cryptoResult.data || []).map(r => mapAsset(r, 'Cryptocurrency', 'crypto_name', 'symbol')),
         ...(forexResult.data || []).map(r => mapAsset(r, 'Foreign Exchange', 'pair_name', 'symbol')),
         ...(commoditiesResult.data || []).map(r => mapAsset(r, 'Commodity', 'commodity_name', 'symbol')),
+        ...selectedEtfs.map(r => mapAsset(r, 'ETF', 'etf_name', 'symbol', 'final_score')),
       ];
 
       const assetMap = new Map();
@@ -209,6 +223,14 @@ export default function HomePage() {
       else if (tier === 'Finance') filtered = combined.filter(item => item.itemType === 'asset');
       else if (tier === 'Markets') filtered = combined.filter(item => item.itemType === 'market');
 
+      const seen = new Set();
+      filtered = filtered.filter(item => {
+        const key = item.symbol || item.name;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+
       setEntities(filtered);
     } catch (err) {
       console.error(err);
@@ -232,15 +254,26 @@ export default function HomePage() {
 
     setSelectedEntity(entity);
     if (entity.symbol) {
-      const { data } = await supabase
-        .from('asset_daily_analysis')
-        .select('*')
-        .eq('symbol', entity.symbol)
-        .order('run_date', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      
-      setFinancialData(data);
+      if (entity.org === 'ETF') {
+        const { data } = await supabase
+          .from('etf_analytical_data')
+          .select('*')
+          .eq('symbol', entity.symbol)
+          .order('run_date', { ascending: false })
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        setFinancialData(data);
+      } else {
+        const { data } = await supabase
+          .from('asset_daily_analysis')
+          .select('*')
+          .eq('symbol', entity.symbol)
+          .order('run_date', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        setFinancialData(data);
+      }
     } else {
       setFinancialData(null);
     }
