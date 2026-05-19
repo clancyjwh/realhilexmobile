@@ -146,10 +146,10 @@ export default function MarketsPage() {
         </div>
         <button 
           onClick={() => navigate('/newsfeed/predictions')}
-          className="flex flex-col items-center justify-center bg-[#00D8FF]/10 border border-[#00D8FF]/20 px-3 py-2 rounded-xl text-[#00D8FF] active:scale-95 transition-all shadow-lg shadow-[#00D8FF]/5"
+          className="flex items-center gap-2 bg-gradient-to-r from-[#00D8FF] to-[#0080FF] text-black px-4 py-2 rounded-full font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all shadow-[0_0_15px_rgba(0,216,255,0.3)]"
         >
-          <Newspaper className="w-5 h-5 mb-1" />
-          <span className="text-[9px] font-black uppercase tracking-wider">AI News</span>
+          <Newspaper className="w-4 h-4" />
+          AI News
         </button>
       </div>
 

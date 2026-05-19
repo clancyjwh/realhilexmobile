@@ -26,6 +26,8 @@ export default function AINewsfeedPage() {
 
   const stories = useMemo(() => {
     const allStories: any[] = [];
+    const seen = new Set();
+
     items.forEach(item => {
       let extracted: any[] = [];
       if (item.results) {
@@ -42,10 +44,17 @@ export default function AINewsfeedPage() {
       }
       if (extracted.length > 0) {
         extracted.forEach(story => {
-          allStories.push({
-            ...story,
-            _meta: { date: item.created_at }
-          });
+          const title = story.title || story.headline || story.name || '';
+          const url = story.source_url || story.url || '';
+          const identifier = url || title;
+          
+          if (identifier && !seen.has(identifier)) {
+            seen.add(identifier);
+            allStories.push({
+              ...story,
+              _meta: { date: item.created_at }
+            });
+          }
         });
       }
     });
@@ -81,36 +90,32 @@ export default function AINewsfeedPage() {
             No intelligence found for this category.
           </div>
         ) : (
-          stories.map((story, i) => (
-            <a 
-              key={i} 
-              href={story.source_url || story.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="block bg-white/5 border border-white/10 rounded-2xl p-4 active:scale-[0.98] transition-transform"
-            >
-              <div className="flex justify-between items-start gap-4 mb-2">
-                <h3 className="font-bold text-base leading-tight text-white flex-1 line-clamp-2">
-                  {story.title}
-                </h3>
-                <ExternalLink className="w-4 h-4 text-[#00D8FF] shrink-0 mt-1 opacity-70" />
-              </div>
-              <p className="text-slate-400 text-xs leading-relaxed line-clamp-3 mb-3">
-                {story.summary}
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1 bg-[#00D8FF]/10 text-[#00D8FF] px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">
-                  <Zap className="w-3 h-3" />
-                  Score: {story.relevance_score || story.relevance}/10
+          stories.map((story, i) => {
+            const displayTitle = story.title || story.headline || story.name || 'Breaking News';
+            const displaySummary = story.summary ? (story.summary.split('. ')[0] + (story.summary.includes('.') ? '.' : '')) : '';
+
+            return (
+              <a 
+                key={i} 
+                href={story.source_url || story.url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block bg-[#12121a] border border-white/5 rounded-2xl p-5 shadow-lg active:scale-[0.98] transition-transform"
+              >
+                <div className="flex justify-between items-start gap-4 mb-2">
+                  <h3 className="font-bold text-[15px] leading-snug text-white flex-1">
+                    {displayTitle}
+                  </h3>
+                  <ExternalLink className="w-4 h-4 text-[#00D8FF] shrink-0 mt-1 opacity-70" />
                 </div>
-                {story.sentiment_score !== undefined && (
-                  <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${story.sentiment_score > 0 ? 'bg-emerald-500/10 text-emerald-400' : story.sentiment_score < 0 ? 'bg-rose-500/10 text-rose-400' : 'bg-slate-500/10 text-slate-400'}`}>
-                    {story.sentiment_score > 0 ? 'Bullish' : story.sentiment_score < 0 ? 'Bearish' : 'Neutral'}
-                  </div>
+                {displaySummary && (
+                  <p className="text-slate-400 text-xs leading-relaxed line-clamp-2">
+                    {displaySummary}
+                  </p>
                 )}
-              </div>
-            </a>
-          ))
+              </a>
+            );
+          })
         )}
       </div>
     </div>
