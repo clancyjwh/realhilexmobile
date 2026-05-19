@@ -184,45 +184,20 @@ export default function HomePage() {
       const athletes = rawEntities.filter(e => e.type === 'athlete');
       const teams = rawEntities.filter(e => e.type === 'team');
 
-      const entityItems = [
+      // Combine all fetched items
+      const allFetchedItems = [
+        ...uniqueAssets.map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 })),
         ...athletes.map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' })),
         ...teams.map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
       ];
 
-      // Selection logic:
-      // 1. Financial Assets: Top 25
-      // 2. Athletes: Top 3, Bottom 2
-      // 3. Teams: Top 3, Bottom 2
-      
-      const sortedAssets = uniqueAssets
-        .map(item => ({ ...item, unifiedScore: Number(item.unifiedScore) || 0 }))
-        .sort((a, b) => b.unifiedScore - a.unifiedScore)
-        .slice(0, 25);
+      // Filter by Tier first
+      let filtered = allFetchedItems;
+      if (tier === 'Sports') filtered = allFetchedItems.filter(item => item.itemType === 'entity');
+      else if (tier === 'Finance') filtered = allFetchedItems.filter(item => item.itemType === 'asset');
+      else if (tier === 'Markets') filtered = allFetchedItems.filter(item => item.itemType === 'market');
 
-      const sortedAthletes = athletes
-        .map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
-        .sort((a, b) => b.unifiedScore - a.unifiedScore);
-      
-      const topAthletes = sortedAthletes.slice(0, 3);
-      const bottomAthletes = sortedAthletes.slice(-2);
-      const selectedAthletes = [...topAthletes, ...bottomAthletes];
-
-      const sortedTeams = teams
-        .map(e => ({ ...e, unifiedScore: e.score, itemType: 'entity' }))
-        .sort((a, b) => b.unifiedScore - a.unifiedScore);
-      
-      const topTeams = sortedTeams.slice(0, 3);
-      const bottomTeams = sortedTeams.slice(-2);
-      const selectedTeams = [...topTeams, ...bottomTeams];
-
-      const combined = [...sortedAssets, ...selectedAthletes, ...selectedTeams]
-        .sort((a, b) => b.unifiedScore - a.unifiedScore);
-
-      let filtered = combined;
-      if (tier === 'Sports') filtered = combined.filter(item => item.itemType === 'entity');
-      else if (tier === 'Finance') filtered = combined.filter(item => item.itemType === 'asset');
-      else if (tier === 'Markets') filtered = combined.filter(item => item.itemType === 'market');
-
+      // Deduplicate
       const seen = new Set();
       filtered = filtered.filter(item => {
         const key = item.symbol || item.name;
@@ -231,7 +206,23 @@ export default function HomePage() {
         return true;
       });
 
-      setEntities(filtered);
+      // Sort by score
+      const fullySorted = filtered.sort((a, b) => b.unifiedScore - a.unifiedScore);
+
+      // Select extreme values: Top 15 and Bottom 15
+      let finalItems = [];
+      if (fullySorted.length <= 30) {
+        finalItems = fullySorted;
+      } else {
+        const top15 = fullySorted.slice(0, 15);
+        const bottom15 = fullySorted.slice(-15);
+        finalItems = [...top15, ...bottom15];
+      }
+
+      // Final sort for display
+      finalItems.sort((a, b) => b.unifiedScore - a.unifiedScore);
+
+      setEntities(finalItems);
     } catch (err) {
       console.error(err);
     } finally {
