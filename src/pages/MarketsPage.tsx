@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ChevronDown, Loader2 } from 'lucide-react';
+import { Search, ChevronDown, Loader2, Newspaper } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { getHeatScoreColor, formatScore, formatMarketQuestion } from '../utils/format';
 
@@ -138,8 +138,23 @@ export default function MarketsPage() {
 
   return (
     <div className="flex-grow p-5 pb-10 flex flex-col">
+      {/* Header */}
+      <div className="mb-6 pt-4 shrink-0 flex items-start justify-between">
+        <div>
+          <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Prediction Hub</h2>
+          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">Markets</h1>
+        </div>
+        <button 
+          onClick={() => navigate('/newsfeed/predictions')}
+          className="flex flex-col items-center justify-center bg-[#00D8FF]/10 border border-[#00D8FF]/20 px-3 py-2 rounded-xl text-[#00D8FF] active:scale-95 transition-all shadow-lg shadow-[#00D8FF]/5"
+        >
+          <Newspaper className="w-5 h-5 mb-1" />
+          <span className="text-[9px] font-black uppercase tracking-wider">AI News</span>
+        </button>
+      </div>
+
       {/* Institutional Search */}
-      <form onSubmit={handleSearch} className="relative mb-6 pt-4">
+      <form onSubmit={handleSearch} className="relative mb-6">
         <div className="absolute left-4 top-[2.2rem] -translate-y-1/2 text-slate-500">
           <Search size={18} />
         </div>

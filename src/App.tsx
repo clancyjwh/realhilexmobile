@@ -15,6 +15,7 @@ import UFCFightList from './pages/UFCFightList';
 import MatchupDetail from './pages/MatchupDetail';
 import FightDetail from './pages/FightDetail';
 import MarketAnalysisPage from './pages/MarketAnalysisPage';
+import AINewsfeedPage from './pages/AINewsfeedPage';
 
 declare global {
   interface Window {
@@ -268,6 +269,9 @@ export default function App() {
           <Route path="/sports/:sport/matchup" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><MatchupDetail /></Shell>} />} />
           <Route path="/markets" element={<ProtectedRoute requiredTiers={['Markets']} element={<Shell><MarketsPage /></Shell>} />} />
           <Route path="/markets/analyze" element={<ProtectedRoute requiredTiers={['Markets']} element={<MarketAnalysisPage />} />} />
+          <Route path="/newsfeed/predictions" element={<ProtectedRoute requiredTiers={['Markets']} element={<Shell><AINewsfeedPage /></Shell>} />} />
+          <Route path="/newsfeed/finance" element={<ProtectedRoute requiredTiers={['Finance']} element={<Shell><AINewsfeedPage /></Shell>} />} />
+          <Route path="/newsfeed/sports" element={<ProtectedRoute requiredTiers={['Sports']} element={<Shell><AINewsfeedPage /></Shell>} />} />
           <Route path="/account" element={<Shell><AccountPage /></Shell>} />
 
           <Route path="*" element={<Navigate to="/login" replace />} />

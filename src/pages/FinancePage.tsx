@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { Newspaper } from 'lucide-react';
 import { formatScore, getHeatScoreBgColor, getSignalColors } from '../utils/format';
 import WatchlistDetailModal from './WatchlistDetailModal';
 
@@ -15,6 +17,7 @@ interface WatchlistItem {
 }
 
 export default function FinancePage() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<WatchlistItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -105,9 +108,18 @@ export default function FinancePage() {
 
   return (
     <div className="flex-grow p-4 pb-10 overflow-x-hidden flex flex-col min-h-[calc(100vh-80px)]">
-      <div className="mb-8 pt-4 shrink-0">
-        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Finance Hub</h2>
-        <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">My Watchlist</h1>
+      <div className="mb-8 pt-4 shrink-0 flex items-start justify-between">
+        <div>
+          <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Finance Hub</h2>
+          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">My Watchlist</h1>
+        </div>
+        <button 
+          onClick={() => navigate('/newsfeed/finance')}
+          className="flex flex-col items-center justify-center bg-[#00D8FF]/10 border border-[#00D8FF]/20 px-3 py-2 rounded-xl text-[#00D8FF] active:scale-95 transition-all shadow-lg shadow-[#00D8FF]/5"
+        >
+          <Newspaper className="w-5 h-5 mb-1" />
+          <span className="text-[9px] font-black uppercase tracking-wider">AI News</span>
+        </button>
       </div>
 
       {loading ? (

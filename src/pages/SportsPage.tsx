@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trophy } from 'lucide-react';
+import { Trophy, Newspaper } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function SportsPage() {
@@ -13,9 +13,18 @@ export default function SportsPage() {
 
   return (
     <div className="flex-grow p-5 pb-10 bg-[#0a0a0f]">
-      <div className="mb-10 pt-4 px-2">
-        <h2 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-1">Platform Hub</h2>
-        <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Sports</h1>
+      <div className="mb-10 pt-4 px-2 flex items-start justify-between">
+        <div>
+          <h2 className="text-[10px] font-black text-slate-600 uppercase tracking-[0.4em] mb-1">Platform Hub</h2>
+          <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">Sports</h1>
+        </div>
+        <button 
+          onClick={() => navigate('/newsfeed/sports')}
+          className="flex flex-col items-center justify-center bg-[#00D8FF]/10 border border-[#00D8FF]/20 px-3 py-2 rounded-xl text-[#00D8FF] active:scale-95 transition-all shadow-lg shadow-[#00D8FF]/5"
+        >
+          <Newspaper className="w-5 h-5 mb-1" />
+          <span className="text-[9px] font-black uppercase tracking-wider">AI News</span>
+        </button>
       </div>
 
       <div className="grid grid-cols-2 gap-4 px-1">
