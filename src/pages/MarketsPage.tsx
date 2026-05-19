@@ -139,18 +139,9 @@ export default function MarketsPage() {
   return (
     <div className="flex-grow p-5 pb-10 flex flex-col">
       {/* Header */}
-      <div className="mb-6 pt-4 shrink-0 flex items-start justify-between">
-        <div>
-          <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Prediction Hub</h2>
-          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">Markets</h1>
-        </div>
-        <button 
-          onClick={() => navigate('/newsfeed/predictions')}
-          className="flex items-center gap-2 bg-gradient-to-r from-[#00D8FF] to-[#0080FF] text-black px-4 py-2 rounded-full font-black uppercase tracking-widest text-[10px] active:scale-95 transition-all shadow-[0_0_15px_rgba(0,216,255,0.3)]"
-        >
-          <Newspaper className="w-4 h-4" />
-          AI News
-        </button>
+      <div className="mb-6 pt-4 shrink-0">
+        <h2 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Prediction Hub</h2>
+        <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white mt-1">Markets</h1>
       </div>
 
       {/* Institutional Search */}
@@ -191,6 +182,23 @@ export default function MarketsPage() {
               )}
             </div>
           )}
+        </div>
+
+        {/* Large AI News Button */}
+        <div className="mt-8 mb-4">
+          <button 
+            onClick={() => navigate('/newsfeed/predictions')}
+            className="w-full flex items-center justify-between p-6 rounded-2xl bg-gradient-to-br from-[#00D8FF]/20 to-transparent border border-[#00D8FF]/30 active:scale-[0.98] transition-transform relative overflow-hidden group shadow-[0_0_20px_rgba(0,216,255,0.15)]"
+          >
+            <div className="absolute inset-0 bg-[#00D8FF]/5 group-active:bg-[#00D8FF]/10 transition-colors" />
+            <div className="relative z-10 flex flex-col items-start gap-1">
+              <h3 className="text-lg font-black italic uppercase tracking-widest text-white">AI Newsfeed</h3>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#00D8FF]">Market Intelligence</span>
+            </div>
+            <div className="relative z-10 bg-[#00D8FF] p-3 rounded-full shadow-[0_0_15px_rgba(0,216,255,0.5)]">
+              <Newspaper className="w-6 h-6 text-black" />
+            </div>
+          </button>
         </div>
       </div>
     </div>
