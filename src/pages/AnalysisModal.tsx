@@ -76,12 +76,10 @@ export default function AnalysisModal({ entity, financialData, onClose }: Analys
 
   return (
     <div className="fixed inset-0 z-[100] bg-[#0a0a0f] flex flex-col animate-in fade-in zoom-in-95 duration-200">
-      <div className="sticky top-0 bg-[#0a0a0f] z-50 px-6 py-4 flex justify-between items-center border-b border-white/5" style={{ paddingTop: 'env(safe-area-inset-top)' }}>
+      <div className="flex justify-end px-6 py-4 shrink-0">
         <button onClick={onClose} className="p-2 bg-white/5 rounded-full text-slate-400 active:bg-white/10 transition-colors">
           <X size={24} />
         </button>
-        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Intelligence Analysis</span>
-        <div className="w-10" /> {/* Spacer */}
       </div>
 
       <div className="flex-grow overflow-y-auto px-6" style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 100px)' }}>
